@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 로그 설정 -->
+<configuration>
+    <!-- 로그 출력 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 로그 형식:날짜, 스레드, 로그 레벨, 로거 이름, 메시지 -->
+         <!-- 일종의 템플릿처럼 쓰이는 구성이다. -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 로깅 레벨 -->
+    <logger name="com.soldesk" level="DEBUG"/>
+    <!-- com.soldesk 패키지의 로그 레벨을 DEBUG로 설정-자세한 정보를 출력하는 디버그 레벨 -->
+    <logger name="org.springframework" level="INFO" />
+    <!-- org.springframework 패키지의 로그 레벨을 INFO로 설정-일반적 정보를 출력하는 정보 레벨 -->
+    <logger name="org.mybatis" level="INFO"/>
+    <!-- org.mybatis 패키지의 로그 레벨을 INFO로 설정-일반적 정보를 출력하는 정보 레벨 -->
+    <!-- 프로젝트 전체의 기본 로깅 규칙: 설정한 패키지 이외의 설정 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
