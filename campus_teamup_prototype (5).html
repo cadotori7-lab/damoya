@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>다모여 — 대학생 프로젝트 매칭·협업 플랫폼</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/css/style.css">
+</head>
+<body>
+  <jsp:include page="/WEB-INF/views/includes/header.jsp" />
+
+
+<main>
+  <!-- 초기 HTML/자바스크립트 -->
+  
+</main>
+
+<!-- ===== 팀원 업무 상세 모달 ===== -->
+<div class="modal-overlay" id="memberModal" onclick="if(event.target===this)closeMember()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mmName">
+    <div class="modal-head">
+      <span class="pic" id="mmPic"></span>
+      <div class="mh-info"><h3 id="mmName"></h3><div class="role" id="mmRole"></div></div>
+      <button class="modal-close" onclick="closeMember()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats" id="mmStats"></div>
+      <div class="sec-label" style="margin-top:0">담당 업무</div>
+      <div id="mmTasks"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 결과물 제출 모달 ===== -->
+<div class="modal-overlay" id="submitModal" onclick="if(event.target===this)closeSubmit()">
+  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="smTitle">
+    <div class="modal-head">
+      <div class="mh-info"><h3 id="smTitle">결과물 제출</h3><div class="role">담당한 업무의 결과물을 제출해요</div></div>
+      <button class="modal-close" onclick="closeSubmit()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="submitBody">
+      <div class="sm-task">
+        <div class="k">제출 업무</div>
+        <div class="v" id="smTaskName">매칭 검색 필터 구현</div>
+        <div class="due" id="smTaskDue">마감 08.15</div>
+      </div>
+
+      <div class="fld">
+        <label>결과물 파일</label>
+        <div class="dropzone" id="dropzone" onclick="pickFile()">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+          <div class="dz-main">파일을 끌어다 놓거나 클릭해서 업로드</div>
+          <div class="dz-sub">파일 또는 텍스트로 제출할 수 있어요 (최대 50MB)</div>
+        </div>
+        <div id="dzFileWrap"></div>
+      </div>
+
+      <div class="fld one">
+        <label>제출 설명 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
+        <textarea placeholder="무엇을 구현했는지, 확인할 점이 있는지 팀장에게 남겨주세요." style="min-height:80px"></textarea>
+      </div>
+      <div class="fld one">
+        <label>참고 링크 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
+        <input type="text" placeholder="GitHub·Figma 등 링크">
+      </div>
+
+      <div class="form-foot">
+        <button class="btn ghost" onclick="closeSubmit()">취소</button>
+        <button class="btn pri" onclick="doSubmit()">제출하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 업무 상세 + 검수 모달 ===== -->
+<div class="modal-overlay" id="taskModal" onclick="if(event.target===this)closeTask()">
+  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="modal-head">
+      <div class="mh-info"><h3 id="taskModalTitle"></h3><div class="role">업무 상세</div></div>
+      <button class="modal-close" onclick="closeTask()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="taskModalBody"></div>
+  </div>
+</div>
+
+<!-- ===== 함께하기 제의 모달 ===== -->
+<div class="modal-overlay" id="offerModal" onclick="if(event.target===this)closeOffer()">
+  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
+    <div class="modal-head">
+      <div class="mh-info"><h3 id="offerTitle">함께하기 제의</h3><div class="role" id="offerWho">상대에게 초대를 보내요</div></div>
+      <button class="modal-close" onclick="closeOffer()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="offerBody">
+      <div class="offer-proj">
+        <div class="k">초대할 프로젝트</div>
+        <select id="offerProj">
+          <option>AI 헬스케어 웹서비스 (팀장)</option>
+          <option>데이터베이스 텀 프로젝트</option>
+        </select>
+      </div>
+      <div class="fld one"><label>맡아줬으면 하는 역할</label><input type="text" id="offerRole" placeholder="예: 백엔드 · 인증/권한"></div>
+      <div class="fld one"><label>제의 메시지</label><textarea placeholder="왜 함께하고 싶은지, 어떤 점이 좋았는지 적어주세요." style="min-height:90px"></textarea></div>
+      <div class="form-foot">
+        <button class="btn ghost" onclick="closeOffer()">취소</button>
+        <button class="btn pri" onclick="sendOffer()">제의 보내기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 프로필 수정 모달 ===== -->
+<div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfile()">
+  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="modal-head">
+      <div class="mh-info"><h3 id="profileTitle">프로필 수정</h3><div class="role">다른 사람에게 보이는 내 정보예요</div></div>
+      <button class="modal-close" onclick="closeProfile()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="profileBody">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <span class="big" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none">민</span>
+        <button class="btn ghost sm">사진 변경</button>
+      </div>
+      <div class="fld one"><label>이름</label><input type="text" id="pfName" value="김민재"></div>
+      <div class="frow">
+        <div class="fld"><label>학과</label>
+          <select id="pfDept"><option selected>컴퓨터공학과</option><option>소프트웨어학과</option><option>산업경영공학과</option><option>게임공학과</option></select>
+        </div>
+        <div class="fld"><label>학년</label>
+          <select id="pfYear"><option>1학년</option><option>2학년</option><option>3학년</option><option selected>4학년</option><option>5학년 이상</option></select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>주전공</label><input type="text" id="pfMajor" value="컴퓨터공학"></div>
+        <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><input type="text" id="pfMinor" placeholder="없으면 비워두세요"></div>
+      </div>
+      <div class="fld one">
+        <label>관심 분야</label>
+        <div class="picker" id="pfInterests">
+          <input type="checkbox" id="pf1" checked><label for="pf1">백엔드</label>
+          <input type="checkbox" id="pf2"><label for="pf2">프론트엔드</label>
+          <input type="checkbox" id="pf3" checked><label for="pf3">데이터</label>
+          <input type="checkbox" id="pf4"><label for="pf4">AI</label>
+          <input type="checkbox" id="pf5"><label for="pf5">기획</label>
+          <input type="checkbox" id="pf6"><label for="pf6">디자인</label>
+          <input type="checkbox" id="pf7"><label for="pf7">게임</label>
+        </div>
+      </div>
+      <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><input type="text" id="pfBio" placeholder="예: Spring 백엔드에 관심 많은 4학년"></div>
+      <div class="form-foot">
+        <button class="btn ghost" onclick="closeProfile()">취소</button>
+        <button class="btn pri" onclick="saveProfile()">저장하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  // ----- 뷰 전환 -----
+  const views = {home:'v-home',match:'v-match',detail:'v-detail',talent:'v-talent',talentdetail:'v-talentdetail',talentpost:'v-talentpost',myprojects:'v-myprojects',overview:'v-overview',tasks:'v-tasks',mypage:'v-mypage',admin:'v-admin',login:'v-login',signup:'v-signup',create:'v-create',feedback:'v-feedback',accounts:'v-accounts',posts:'v-posts',taskform:'v-taskform',schedule:'v-schedule',meetings:'v-meetings',meetingform:'v-meetingform',org:'v-org',applicants:'v-applicants',results:'v-results',complete:'v-complete'};
+  function go(v){
+    Object.values(views).forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById(views[v]).classList.add('on');
+    document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+  // ----- 매칭 카드 데이터 -----
+  const CAT={공모전:{c:'var(--cat-contest)'},학과:{c:'var(--cat-major)'},교양:{c:'var(--cat-liberal)'},교내활동:{c:'var(--cat-club)'}};
+  const projects=[
+    {cat:'공모전',scope:'교내',title:'2026 캡스톤 경진대회 — AI 헬스케어 웹서비스',desc:'학생 건강 관리를 돕는 AI 기반 웹서비스를 함께 만들 팀원을 찾습니다.',dept:'컴퓨터공학',year:'3–4학년',have:2,need:4,tags:['Spring','React','MySQL'],dday:'D-9'},
+    {cat:'학과',scope:'학과',title:'데이터베이스 텀 프로젝트 팀원 구해요',desc:'ERD 설계부터 구현까지. DB 수업 텀 프로젝트를 같이 할 3명을 모집합니다.',dept:'컴퓨터공학',year:'3학년',have:1,need:3,tags:['MySQL','ERD'],dday:'D-4'},
+    {cat:'교양',scope:'교내',title:'교양 〈창업과 경영〉 발표 조원 모집',desc:'중간·기말 발표를 함께 준비할 조원을 찾습니다. 부담 없는 팀플이에요.',dept:'전체',year:'전 학년',have:3,need:5,tags:['발표','기획'],dday:'D-6'},
+    {cat:'교내활동',scope:'전국',title:'전국 대학생 연합 해커톤 참가팀',desc:'48시간 해커톤에 나갈 연합팀을 꾸립니다. 학교 무관, 실력·열정 환영.',dept:'무관',year:'무관',have:3,need:6,tags:['해커톤','Node','AI'],dday:'D-12'},
+    {cat:'공모전',scope:'전국',title:'ESG 아이디어 공모전 — 기획·개발 파트너',desc:'친환경 서비스 아이디어를 서비스로 구현할 개발자를 찾습니다.',dept:'무관',year:'2–4학년',have:2,need:4,tags:['기획','Spring'],dday:'D-15'},
+    {cat:'학과',scope:'교내',title:'졸업작품 — Unity 게임 개발 팀원',desc:'카드 전략 RPG 졸업작품을 함께 완성할 클라이언트·기획 팀원 모집.',dept:'게임공학',year:'4학년',have:2,need:3,tags:['Unity','C#'],dday:'D-3'},
+  ];
+  document.getElementById('cards').innerHTML=projects.map(p=>`
+    <article class="card" style="--c:${CAT[p.cat].c}" onclick="go('detail')" tabindex="0" onkeydown="if(event.key==='Enter')go('detail')">
+      <div class="row1"><span class="cat">${p.cat} · ${p.scope}</span><span class="chip recruit">모집중</span></div>
+      <h4>${p.title}</h4>
+      <p>${p.desc}</p>
+      <div class="meta"><span>${p.dept}</span><span>${p.year}</span></div>
+      <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-foot"><span class="team-need">모집 <b class="mono" style="color:var(--ink)">${p.have}/${p.need}</b>명</span><span class="dday">${p.dday}</span></div>
+    </article>`).join('');
+
+  // ----- 업무 보드 (칸반) -----
+  const MYID=1; // 데모: 로그인 사용자 = 김민재(팀원 인덱스 1)
+  let boardFilter='all';
+  const MEM=[{n:'이도현',c:'#2b46c8',i:'이'},{n:'김민재',c:'#2b46c8',i:'민'},{n:'서지우',c:'#0f9d8c',i:'서'},{n:'최윤서',c:'#c98a12',i:'최'}];
+  const COLS=[
+    {key:'등록',label:'등록',cc:'var(--grey)',chip:'done'},
+    {key:'진행중',label:'진행중',cc:'var(--accent)',chip:'ing'},
+    {key:'검수대기',label:'제출·검수 대기',cc:'var(--wait)',chip:'wait'},
+    {key:'승인',label:'승인 완료',cc:'var(--ok)',chip:'approve'}
+  ];
+  let TASKS=[
+    {id:1,t:'로그인·회원 인증 구현',d:'Spring Security 세션 인증',who:0,due:'08.12',status:'등록'},
+    {id:2,t:'관리자 통계 화면',d:'집계 쿼리 + 대시보드',who:1,due:'08.20',status:'등록'},
+    {id:3,t:'매칭 검색 필터 구현',d:'카테고리·학과·학년 동적 쿼리',who:1,due:'08.15',soon:1,status:'진행중'},
+    {id:4,t:'신고·계정 관리 API',d:'관리자 기능',who:0,due:'08.22',status:'진행중'},
+    {id:5,t:'ERD·DB 스키마 설계',d:'5개 핵심 테이블 + 참여/신고 관계까지 반영했습니다. 정규화 검토 부탁드려요.',who:0,due:'08.10',soon:1,status:'검수대기',file:['erd_schema_v2.pdf','1.4MB'],submittedAt:'08.10 제출'},
+    {id:6,t:'지원·승인 API',d:'면접→승인 트랜잭션. 정원 초과 동시 요청은 비관적 락으로 막았고 테스트 코드 포함했습니다.',who:1,due:'08.14',status:'검수대기',file:['recruit_api.zip','320KB'],submittedAt:'08.13 제출'},
+    {id:7,t:'화면 설계 (Figma)',d:'전체 15개 화면 와이어프레임입니다.',who:2,due:'08.08',status:'승인',file:['wireframe.fig','2.1MB'],submittedAt:'08.08 제출'},
+    {id:8,t:'개발 환경 세팅',d:'Tomcat · Maven · Git',who:1,due:'08.07',status:'승인'},
+    {id:9,t:'요구사항 정의서',d:'기능 명세서',who:3,due:'08.06',status:'승인',file:['requirements_v2.docx','92KB'],submittedAt:'08.06 제출'},
+    {id:10,t:'회원 도메인 설계',d:'엔티티·매퍼 구조',who:0,due:'08.05',status:'승인'},
+    {id:11,t:'프로젝트 CRUD API',d:'모집 등록·수정·조회',who:1,due:'08.09',status:'승인'},
+    {id:12,t:'공통 레이아웃·헤더',d:'JSP 공통 화면',who:2,due:'08.05',status:'승인'},
+    {id:13,t:'DB 초기 스키마 반영',d:'테이블 생성 스크립트',who:0,due:'08.04',status:'승인'}
+  ];
+  const APPROVED_LIMIT=5;
+  let taskSearch='', approvedExpanded=false;
+  function taskMatch(t,q){ return !q || (t.t+' '+(t.d||'')+' '+MEM[t.who].n).toLowerCase().includes(q); }
+  function renderKanban(){
+    const q=taskSearch.trim().toLowerCase();
+    let src=boardFilter==='mine'?TASKS.filter(t=>t.who===MYID):TASKS;
+    src=src.filter(t=>taskMatch(t,q));
+    document.getElementById('kanban').innerHTML=COLS.map(c=>{
+      let items=src.filter(t=>t.status===c.key);
+      const total=items.length;
+      let extra='';
+      if(c.key==='승인' && !q && !approvedExpanded && total>APPROVED_LIMIT){
+        items=items.slice(0,APPROVED_LIMIT);
+        extra=`<button class="col-more" onclick="expandApproved()">지난 완료 ${total-APPROVED_LIMIT}개 더보기</button>`;
+      } else if(c.key==='승인' && approvedExpanded && !q && total>APPROVED_LIMIT){
+        extra=`<button class="col-more" onclick="collapseApproved()">완료 칸 접기</button>`;
+      }
+      return `<div class="col">
+        <div class="col-h" style="--cc:${c.cc}">
+          <div class="t"><span class="chip ${c.chip}">${c.label}</span></div>
+          <div class="cnt">${total}</div>
+        </div>
+        ${items.map(t=>`
+          <div class="task" onclick="openTask(${t.id})">
+            <h5>${t.t}</h5><p>${t.d}</p>
+            ${t.rejected?'<span class="chip reject" style="margin-bottom:8px">반려 · 재작업 필요</span>':''}
+            <div class="task-foot">
+              <span class="who-mini"><span class="pic" style="background:${MEM[t.who].c}">${MEM[t.who].i}</span>${MEM[t.who].n}</span>
+              <span class="due${t.soon?' soon':''}">~${t.due}</span>
+            </div>
+          </div>`).join('')}
+        ${extra}
+        ${total===0?'<p class="col-empty">'+(q?'검색 결과 없음':'없음')+'</p>':''}
+      </div>`;
+    }).join('');
+  }
+  window.onTaskSearch=(v)=>{ taskSearch=v; approvedExpanded=false; renderKanban(); };
+  window.expandApproved=()=>{ approvedExpanded=true; renderKanban(); };
+  window.collapseApproved=()=>{ approvedExpanded=false; renderKanban(); };
+  renderKanban();
+
+  // ----- 업무 보드 토글 (전체/내업무/팀현황) -----
+  document.querySelectorAll('#taskToggle button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#taskToggle button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const p=b.dataset.p, team=p==='team';
+    document.getElementById('boardPanel').style.display=team?'none':'';
+    document.getElementById('teamPanel').style.display=team?'':'none';
+    document.getElementById('boardTools').style.display=team?'none':'';
+    if(!team){ boardFilter=p; renderKanban(); }
+  });
+
+  // ----- 마이페이지 탭 -----
+  const CATC={공모전:'var(--cat-contest)',학과:'var(--cat-major)',교양:'var(--cat-liberal)',교내활동:'var(--cat-club)'};
+  const mp={
+    joined:[
+      {cat:'공모전',t:'AI 헬스케어 웹서비스',meta:['진행중','팀 4명','D-24'],role:'lead',prog:58},
+      {cat:'학과',t:'데이터베이스 텀 프로젝트',meta:['진행중','팀 3명','D-11'],role:'member',prog:40},
+      {cat:'교양',t:'〈창업과 경영〉 발표 팀플',meta:['진행중','팀 5명','D-6'],role:'member',prog:72},
+    ],
+    applied:[
+      {cat:'교내활동',t:'전국 대학생 연합 해커톤 참가팀',meta:['지원 3일 전'],chip:'interview',chipT:'면접 예정'},
+      {cat:'공모전',t:'ESG 아이디어 공모전 파트너',meta:['지원 1일 전'],chip:'wait',chipT:'승인 대기'},
+    ],
+    liked:[
+      {cat:'학과',t:'졸업작품 — Unity 게임 개발 팀원',meta:['모집중','2/3명','D-3']},
+      {cat:'공모전',t:'교내 창업 아이디어톤 팀원 모집',meta:['모집중','1/5명','D-8']},
+    ],
+    offers:[
+      {cat:'공모전',from:'최윤서 팀장',proj:'AI 헬스케어 웹서비스',role:'백엔드 · 인증/권한',msg:'인증·권한 경험이 잘 맞을 것 같아요. 함께해요!',status:'대기'},
+      {cat:'학과',from:'정하람 팀장',proj:'데이터베이스 텀 프로젝트',role:'ERD 설계',msg:'ERD 잘 다루신다고 들었어요. 제안드립니다.',status:'대기'},
+    ]
+  };
+  function renderMp(tab){
+    if(tab==='offers'){
+      document.getElementById('mpList').innerHTML=mp.offers.map((o,i)=>`
+        <div class="offer-item" style="--c:${CATC[o.cat]}">
+          <div class="oi-main">
+            <div class="oi-from">${o.from} · ${o.proj}</div>
+            <h4>${o.role} 제안</h4>
+            <div class="oi-msg">"${o.msg}"</div>
+          </div>
+          <div class="oi-act" id="offerAct${i}">
+            ${o.status==='대기'
+              ? `<button class="btn sm pri" onclick="answerOffer(${i},'수락')">수락</button><button class="btn sm ghost" onclick="answerOffer(${i},'거절')">거절</button>`
+              : `<span class="chip ${o.status==='수락'?'approve':'reject'}">${o.status==='수락'?'수락함 · 팀 합류':'거절함'}</span>`}
+          </div>
+        </div>`).join('') || '<p style="color:var(--ink-soft);padding:16px">받은 제의가 없어요.</p>';
+      return;
+    }
+    document.getElementById('mpList').innerHTML=mp[tab].map(x=>{
+      let right='';
+      if(x.role) right=`<span class="role-tag ${x.role}">${x.role==='lead'?'팀장':'팀원'}</span>`;
+      else if(x.chip) right=`<span class="chip ${x.chip}">${x.chipT}</span>`;
+      else right=`<button class="btn sm ghost">보기</button>`;
+      return `<div class="mp-item" style="--c:${CATC[x.cat]}" onclick="go('${tab==='joined'?'overview':'detail'}')">
+        <div class="m-main">
+          <div class="m-cat">${x.cat}</div><h4>${x.t}</h4>
+          <div class="m-meta">${x.meta.map(m=>`<span>${m}</span>`).join('')}</div>
+        </div>
+        <div class="m-right">${right}</div>
+      </div>`;
+    }).join('');
+  }
+  window.answerOffer=(i,ans)=>{ mp.offers[i].status=ans; renderMp('offers'); };
+  document.querySelectorAll('#mpTabs button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#mpTabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); renderMp(b.dataset.t);
+  });
+  renderMp('joined');
+
+  // ----- 프로필 수정 모달 -----
+  function openProfile(){
+    document.getElementById('profileModal').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function closeProfile(){
+    document.getElementById('profileModal').classList.remove('on');
+    document.body.style.overflow='';
+  }
+  function saveProfile(){
+    const name=document.getElementById('pfName').value.trim()||'김민재';
+    const dept=document.getElementById('pfDept').value;
+    const year=document.getElementById('pfYear').value;
+    const head=document.querySelector('#v-mypage .mp-head');
+    head.querySelector('.info h2').textContent=name;
+    head.querySelector('.info .line').textContent=`대진대학교 · ${dept} · ${year}`;
+    head.querySelector('.big').textContent=name.slice(-2,-1)||name.charAt(0);
+    // 관심 분야 배지 갱신 (학교 인증 배지는 유지)
+    const picked=[...document.querySelectorAll('#pfInterests input:checked')].map(c=>c.nextElementSibling.textContent);
+    head.querySelector('.info .badges').innerHTML=
+      picked.map(p=>`<span class="b">${p}</span>`).join('')+'<span class="b">✓ 학교 인증됨</span>';
+    closeProfile();
+  }
+  window.openProfile=openProfile; window.closeProfile=closeProfile; window.saveProfile=saveProfile;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfile();});
+
+  // ----- 계정 관리 테이블 -----
+  const accs=[
+    {n:'이도현',id:'dohyun_lee',sch:'대진대 · 컴퓨터공학',role:'일반',date:'2025.09.02',status:'ok',c:'#2b46c8'},
+    {n:'서지우',id:'jiwoo_seo',sch:'대진대 · 경영학',role:'일반',date:'2025.09.10',status:'ok',c:'#0f9d8c'},
+    {n:'박준호',id:'mentor_park',sch:'대진대 · 컴퓨터공학',role:'멘토',date:'2025.03.14',status:'ok',c:'#e07a45'},
+    {n:'김상우',id:'sangwoo_k',sch:'가천대 · 소프트웨어',role:'일반',date:'2025.10.21',status:'suspended',c:'#8256e0'},
+    {n:'관리자',id:'admin',sch:'—',role:'관리자',date:'2025.01.02',status:'ok',c:'#16233f'},
+  ];
+  const stChip={ok:'<span class="chip approve">정상</span>',suspended:'<span class="chip reject">정지</span>'};
+  document.getElementById('accTable').innerHTML=
+    '<tr><th>회원</th><th>학교 / 학과</th><th>역할</th><th>가입일</th><th>상태</th><th>관리</th></tr>'+
+    accs.map(a=>`<tr>
+      <td><div class="u"><span class="pic" style="background:${a.c}">${a.n[0]}</span><div><div class="nm">${a.n}</div><div class="mono" style="font-size:11.5px">@${a.id}</div></div></div></td>
+      <td><div class="mono">${a.sch}</div></td>
+      <td><span class="rolebadge${a.role==='관리자'?' admin':''}">${a.role}</span></td>
+      <td><div class="mono">${a.date}</div></td>
+      <td>${stChip[a.status]}</td>
+      <td>${a.role==='관리자'?'<span style="color:var(--ink-soft);font-size:12.5px">—</span>':(a.status==='ok'?'<button class="btn sm ghost">계정 정지</button>':'<button class="btn sm pri">정지 해제</button>')}</td>
+    </tr>`).join('');
+
+  // ----- 일정 캘린더 (2026년 8월) -----
+  const EVENTS={
+    6:[{t:'요구사항 정의서 마감',c:'task'}],
+    7:[{t:'개발 환경 세팅 마감',c:'task'}],
+    10:[{t:'킥오프 회의',c:'meet'},{t:'ERD 스키마 마감',c:'task'}],
+    14:[{t:'지원·승인 API 마감',c:'task'}],
+    17:[{t:'중간 점검 회의',c:'meet'}],
+    18:[{t:'멘토 중간 피드백',c:'fb'}],
+    20:[{t:'통계 화면 마감',c:'task'}],
+    24:[{t:'2차 스프린트 회의',c:'meet'}],
+    28:[{t:'통합 테스트 시작',c:'task'}],
+    31:[{t:'최종 리허설 회의',c:'meet'}],
+  };
+  (function buildCal(){
+    const year=2026,month=7; // 8월(0-indexed 7)
+    const first=new Date(year,month,1).getDay(); // 요일
+    const days=new Date(year,month+1,0).getDate(); // 31
+    const prevDays=new Date(year,month,0).getDate();
+    const today=12; // 데모: 8/12를 오늘로
+    let cells='';
+    for(let i=0;i<first;i++){cells+=`<div class="cell out"><div class="dn">${prevDays-first+i+1}</div></div>`;}
+    for(let d=1;d<=days;d++){
+      const evs=(EVENTS[d]||[]).map(e=>`<div class="ev ${e.c}" title="${e.t}">${e.t}</div>`).join('');
+      cells+=`<div class="cell${d===today?' today':''}"><div class="dn">${d}</div>${evs}</div>`;
+    }
+    const rem=(first+days)%7; if(rem){for(let i=1;i<=7-rem;i++)cells+=`<div class="cell out"><div class="dn">${i}</div></div>`;}
+    document.getElementById('calGrid').innerHTML=cells;
+  })();
+
+  // ----- 회의 목록/회의록 -----
+  let MEETS=[
+    {dt:'08.24 (월) 19:00',date:'2026-08-24',time:'19:00',t:'2차 스프린트 회의',sum:'관리자·통계 기능 분담',att:[['#0f9d8c','도'],['#2b46c8','민'],['#e07a45','서'],['#8256e0','윤']],
+     content:'[안건]\n- 관리자·통계 기능 담당 분담\n- 2차 스프린트 범위 확정\n- 배포 환경(Tomcat) 점검\n\n[결정 사항]\n- 통계 대시보드는 민재, 신고·계정 관리는 윤서가 담당\n- 08/28부터 통합 테스트 시작, 그 전까지 기능 개발 마무리'},
+    {dt:'08.17 (월) 19:00',date:'2026-08-17',time:'19:00',t:'중간 점검 회의',sum:'진행 상황 공유, 블로커 논의',att:[['#0f9d8c','도'],['#2b46c8','민'],['#8256e0','윤']],
+     content:'[안건]\n- 각자 진행 상황 공유\n- 지원–승인 트랜잭션 블로커 논의\n\n[결정 사항]\n- 정원 동시성 처리는 비관적 락으로 우선 구현 후 리뷰\n- 멘토님께 중간 피드백 요청드리기'},
+    {dt:'08.10 (월) 19:00',date:'2026-08-10',time:'19:00',t:'킥오프 회의',sum:'역할 분담과 일정 확정',att:[['#0f9d8c','도'],['#2b46c8','민'],['#e07a45','서'],['#8256e0','윤']],
+     content:'[안건]\n- 팀 역할 분담(매칭/업무/권한/관리자)\n- 5주 개발 일정 확정\n- 협업 도구·브랜치 전략 합의\n\n[결정 사항]\n- 주 2회(월·목) 오프라인 회의\n- GitHub feature 브랜치 + PR 리뷰 후 머지'},
+  ];
+  let curMeeting=0, editMeeting=-1;
+  function meetingBodyHTML(content){
+    const lines=content.split('\n'); let html=''; let inList=false;
+    for(let raw of lines){
+      const ln=raw.trim();
+      if(!ln){ if(inList){html+='</ul>';inList=false;} continue; }
+      const head=ln.match(/^\[(.+)\]$/);
+      if(head){ if(inList){html+='</ul>';inList=false;} html+=`<h5>${head[1]}</h5>`; }
+      else if(ln.startsWith('- ')){ if(!inList){html+='<ul>';inList=true;} html+=`<li>${ln.slice(2)}</li>`; }
+      else { if(inList){html+='</ul>';inList=false;} html+=`<p>${ln}</p>`; }
+    }
+    if(inList)html+='</ul>';
+    return html;
+  }
+  function renderMinutes(i){
+    curMeeting=i;
+    const m=MEETS[i];
+    document.getElementById('minutes').innerHTML=`
+      <div class="mh">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div><div class="dt">${m.dt}</div><h2>${m.t}</h2></div>
+          <button class="btn ghost sm" onclick="openMeetingEdit(${i})">✎ 수정</button>
+        </div>
+        <div class="att">${m.att.map(a=>`<span class="pic" style="background:${a[0]}">${a[1]}</span>`).join('')}<span style="align-self:center;font-size:12.5px;color:var(--ink-soft);margin-left:4px">참석 ${m.att.length}명</span></div>
+      </div>
+      <div class="prose">${meetingBodyHTML(m.content)}</div>`;
+    document.querySelectorAll('#meetList .meet-card').forEach((c,idx)=>c.classList.toggle('on',idx===i));
+  }
+  function renderMeetList(){
+    document.getElementById('meetList').innerHTML=MEETS.map((m,i)=>`
+      <div class="meet-card${i===curMeeting?' on':''}" onclick="renderMinutes(${i})">
+        <div class="dt">${m.dt}</div><h4>${m.t}</h4><p>${m.sum}</p>
+      </div>`).join('');
+  }
+  // 회의 등록/수정 폼 진입
+  function openMeetingNew(){
+    editMeeting=-1;
+    document.getElementById('mfEyebrow').textContent='New meeting';
+    document.getElementById('mfTitle').textContent='회의 등록';
+    document.getElementById('mfSave').textContent='회의 등록';
+    document.getElementById('mfName').value='';
+    document.getElementById('mfDate').value='2026-08-24';
+    document.getElementById('mfTime').value='19:00';
+    document.getElementById('mfAgenda').value='';
+    document.getElementById('mfContent').value='';
+    go('meetingform');
+  }
+  function openMeetingEdit(i){
+    editMeeting=i; const m=MEETS[i];
+    document.getElementById('mfEyebrow').textContent='Edit meeting';
+    document.getElementById('mfTitle').textContent='회의 수정';
+    document.getElementById('mfSave').textContent='수정 저장';
+    document.getElementById('mfName').value=m.t;
+    document.getElementById('mfDate').value=m.date;
+    document.getElementById('mfTime').value=m.time;
+    document.getElementById('mfAgenda').value=m.sum;
+    document.getElementById('mfContent').value=m.content;
+    go('meetingform');
+  }
+  function saveMeeting(){
+    const name=document.getElementById('mfName').value.trim()||'제목 없는 회의';
+    const date=document.getElementById('mfDate').value, time=document.getElementById('mfTime').value;
+    const agenda=document.getElementById('mfAgenda').value.trim();
+    const content=document.getElementById('mfContent').value;
+    const dows=['일','월','화','수','목','금','토'];
+    const dt=date?`${date.slice(5,7)}.${date.slice(8,10)} (${dows[new Date(date).getDay()]}) ${time||''}`.trim():'';
+    if(editMeeting>=0){
+      Object.assign(MEETS[editMeeting],{t:name,date,time,sum:agenda,content,dt});
+      curMeeting=editMeeting;
+    } else {
+      MEETS.unshift({dt,date,time,t:name,sum:agenda,att:[['#2b46c8','민']],content});
+      curMeeting=0;
+    }
+    renderMeetList(); renderMinutes(curMeeting); go('meetings');
+  }
+  window.openMeetingEdit=openMeetingEdit; window.openMeetingNew=openMeetingNew; window.saveMeeting=saveMeeting;
+  renderMeetList();
+  renderMinutes(0);
+
+  // ----- 모집 관리: 지원자 -----
+  const applicants=[
+    {n:'이도현',dept:'컴퓨터공학 · 4학년',want:'백엔드',pic:'#2b46c8',applied:'2일 전',status:'면접',
+     motive:'Spring·MyBatis로 팀 프로젝트를 2번 해봤고, 캡스톤에 제대로 몰입하고 싶어 지원합니다. 트랜잭션·인증 파트를 맡고 싶어요.'},
+    {n:'서지우',dept:'경영학 · 3학년',want:'기획·디자인',pic:'#0f9d8c',applied:'2일 전',status:'승인',
+     motive:'Figma로 UI 작업이 가능하고, 서비스 기획 경험이 있습니다. 디자인·기획 파트로 참여하고 싶어요!'},
+    {n:'한지민',dept:'소프트웨어 · 3학년',want:'프론트엔드',pic:'#8256e0',applied:'1일 전',status:'대기',
+     motive:'React로 개인 프로젝트를 만들어봤어요. 실제 서비스 규모의 프론트를 경험하고 싶어 지원합니다.'},
+    {n:'오세훈',dept:'컴퓨터공학 · 4학년',want:'백엔드',pic:'#c98a12',applied:'20시간 전',status:'대기',
+     motive:'JPA·Spring 학습 중이고 배우며 기여하고 싶습니다. 성실하게 끝까지 참여할 자신 있습니다.'},
+    {n:'윤가람',dept:'산업경영 · 2학년',want:'기획·디자인',pic:'#e07a45',applied:'3일 전',status:'거절',
+     motive:'기획에 관심이 있어 지원했습니다.'},
+  ];
+  const STCLS={대기:'wait',면접:'interview',승인:'approve',거절:'reject'};
+  let applFilter='all';
+  function actionsFor(a,i){
+    if(a.status==='대기') return `<button class="btn sm pri" onclick="setAppl(${i},'면접')">면접 제안</button><button class="btn sm ghost" onclick="setAppl(${i},'거절')">거절</button>`;
+    if(a.status==='면접') return `<button class="btn sm pri" onclick="setAppl(${i},'승인')">승인</button><button class="btn sm ghost" onclick="setAppl(${i},'거절')">거절</button><div class="statusline">면접 진행 중</div>`;
+    if(a.status==='승인') return `<div class="statusline" style="color:var(--ok);font-weight:700">✓ 팀원으로 등록됨</div>`;
+    return `<div class="statusline">거절됨</div><button class="btn sm ghost" onclick="setAppl(${i},'대기')">되돌리기</button>`;
+  }
+  function renderAppl(){
+    const list=applicants.map((a,i)=>({a,i})).filter(x=>applFilter==='all'||x.a.status===applFilter);
+    document.getElementById('applList').innerHTML=list.map(({a,i})=>`
+      <div class="appl-card${(a.status==='승인'||a.status==='거절')?' decided':''}">
+        <span class="pic" style="background:${a.pic}">${a.n[0]}</span>
+        <div class="ac-main">
+          <div class="ac-top"><span class="nm">${a.n}</span><span class="dept">${a.dept}</span><span class="chip ${STCLS[a.status]}">${a.status}</span><span class="applied">지원 ${a.applied}</span></div>
+          <div class="want">희망 분야 · ${a.want}</div>
+          <div class="motive">${a.motive}</div>
+        </div>
+        <div class="ac-actions">${actionsFor(a,i)}</div>
+      </div>`).join('') || '<p style="color:var(--ink-soft);padding:20px;text-align:center">해당 상태의 지원자가 없어요.</p>';
+    // 탭 카운트 갱신
+    const cnt={all:applicants.length,대기:0,면접:0,승인:0,거절:0};
+    applicants.forEach(a=>cnt[a.status]++);
+    document.querySelectorAll('#applTabs button').forEach(b=>{
+      const f=b.dataset.f; b.querySelector('.mono').textContent=cnt[f];
+    });
+    const appr=applicants.filter(a=>a.status==='승인').length+1; // +1 팀장
+    document.getElementById('recruitNum').innerHTML=`${appr}<small> / 4명 확정</small>`;
+    document.getElementById('recruitFill').style.width=(appr/4*100)+'%';
+  }
+  window.setAppl=(i,st)=>{ applicants[i].status=st; renderAppl(); };
+  document.querySelectorAll('#applTabs button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#applTabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); applFilter=b.dataset.f; renderAppl();
+  });
+  renderAppl();
+
+  // ----- 업무 상세 + 검수 모달 -----
+  const TSTAT={등록:'done',진행중:'ing',검수대기:'wait',승인:'approve'};
+  const TSTATLABEL={등록:'등록',진행중:'진행중',검수대기:'검수 대기',승인:'승인 완료'};
+  const fileIconT='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+  let curTask=null;
+  function openTask(id){
+    const t=TASKS.find(x=>x.id===id); if(!t)return; curTask=id;
+    const m=MEM[t.who];
+    let sub='';
+    if(t.file){
+      sub=`<div class="submission"><div class="slabel">제출물 · 결과물</div>
+        <div class="file">${fileIconT}${t.file[0]} <span class="sz">${t.file[1]}</span></div>
+        ${t.d?`<p>${t.d}</p>`:''}</div>`;
+    }
+    let action='';
+    if(t.status==='검수대기'){
+      action=`<div class="sec-label" style="margin:2px 0 10px">팀장 검수</div>
+        <div class="rv-actions">
+          <button class="btn pri" onclick="taskApprove()">승인</button>
+          <button class="btn ghost" onclick="taskToggleReason()">반려</button>
+        </div>
+        <div class="reason-box" id="taskReason">
+          <textarea placeholder="반려 사유를 적어주세요. 담당자에게 전달돼요."></textarea>
+          <div style="text-align:right;margin-top:8px"><button class="btn sm ghost" onclick="taskReject()">반려 확정</button></div>
+        </div>`;
+    } else if(t.status==='진행중' && t.who===MYID){
+      action=(t.rejected&&t.reason?`<div class="reason-shown"><b>반려 사유</b> · ${t.reason}</div>`:'')+
+        `<div class="rv-actions" style="margin-top:12px"><button class="btn pri" onclick="closeTask();openSubmit('${t.t}','${t.due}')">결과물 제출</button></div>`;
+    } else if(t.status==='진행중' && t.rejected){
+      action=`<div class="reason-shown"><b>반려됨</b> · ${t.reason||'보완 후 재제출 필요'}</div>`;
+    } else if(t.status==='승인'){
+      action=`<div class="rv-result ok">✓ 승인 완료된 업무예요</div>`;
+    } else if(t.status==='등록'){
+      action=`<div style="font-size:13px;color:var(--ink-soft)">아직 착수 전이에요. 담당자가 진행하면 업데이트돼요.</div>`;
+    }
+    document.getElementById('taskModalTitle').textContent=t.t;
+    document.getElementById('taskModalBody').innerHTML=`
+      <div class="tm-meta">
+        <span class="chip ${TSTAT[t.status]}">${TSTATLABEL[t.status]}</span>
+        <span class="who-mini"><span class="pic" style="background:${m.c}">${m.i}</span>${m.n}</span>
+        <span class="tm-sub mono">마감 ~${t.due}${t.submittedAt?' · '+t.submittedAt:''}</span>
+      </div>
+      ${(!t.file&&t.d)?`<p class="tm-desc">${t.d}</p>`:''}
+      ${sub}
+      ${action}`;
+    document.getElementById('taskModal').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function closeTask(){document.getElementById('taskModal').classList.remove('on');document.body.style.overflow='';}
+  function taskToggleReason(){document.getElementById('taskReason').classList.toggle('on');}
+  function taskApprove(){const t=TASKS.find(x=>x.id===curTask);t.status='승인';t.rejected=false;renderKanban();closeTask();}
+  function taskReject(){
+    const t=TASKS.find(x=>x.id===curTask);
+    const ta=document.querySelector('#taskReason textarea');
+    t.reason=ta.value.trim()||'보완 후 다시 제출해주세요.'; t.status='진행중'; t.rejected=true; t.soon=0;
+    renderKanban(); closeTask();
+  }
+  window.openTask=openTask; window.closeTask=closeTask; window.taskToggleReason=taskToggleReason;
+  window.taskApprove=taskApprove; window.taskReject=taskReject;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTask();});
+
+  // ----- 팀원 업무 상세 모달 -----
+  const MEMBERS={
+    '이도현':{pic:'이',c:'#2b46c8',role:'팀원 · 백엔드 · 컴퓨터공학 4학년',contrib:60,
+      tasks:[
+        {t:'로그인·회원 인증 구현',d:'Spring Security 세션 인증',st:'승인',due:'08.12'},
+        {t:'권한 분기(전역×프로젝트)',d:'필터·인터셉터 접근 제어',st:'승인',due:'08.16'},
+        {t:'개발 환경 세팅',d:'Tomcat·Maven·Git',st:'승인',due:'08.07'},
+        {t:'ERD·DB 스키마 설계',d:'제출 완료 · 검수 대기',st:'검수 대기',due:'08.10'},
+        {t:'신고·계정 관리 API',d:'관리자 기능',st:'진행중',due:'08.22'},
+      ]},
+    '김민재':{pic:'민',c:'#2b46c8',role:'팀원 · 백엔드 · 컴퓨터공학 4학년',contrib:50,
+      tasks:[
+        {t:'매칭 검색 필터 구현',d:'카테고리·학과·학년 동적 쿼리',st:'진행중',due:'08.15'},
+        {t:'지원·승인 API',d:'면접→승인 트랜잭션 · 검수 대기',st:'검수 대기',due:'08.14'},
+        {t:'로그인·회원 인증 구현',d:'Spring Security 세션 인증',st:'승인',due:'08.12'},
+        {t:'관리자 통계 화면',d:'집계 쿼리 + 대시보드',st:'승인',due:'08.20'},
+      ]},
+    '서지우':{pic:'서',c:'#0f9d8c',role:'팀원 · 기획/디자인 · 경영학 3학년',contrib:100,
+      tasks:[
+        {t:'화면 설계 (Figma)',d:'전체 15개 화면 와이어프레임',st:'승인',due:'08.08'},
+        {t:'요구사항 정의서',d:'반려 후 보완하여 재승인',st:'승인',due:'08.06'},
+        {t:'서비스 소개·발표 자료',d:'중간 발표용',st:'승인',due:'08.18'},
+      ]},
+  };
+  const MST={'승인':'approve','검수 대기':'wait','진행중':'ing','반려':'reject'};
+  function openMember(name){
+    const m=MEMBERS[name]; if(!m)return;
+    document.getElementById('mmPic').textContent=m.pic;
+    document.getElementById('mmPic').style.background=m.c;
+    document.getElementById('mmName').textContent=name;
+    document.getElementById('mmRole').textContent=m.role;
+    const cnt={all:m.tasks.length,승인:0,'검수 대기':0,진행중:0};
+    m.tasks.forEach(t=>cnt[t.st]!==undefined&&cnt[t.st]++);
+    document.getElementById('mmStats').innerHTML=`
+      <div class="ms"><div class="n">${cnt.all}</div><div class="k">배정</div></div>
+      <div class="ms"><div class="n" style="color:var(--accent)">${cnt.진행중}</div><div class="k">진행중</div></div>
+      <div class="ms"><div class="n" style="color:var(--wait)">${cnt['검수 대기']}</div><div class="k">검수 대기</div></div>
+      <div class="ms"><div class="n" style="color:var(--ok)">${cnt.승인}</div><div class="k">완료</div></div>`;
+    document.getElementById('mmTasks').innerHTML=m.tasks.map(t=>`
+      <div class="task-line" style="--cc:var(--${MST[t.st]==='approve'?'ok':MST[t.st]==='wait'?'wait':MST[t.st]==='ing'?'accent':'reject'})">
+        <div class="tl-main"><h4>${t.t}</h4><div class="tl-desc">${t.d}</div></div>
+        <span class="chip ${MST[t.st]}">${t.st}</span>
+        <span class="due">${t.due}</span>
+      </div>`).join('');
+    document.getElementById('memberModal').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function closeMember(){
+    document.getElementById('memberModal').classList.remove('on');
+    document.body.style.overflow='';
+  }
+  window.openMember=openMember; window.closeMember=closeMember;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMember();});
+
+  // ----- 결과물 (승인 완료 산출물) -----
+  const RES=[
+    {task:'화면 설계 (Figma)',who:'서지우',c:'#0f9d8c',file:'wireframe.fig',sz:'2.1MB',type:'img',date:'08.08'},
+    {task:'서비스 소개·발표 자료',who:'서지우',c:'#0f9d8c',file:'midterm_deck.pptx',sz:'5.4MB',type:'deck',date:'08.18'},
+    {task:'요구사항 정의서',who:'서지우',c:'#0f9d8c',file:'requirements_v2.docx',sz:'92KB',type:'doc',date:'08.06'},
+    {task:'로그인·회원 인증 구현',who:'이도현',c:'#2b46c8',file:'auth_module.zip',sz:'340KB',type:'zip',date:'08.12'},
+    {task:'권한 분기(전역×프로젝트)',who:'이도현',c:'#2b46c8',file:'security_config.zip',sz:'128KB',type:'zip',date:'08.16'},
+    {task:'개발 환경 세팅',who:'이도현',c:'#2b46c8',file:'setup_guide.md',sz:'14KB',type:'doc',date:'08.07'},
+    {task:'관리자 통계 화면',who:'김민재',c:'#2b46c8',file:'admin_stats.zip',sz:'410KB',type:'zip',date:'08.20'},
+  ];
+  const P3={이도현:'이',김민재:'민',서지우:'서'};
+  const dlIcon='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+  const fIcon='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+  let resFilter='all';
+  function renderRes(){
+    const list=RES.filter(r=>resFilter==='all'||r.who===resFilter);
+    document.getElementById('resGrid').innerHTML=list.map(r=>`
+      <div class="res-card">
+        <div class="rc-file">
+          <div class="ficon ${r.type}">${fIcon}</div>
+          <div class="fmeta"><div class="fn">${r.file}</div><div class="fsz">${r.sz} · 승인 ${r.date}</div></div>
+        </div>
+        <div class="rc-task"><div class="tt">${r.task}</div></div>
+        <div class="rc-foot">
+          <span class="rc-who"><span class="pic" style="background:${r.c}">${P3[r.who]}</span>${r.who}<span class="chip approve" style="margin-left:4px">승인</span></span>
+          <button class="dl" title="다운로드">${dlIcon}</button>
+        </div>
+      </div>`).join('');
+    document.getElementById('resCount').textContent=RES.length;
+  }
+  document.querySelectorAll('#resFilter button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#resFilter button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); resFilter=b.dataset.f; renderRes();
+  });
+  renderRes();
+
+  // ----- 팀원 관리 (조직도 + 승계순위/강퇴) -----
+  let team=[
+    {name:'이도현',roleTxt:'백엔드',dept:'컴퓨터공학 · 4학년',pic:'이',c:'#2b46c8',rc:'var(--accent)'},
+    {name:'김민재',roleTxt:'백엔드',dept:'컴퓨터공학 · 4학년',pic:'민',c:'#2b46c8',rc:'var(--accent)'},
+    {name:'서지우',roleTxt:'기획/디자인',dept:'경영학 · 3학년',pic:'서',c:'#0f9d8c',rc:'var(--cat-major)'},
+  ];
+  let confirmKick=-1;
+  function renderTeam(){
+    // 조직도 노드
+    const n=team.length;
+    const bus=n>1?(50/n).toFixed(2)+'%':'50%';
+    const row=document.getElementById('orgRow');
+    row.style.setProperty('--bus',bus);
+    row.style.visibility=n?'visible':'hidden';
+    row.innerHTML=team.map((m,i)=>`
+      <div class="org-col">
+        <div class="org-node">
+          <div class="succ" title="승계 우선순위 ${i+1}순위">${i+1}</div>
+          <div class="pic" style="background:${m.c}">${m.pic}</div>
+          <div class="nm">${m.name}</div>
+          <div class="role" style="color:${m.rc}">팀원 · ${m.roleTxt}</div>
+          <div class="dept">${m.dept}</div>
+        </div>
+      </div>`).join('') || '<p style="color:var(--ink-soft);padding:10px">팀원이 없어요.</p>';
+    // 관리 리스트
+    document.getElementById('tmList').innerHTML=team.map((m,i)=>`
+      <div class="tm-row">
+        <span class="pic" style="background:${m.c}">${m.pic}</span>
+        <div class="tm-info"><div class="nm">${m.name}</div><div class="role">팀원 · ${m.roleTxt} · ${m.dept}</div></div>
+        <div class="tm-succ">
+          <span class="lbl">승계</span>
+          <span class="rank">${i+1}</span>
+          <div class="arrows">
+            <button onclick="moveSucc(${i},-1)" ${i===0?'disabled':''} aria-label="위로">▲</button>
+            <button onclick="moveSucc(${i},1)" ${i===team.length-1?'disabled':''} aria-label="아래로">▼</button>
+          </div>
+        </div>
+        <div class="tm-kick">${
+          confirmKick===i
+          ? `<span class="tm-confirm">강퇴할까요? <button class="btn sm danger" onclick="kickMember(${i})">확인</button><button class="btn sm ghost" onclick="cancelKick()">취소</button></span>`
+          : `<button class="btn sm danger" onclick="askKick(${i})">강퇴</button>`
+        }</div>
+      </div>`).join('');
+  }
+  window.moveSucc=(i,dir)=>{
+    const j=i+dir; if(j<0||j>=team.length)return;
+    [team[i],team[j]]=[team[j],team[i]]; confirmKick=-1; renderTeam();
+  };
+  window.askKick=(i)=>{confirmKick=i;renderTeam();};
+  window.cancelKick=()=>{confirmKick=-1;renderTeam();};
+  window.kickMember=(i)=>{team.splice(i,1);confirmKick=-1;renderTeam();};
+  renderTeam();
+
+  // ----- 인재풀 (자기홍보 게시물) -----
+  const TALENT=[
+    {name:'한지민',dept:'소프트웨어 · 3학년',pic:'한',c:'#8256e0',kind:'member',field:'프론트엔드',time:'평일 저녁·주말',cats:'공모전, 교내활동',tags:['React','TypeScript','Figma'],
+     intro:'React로 개인 프로젝트를 3개 만들어봤어요. 실제 서비스 규모의 프론트엔드를 경험하고 싶어 팀을 찾고 있습니다. UI 구현부터 상태관리까지 맡을 수 있어요.'},
+    {name:'박준호',dept:'컴퓨터공학 교수',pic:'박',c:'#e07a45',kind:'mentor',field:'백엔드·아키텍처 멘토링',time:'주 1회 화상',cats:'공모전, 학과',tags:['Spring','아키텍처','코드리뷰'],
+     intro:'백엔드 설계와 코드 리뷰를 도와드립니다. 캡스톤·공모전 팀을 대상으로 중간 점검과 방향 피드백을 제공해요. 실무 관점의 조언이 필요한 팀 환영합니다.'},
+    {name:'오세훈',dept:'컴퓨터공학 · 4학년',pic:'오',c:'#c98a12',kind:'member',field:'백엔드',time:'평일 오후',cats:'공모전',tags:['Spring','MyBatis','MySQL'],
+     intro:'Spring·MyBatis 학습 중이고 배우며 기여하고 싶습니다. 인증·권한, CRUD API 파트를 성실히 맡을 자신 있어요. 끝까지 완주합니다.'},
+    {name:'이서연',dept:'디자인 · 2학년',pic:'이',c:'#0f9d8c',kind:'member',field:'UI/UX 디자인',time:'주말',cats:'공모전, 교양',tags:['Figma','디자인','기획'],
+     intro:'서비스 UI/UX 디자인과 발표 자료를 맡을 수 있어요. 공모전 수상 경험이 있고, 개발자와 협업해본 경험도 많습니다.'},
+  ];
+  const TKIND={member:['member','팀원 지원'],mentor:['mentor','멘토']};
+  let talentFilter='all', curTalent=0;
+  function renderTalent(){
+    const list=TALENT.map((t,i)=>({t,i})).filter(({t})=>talentFilter==='all'||t.kind===talentFilter);
+    document.getElementById('talentGrid').innerHTML=list.map(({t,i})=>`
+      <div class="talent-card" onclick="openTalent(${i})" tabindex="0" onkeydown="if(event.key==='Enter')openTalent(${i})">
+        <div class="tc-head">
+          <span class="pic" style="background:${t.c}">${t.pic}</span>
+          <div class="who"><div class="nm">${t.name}</div><div class="dept">${t.dept}</div></div>
+          <span class="tc-kind ${TKIND[t.kind][0]}">${TKIND[t.kind][1]}</span>
+        </div>
+        <p>${t.intro}</p>
+        <div class="tc-tags">${t.tags.map(g=>`<span class="tag">${g}</span>`).join('')}</div>
+        <div class="tc-foot"><span>희망 · ${t.field}</span><span>${t.time}</span></div>
+      </div>`).join('');
+  }
+  function openTalent(i){
+    curTalent=i; const t=TALENT[i];
+    document.getElementById('tdPic').textContent=t.pic;
+    document.getElementById('tdPic').style.background=t.c;
+    document.getElementById('tdName').textContent=t.name;
+    document.getElementById('tdDept').textContent=t.dept;
+    const k=document.getElementById('tdKind'); k.className='tc-kind '+TKIND[t.kind][0]; k.textContent=TKIND[t.kind][1];
+    document.getElementById('tdField').textContent=t.field;
+    document.getElementById('tdTime').textContent=t.time;
+    document.getElementById('tdCat').textContent=t.cats;
+    document.getElementById('tdIntro').innerHTML=`<p>${t.intro}</p>`;
+    document.getElementById('tdTags').innerHTML=t.tags.map(g=>`<span class="tag">${g}</span>`).join('');
+    go('talentdetail');
+  }
+  document.querySelectorAll('#talentTabs button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#talentTabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); talentFilter=b.dataset.f; renderTalent();
+  });
+  window.openTalent=openTalent;
+  renderTalent();
+
+  // ----- 함께하기 제의 모달 -----
+  const SENT_OFFERS=[
+    {name:'오세훈',pic:'오',c:'#c98a12',role:'백엔드 · CRUD API',status:'수락'},
+    {name:'이서연',pic:'이',c:'#0f9d8c',role:'UI/UX 디자인',status:'거절'},
+  ];
+  function renderSentOffers(){
+    const el=document.getElementById('sentOffers'); if(!el)return;
+    el.innerHTML=SENT_OFFERS.map((o,i)=>`
+      <div class="offer-item" style="--c:var(--accent)">
+        <span class="pic" style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;flex:none;background:${o.c}">${o.pic}</span>
+        <div class="oi-main">
+          <h4 style="margin:0 0 3px">${o.name}</h4>
+          <div class="oi-msg">${o.role} 제의</div>
+        </div>
+        <div class="oi-act">
+          ${o.status==='대기'
+            ? `<span class="chip wait">수락 대기</span><button class="btn sm ghost" onclick="cancelOffer(${i})">취소</button>`
+            : `<span class="chip ${o.status==='수락'?'approve':'reject'}">${o.status==='수락'?'수락함 · 합류':'거절함'}</span>`}
+        </div>
+      </div>`).join('') || '<p style="color:var(--ink-soft);padding:14px;text-align:center">아직 보낸 제의가 없어요. 인재풀에서 함께할 사람을 초대해보세요.</p>';
+  }
+  window.cancelOffer=(i)=>{ SENT_OFFERS.splice(i,1); renderSentOffers(); };
+  renderSentOffers();
+
+  function openOffer(){
+    document.getElementById('offerBody').style.display='';
+    const t=TALENT[curTalent];
+    document.getElementById('offerWho').textContent=`${t.name}님에게 초대를 보내요`;
+    document.querySelectorAll('#offerBody input,#offerBody textarea').forEach(el=>el.value='');
+    document.getElementById('offerModal').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function closeOffer(){document.getElementById('offerModal').classList.remove('on');document.body.style.overflow='';}
+  function sendOffer(){
+    const t=TALENT[curTalent];
+    const role=(document.getElementById('offerRole').value||'').trim()||t.field;
+    SENT_OFFERS.unshift({name:t.name,pic:t.pic,c:t.c,role,status:'대기'});
+    renderSentOffers();
+    document.getElementById('offerBody').innerHTML=`
+      <div class="submit-success">
+        <div class="ok-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>제의를 보냈어요!</h3>
+        <p>${t.name}님에게 함께하기 제의가 전달됐어요.<br>상대가 <b>수락</b>하면 팀원으로 합류해요. 보낸 제의는 <b>팀원 관리</b>에서 확인할 수 있어요.</p>
+        <button class="btn pri" style="margin-top:20px" onclick="closeOffer()">확인</button>
+      </div>`;
+  }
+  window.openOffer=openOffer; window.closeOffer=closeOffer; window.sendOffer=sendOffer;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOffer();});
+  const CATCLR={공모전:'#2b46c8',학과:'#0f9d8c',교양:'#e07a45',교내활동:'#8256e0'};
+  const posts=[
+    {title:'2026 캡스톤 경진대회 — AI 헬스케어 웹서비스',cat:'공모전',author:'최윤서',date:'08.03',reports:0,status:'게시중'},
+    {title:'데이터베이스 텀 프로젝트 팀원 구해요',cat:'학과',author:'정하람',date:'08.05',reports:0,status:'게시중'},
+    {title:'전국 대학생 연합 해커톤 참가팀',cat:'교내활동',author:'김상우',date:'08.02',reports:2,status:'게시중'},
+    {title:'교양 〈창업과 경영〉 발표 조원 모집',cat:'교양',author:'박서연',date:'08.06',reports:0,status:'게시중'},
+    {title:'[급구] 상금 나눠요 아무나 지원 ㄱㄱ',cat:'공모전',author:'user_2201',date:'08.04',reports:1,status:'숨김'},
+    {title:'졸업작품 — Unity 게임 개발 팀원',cat:'학과',author:'오세훈',date:'08.01',reports:0,status:'게시중'},
+  ];
+  const PSTAT={게시중:'approve',숨김:'wait',삭제:'reject'};
+  let postFilter='all';
+  function postActions(p,i){
+    if(p.status==='게시중') return `<button class="btn sm ghost" onclick="setPost(${i},'숨김')">숨김</button><button class="btn sm ghost" onclick="setPost(${i},'삭제')" style="color:var(--reject)">삭제</button>`;
+    if(p.status==='숨김') return `<button class="btn sm pri" onclick="setPost(${i},'게시중')">복원</button><button class="btn sm ghost" onclick="setPost(${i},'삭제')" style="color:var(--reject)">삭제</button>`;
+    return `<button class="btn sm pri" onclick="setPost(${i},'게시중')">복원</button>`;
+  }
+  function renderPosts(){
+    const rows=posts.map((p,i)=>({p,i})).filter(({p})=>
+      postFilter==='all'?true:postFilter==='reported'?p.reports>0:(p.status==='숨김'||p.status==='삭제'));
+    document.getElementById('postTable').innerHTML=
+      '<tr><th>게시물</th><th>작성자</th><th>게시일</th><th>신고</th><th>상태</th><th>관리</th></tr>'+
+      rows.map(({p,i})=>`<tr${(p.status!=='게시중')?' style="opacity:.65"':''}>
+        <td><div class="nm" style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:2px;background:${CATCLR[p.cat]};flex:none"></span>${p.title}</div><div class="mono" style="font-size:11px;color:var(--ink-soft);margin-left:16px">${p.cat}</div></td>
+        <td><div class="mono">${p.author}</div></td>
+        <td><div class="mono">08.${p.date.split('.')[1]}</div></td>
+        <td>${p.reports>0?`<span class="chip reject">${p.reports}</span>`:'<span style="color:var(--ink-soft)">—</span>'}</td>
+        <td><span class="chip ${PSTAT[p.status]}">${p.status}</span></td>
+        <td><div class="act-btns">${postActions(p,i)}</div></td>
+      </tr>`).join('');
+    // 탭 카운트
+    const cAll=posts.length, cRep=posts.filter(p=>p.reports>0).length, cHid=posts.filter(p=>p.status!=='게시중').length;
+    const tb=document.querySelectorAll('#postTabs button');
+    tb[0].querySelector('.mono').textContent=cAll;
+    tb[1].querySelector('.mono').textContent=cRep;
+    tb[2].querySelector('.mono').textContent=cHid;
+  }
+  window.setPost=(i,st)=>{posts[i].status=st;renderPosts();};
+  document.querySelectorAll('#postTabs button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#postTabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); postFilter=b.dataset.f; renderPosts();
+  });
+  renderPosts();
+
+  // ----- 결과물 제출 모달 -----
+  const submitFormHTML=document.getElementById('submitBody').innerHTML;
+  const fileIconSvg='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+  function openSubmit(name,due){
+    document.getElementById('submitBody').innerHTML=submitFormHTML; // 폼 복원
+    if(name) document.getElementById('smTaskName').textContent=name;
+    document.getElementById('smTaskDue').textContent='마감 '+(due||'08.15');
+    document.getElementById('submitModal').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function closeSubmit(){
+    document.getElementById('submitModal').classList.remove('on');
+    document.body.style.overflow='';
+  }
+  function pickFile(){
+    // 데모: 파일 선택된 것처럼 표시
+    document.getElementById('dropzone').style.display='none';
+    document.getElementById('dzFileWrap').innerHTML=`
+      <div class="dz-file">
+        <span class="fi">${fileIconSvg}</span>
+        <div class="fmeta"><div class="fn">search_filter.zip</div><div class="fs">280KB</div></div>
+        <span class="rm" onclick="removeFile()" title="제거">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </span>
+      </div>`;
+  }
+  function removeFile(){
+    document.getElementById('dzFileWrap').innerHTML='';
+    document.getElementById('dropzone').style.display='';
+  }
+  function doSubmit(){
+    document.getElementById('submitBody').innerHTML=`
+      <div class="submit-success">
+        <div class="ok-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>제출 완료!</h3>
+        <p>결과물이 제출됐어요.<br>이제 <b>팀장의 검수</b>를 기다리면 돼요. 결과는 알림으로 알려드릴게요.</p>
+        <button class="btn pri" style="margin-top:20px" onclick="closeSubmit()">확인</button>
+      </div>`;
+  }
+  window.openSubmit=openSubmit; window.closeSubmit=closeSubmit;
+  window.pickFile=pickFile; window.removeFile=removeFile; window.doSubmit=doSubmit;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSubmit();});
+
+  // ----- 댓글 등록 -----
+  function addComment(){
+    const ta=document.getElementById('cmtInput');
+    const txt=ta.value.trim(); if(!txt)return;
+    const form=ta.closest('.cmt-form');
+    const el=document.createElement('div');
+    el.className='cmt';
+    el.innerHTML=`<div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">민</div>
+      <div class="body"><div class="nm">김민재 <span>컴퓨터공학 · 4학년 · 방금</span></div><p></p></div>`;
+    el.querySelector('p').textContent=txt;
+    form.parentNode.insertBefore(el,form);
+    ta.value='';
+    // 댓글 수 +1
+    const cnt=document.querySelector('#v-detail .panel h5 .mono');
+    if(cnt) cnt.textContent=parseInt(cnt.textContent||'0',10)+1;
+  }
+  window.addComment=addComment;
+
+  // ----- 프로젝트 완료 -----
+  function pickFinal(){
+    document.getElementById('finalDrop').style.display='none';
+    document.getElementById('finalFileWrap').innerHTML=`
+      <div class="final-file">
+        <span class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+        <div class="fmeta"><div class="fn">final_deliverable.zip</div><div class="fs">8.7MB</div></div>
+        <span class="rm" onclick="removeFinal()" title="제거"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+      </div>`;
+  }
+  function removeFinal(){
+    document.getElementById('finalFileWrap').innerHTML='';
+    document.getElementById('finalDrop').style.display='';
+  }
+  function completeProject(){
+    document.getElementById('completeBody').innerHTML=`
+      <div class="complete-done">
+        <div class="big-ic"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h2>프로젝트를 완료했어요! 🎉</h2>
+        <p>AI 헬스케어 웹서비스가 완료 처리됐어요. 최종 결과물과 팀원별 기여도가 <b>포트폴리오</b>에 기록됐고, 팀원 전원에게 알림이 전송됐어요.</p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:22px">
+          <button class="btn ghost" onclick="go('results')">결과물 보기</button>
+          <button class="btn pri" onclick="go('mypage')">마이페이지로</button>
+        </div>
+      </div>`;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  window.pickFinal=pickFinal; window.removeFinal=removeFinal; window.completeProject=completeProject;
+</script>
+</body>
+</html>

@@ -21,7 +21,6 @@
 
     <!-- 정적 리소스(이미지, CSS, JavaScript 등) 처리 -->
     <mvc:resources mapping="/resources/**" location="/resources/" />
-    <mvc:resources mapping="/upload/**" location="file:///${upload.path}/" />
 
     <!-- 멀티파트 리졸버 설정 -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
