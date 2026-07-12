@@ -92,5 +92,6 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
+  <script src="../resources/js/detail.js"></script>
 </body>
 </html>

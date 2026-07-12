@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,15 +20,7 @@
     <h1 class="page"><em>AI 헬스케어 웹서비스</em></h1>
     <p class="sub">프로젝트를 마무리하고 완료 처리해요.</p>
 
-    <div class="ws-nav">
-      <button onclick="go('overview')">개요</button>
-      <button onclick="go('tasks')">업무 보드</button>
-      <button onclick="go('schedule')">일정</button>
-      <button onclick="go('meetings')">회의</button>
-      <button onclick="go('org')">팀원 관리</button>
-      <button onclick="go('results')">결과물</button>
-      <button class="on" onclick="go('complete')">완료</button>
-    </div>
+    <jsp:include page="../includes/workspaceHeader.jsp" />
 
     <div id="completeBody">
       <div class="detail" style="align-items:start">
@@ -84,5 +79,6 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
+  <script src="../resources/js/workspace/complete.js"></script>
 </body>
 </html>

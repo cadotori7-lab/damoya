@@ -20,7 +20,7 @@
 
     <div class="searchbar">
       <input type="text" placeholder="관심 분야·기술·소개로 검색  (예: 백엔드, Spring, 디자인)">
-      <button class="btn pri" onclick="go('talentpost')">+ 내 소개 올리기</button>
+      <a class="btn pri" href="${ctx}/talent/form">+ 내 소개 올리기</a>
     </div>
 
     <div class="appl-tabs" id="talentTabs">
@@ -32,6 +32,10 @@
     <div class="talent-grid" id="talentGrid"></div>
   </section>
   </main>
+
   <jsp:include page="../includes/footer.jsp" />
+  <script src="${ctx}/resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/talent.js"></script>
 </body>
 </html>
+

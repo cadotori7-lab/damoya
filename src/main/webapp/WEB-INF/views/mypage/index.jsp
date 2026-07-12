@@ -44,7 +44,8 @@
     <div class="mp-list" id="mpList"></div>
   </section>
   </main>
-  <div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeModal('profileModal')">
+  <!-- 프로필 수정 모달 -->
+<div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeModal('profileModal')">
   <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
     <div class="modal-head">
       <div class="mh-info"><h3 id="profileTitle">프로필 수정</h3><div class="role">다른 사람에게 보이는 내 정보예요</div></div>
@@ -92,5 +93,7 @@
 </div>
   <jsp:include page="../includes/footer.jsp" />
   <script src="${ctx}/resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/myPage.js"></script>
 </body>
 </html>
+

@@ -7,17 +7,33 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
     
+    <!-- 프로퍼티 불러오기 -->
+    <context:property-placeholder location="classpath:properties/db.properties, classpath:properties/app.properties" />
 
-    <!-- Mapper 자동스캔 -->
-    <!-- <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.soldesk.mapper" />
-    </bean> -->
-    <!-- 트랜잭션 매니저 설정 -->
-    <!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <!-- 시큐리티 설정 -->
+    <context:component-scan base-package="com.soldesk.config, com.soldesk.security, com.soldesk.handler" />
+    <!-- DB 연결 설정 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${db.driver}" />
+        <property name="url" value="${db.url}" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+    </bean>          
+    <!-- sqlSessionFactory: db설정, 매퍼 XML파싱, 커넥션 풀 초기화 등 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
-    </bean> -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+    </bean>
+    <!-- Mapper 자동스캔 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.soldesk.mapper" />
+    </bean>
+    <!-- 트랜잭션 매니저 설정 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
     <!-- 트랜잭션 어노테이션 활성화 --> 
-    <!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
     
 
 

@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,7 +17,7 @@
   <main>
   <!-- ========== 모집 관리 (지원자 승인) ========== -->
   <section id="v-applicants">
-    <button class="back" onclick="go('org')">← 팀원 관리</button>
+    <a class="back" href="${ctx}/workspace/members">← 팀원 관리</a>
     <div class="eyebrow">Recruitment · 팀장</div>
     <h1 class="page"><em>지원자 관리</em></h1>
     <p class="sub">AI 헬스케어 웹서비스 · 지원자를 확인하고 면접·승인을 진행해요.</p>
@@ -46,5 +49,6 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
+  <script src="../resources/js/workspace/applicants.js"></script>
 </body>
 </html>

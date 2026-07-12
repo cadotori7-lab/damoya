@@ -15,7 +15,7 @@
   <!-- ========== 프로젝트 생성 ========== -->
   <section id="v-create">
     <div class="form-wrap">
-      <button class="back" onclick="go('match')">← 목록으로</button>
+      <a class="back" href="${ctx}/project/list">← 목록으로</a>
       <div class="eyebrow">New project</div>
       <h1 class="page"><em>프로젝트 모집</em> 등록</h1>
       <p class="sub">모집 정보를 입력하면 매칭 목록에 게시돼요. 모집이 끝나면 업무 보드가 열립니다.</p>
@@ -67,7 +67,7 @@
         </div>
         <div class="form-foot">
           <button class="btn ghost">임시저장</button>
-          <button class="btn pri" onclick="go('match')">모집 등록</button>
+          <a class="btn pri" href="${ctx}/project/match">모집 등록</a>
         </div>
       </div>
     </div>

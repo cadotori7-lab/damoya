@@ -3,7 +3,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <header class="top">
   <div class="top-in">
-    <div class="logo">다<b>모여</b></div>
+    <a class="logo" href="${ctx}/home">다<b>모여</b></a>
     <nav class="main" id="nav">
       <button data-v="home" class="on"><a href="${ctx}/home">홈</a></button>
       <button data-v="match"><a href="${ctx}/project/list">프로젝트 찾기</a></button>
@@ -14,14 +14,18 @@
       <button data-v="admin"><a href="${ctx}/admin/dashboard"> 관리자</a></button>
     </nav>
     <div class="top-right">
+      <button class="btn sec" onclick="document.getElementById('logoutForm').submit();">로그아웃</button>
       <button class="bell" aria-label="알림">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
         <span class="dot"></span>
       </button>
-      <button class="avatar" onclick="go('mypage')" style="cursor:pointer">
-        <div class="who">김민재<small>컴퓨터공학 · 4학년</small></div>
-        <div class="pic">민</div>
-      </button>
+      <a class="avatar" href="${ctx}/mypage/index" style="cursor:pointer">
+        <div class="who">${member.name}<small>컴퓨터공학 · 4학년</small></div>
+        <div class="pic">${member.name.substring(0, 1)}</div>
+      </a>
     </div>
   </div>
 </header>
+<form id="logoutForm" action="${ctx}/auth/logout" method="post" style="display:none;">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+</form>

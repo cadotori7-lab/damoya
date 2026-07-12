@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,15 +21,7 @@
     <h1 class="page"><em>AI 헬스케어 웹서비스</em></h1>
     <p class="sub">모집이 끝난 팀의 작업 공간이에요. 업무·일정·회의를 한곳에서 관리해요.</p>
 
-    <div class="ws-nav">
-      <button onclick="go('overview')">개요</button>
-      <button onclick="go('tasks')">업무 보드</button>
-      <button onclick="go('schedule')">일정</button>
-      <button onclick="go('meetings')">회의</button>
-      <button onclick="go('org')">팀원 관리</button>
-      <button class="on" onclick="go('results')">결과물</button>
-      <button onclick="go('complete')">완료</button>
-    </div>
+    <jsp:include page="../includes/workspaceHeader.jsp" />
 
     <div class="res-summary">승인 완료된 결과물 <b id="resCount">7</b>건 · 팀이 만들어낸 산출물을 모아봤어요.</div>
 
@@ -41,5 +36,6 @@
   </section>
   </main>
 <jsp:include page="../includes/footer.jsp" />
+<script src="../resources/js/workspace/results.js"></script>
 </body>
 </html>

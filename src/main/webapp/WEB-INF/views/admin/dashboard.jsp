@@ -17,7 +17,7 @@
     <div class="eyebrow">Admin console</div>
     <h1 class="page"><em>관리자</em> 대시보드</h1>
     <p class="sub">학교 인증, 신고 처리, 서비스 통계를 한곳에서 관리해요.</p>
-    <div style="margin:-12px 0 22px;display:flex;gap:8px"><button class="btn ghost sm" onclick="go('posts')">게시물 관리 →</button><button class="btn ghost sm" onclick="go('accounts')">계정 관리 →</button></div>
+    <div style="margin:-12px 0 22px;display:flex;gap:8px"><a class="btn ghost sm" href="${ctx}/admin/posts">게시물 관리 →</a><a class="btn ghost sm" href="${ctx}/admin/accounts">계정 관리 →</a></div>
 
     <div class="stats">
       <div class="stat"><div class="k">전체 회원</div><div class="n">1,284<small>명</small></div><div class="d up">▲ 8.2% 이번 주</div></div>

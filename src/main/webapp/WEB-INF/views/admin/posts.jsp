@@ -14,7 +14,7 @@
   <main>
     <!-- ========== 게시물 관리 (관리자) ========== -->
   <section id="v-posts">
-    <button class="back" onclick="go('admin')">← 관리자 대시보드</button>
+    <a class="back" href="${ctx}/admin/dashboard">← 관리자 대시보드</a>
     <div class="eyebrow">Post management</div>
     <h1 class="page"><em>게시물 관리</em></h1>
     <p class="sub">공모 게시물을 확인하고, 신고·규정 위반 게시물을 숨기거나 삭제할 수 있어요.</p>
@@ -34,5 +34,7 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
+  <script src="${ctx}/resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/adminPosts.js"></script>
 </body>
 </html>

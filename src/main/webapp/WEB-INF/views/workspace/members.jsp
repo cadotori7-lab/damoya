@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,15 +21,7 @@
     <h1 class="page"><em>AI 헬스케어 웹서비스</em></h1>
     <p class="sub">모집이 끝난 팀의 작업 공간이에요. 업무·일정·회의를 한곳에서 관리해요.</p>
 
-    <div class="ws-nav">
-      <button onclick="go('overview')">개요</button>
-      <button onclick="go('tasks')">업무 보드</button>
-      <button onclick="go('schedule')">일정</button>
-      <button onclick="go('meetings')">회의</button>
-      <button class="on" onclick="go('org')">팀원 관리</button>
-      <button onclick="go('results')">결과물</button>
-      <button onclick="go('complete')">완료</button>
-    </div>
+    <jsp:include page="../includes/workspaceHeader.jsp" />
 
     <div class="org">
       <div class="org-mentor">
@@ -57,13 +52,13 @@
 
     <div class="tm-section">
       <div class="sec-label" style="justify-content:center">지원자 관리</div>
-      <div class="tm-row" style="cursor:pointer" onclick="go('applicants')" tabindex="0" onkeydown="if(event.key==='Enter')go('applicants')">
+      <a class="tm-row" style="cursor:pointer" href="${ctx}/workspace/applicants">
         <span class="pic" style="background:var(--accent-soft);color:var(--accent)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </span>
         <div class="tm-info"><div class="nm">지원자 확인 · 면접 · 승인</div><div class="role">모집 2/4명 확정 · 대기 중인 지원 <b style="color:var(--reject)">2명</b></div></div>
         <span class="btn sm pri" style="pointer-events:none">지원자 관리 →</span>
-      </div>
+      </a>
       <div class="tm-note" style="margin-top:12px">지원–면접–승인을 거쳐 팀원을 확정해요. 승인하면 아래 팀 구성에 자동으로 추가돼요.</div>
     </div>
 
@@ -81,5 +76,6 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
+  <script src="../resources/js/workspace/members.js"></script>
 </body>
 </html>

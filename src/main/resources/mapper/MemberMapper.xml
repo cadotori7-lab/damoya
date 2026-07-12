@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.soldesk.mapper.MemberMapper">
+    <!-- 회원 정보 resultMap: vo 객체와 DB 컬럼 매핑 -->
+    <resultMap id="memberResultMap" type="com.soldesk.vo.MemberVO">
+        <id property="login_id" column="login_id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="dept_id" column="dept_id" />
+        <result property="name" column="name" />
+        <result property="grade" column="grade" />
+        <result property="major" column="major" />
+        <result property="double_major" column="double_major" />
+        <result property="intro" column="intro" />
+        <result property="approved" column="approved" />
+        <result property="account_status" column="account_status" />
+        <result property="profile_public" column="profile_public" />
+        <result property="role" column="role" />
+        <!--  OAuth 칼럼 매핑  -->
+        <result column="provider" property="provider"/>
+        <result column="provider_id" property="providerId"/>
+    </resultMap>
+
+    <!-- 회원가입 -->
+    <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
+        INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved)
+        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved})
+    </insert>
+    <!-- 로그인 -->
+    <select id="findByLoginId" parameterType="String" resultMap="memberResultMap">
+        SELECT * FROM member WHERE login_id = #{login_id};
+    </select>
+</mapper>

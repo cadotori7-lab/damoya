@@ -22,7 +22,7 @@
 
     <div class="searchbar">
       <input type="text" placeholder="제목, 소개, 태그로 검색  (예: 캡스톤, Spring, 데이터 분석)">
-      <button class="btn pri" onclick="go('create')">+ 프로젝트 모집</button>
+      <a class="btn pri" href="${ctx}/project/form">+ 프로젝트 모집</a>
     </div>
 
     <div class="board">
@@ -61,3 +61,5 @@
   <jsp:include page="../includes/footer.jsp" />
 </body>
 </html>
+
+<script src="${ctx}/resources/js/projectList.js"></script>

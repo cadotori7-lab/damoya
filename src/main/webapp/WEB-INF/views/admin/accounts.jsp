@@ -14,7 +14,7 @@
   <main>
   <!-- ========== 계정 관리 (관리자) ========== -->
   <section id="v-accounts">
-    <button class="back" onclick="go('admin')">← 관리자 대시보드</button>
+    <a class="back" href="${ctx}/admin/dashboard">← 관리자 대시보드</a>
     <div class="eyebrow">Account management</div>
     <h1 class="page"><em>계정 관리</em></h1>
     <p class="sub">회원 계정을 조회하고, 신고·규정 위반 계정을 제재할 수 있어요.</p>
@@ -33,5 +33,7 @@
   </section>
   </main>
 <jsp:include page="../includes/footer.jsp" />
+<script src="${ctx}/resources/js/common.js"></script>
+<script src="${ctx}/resources/js/adminAccounts.js"></script>
 </body>
 </html>

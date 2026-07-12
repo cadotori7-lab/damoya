@@ -14,7 +14,7 @@
   <main>
   <section id="v-talentpost">
     <div class="form-wrap">
-      <button class="back" onclick="go('talent')">← 인재풀</button>
+      <a class="back" href="${ctx}/talent/list">← 인재풀</a>
       <div class="eyebrow">New profile post</div>
       <h1 class="page"><em>내 소개</em> 올리기</h1>
       <p class="sub">프로젝트를 찾고 있다는 걸 알려요. 팀장들이 보고 함께하기를 제의할 수 있어요.</p>
@@ -44,8 +44,8 @@
         <div class="fld one"><label>자기소개<span class="req">*</span></label><textarea placeholder="경험, 다뤄본 기술, 어떤 팀과 함께하고 싶은지 자유롭게 적어주세요." style="min-height:120px"></textarea></div>
         <div class="fld one"><label>포트폴리오 링크 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><input type="text" placeholder="GitHub, 노션, 블로그 등"></div>
         <div class="form-foot">
-          <button class="btn ghost" onclick="go('talent')">취소</button>
-          <button class="btn pri" onclick="go('talent')">등록하기</button>
+          <a class="btn ghost" href="${ctx}/talent/list">취소</a>
+          <a class="btn pri" href="${ctx}/talent/list">등록하기</a>
         </div>
       </div>
     </div>

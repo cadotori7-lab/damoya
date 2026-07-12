@@ -14,7 +14,7 @@
   <main>
   <!-- ========== 인재 상세 ========== -->
   <section id="v-talentdetail">
-    <button class="back" onclick="go('talent')">← 인재풀</button>
+    <a class="back" href="${ctx}/talent/list">← 인재풀</a>
     <div class="detail">
       <div>
         <div class="panel">
@@ -43,6 +43,35 @@
     </div>
   </section>
   </main>
+  
+<!-- ===== 함께하기 제의 모달 ===== -->
+<div class="modal-overlay" id="offerModal" onclick="if(event.target===this)closeOffer()">
+  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
+    <div class="modal-head">
+      <div class="mh-info"><h3 id="offerTitle">함께하기 제의</h3><div class="role" id="offerWho">상대에게 초대를 보내요</div></div>
+      <button class="modal-close" onclick="closeOffer()" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="offerBody">
+      <div class="offer-proj">
+        <div class="k">초대할 프로젝트</div>
+        <select id="offerProj">
+          <option>AI 헬스케어 웹서비스 (팀장)</option>
+          <option>데이터베이스 텀 프로젝트</option>
+        </select>
+      </div>
+      <div class="fld one"><label>맡아줬으면 하는 역할</label><input type="text" id="offerRole" placeholder="예: 백엔드 · 인증/권한"></div>
+      <div class="fld one"><label>제의 메시지</label><textarea placeholder="왜 함께하고 싶은지, 어떤 점이 좋았는지 적어주세요." style="min-height:90px"></textarea></div>
+      <div class="form-foot">
+        <button class="btn ghost" onclick="closeOffer()">취소</button>
+        <button class="btn pri" onclick="sendOffer()">제의 보내기</button>
+      </div>
+    </div>
+  </div>
+</div>
 <jsp:include page="../includes/footer.jsp" />
+<script src="${ctx}/resources/js/common.js"></script>
+<script src="${ctx}/resources/js/talent.js"></script>
 </body>
 </html>

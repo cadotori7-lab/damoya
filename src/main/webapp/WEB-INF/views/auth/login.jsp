@@ -12,7 +12,15 @@
     <link rel="stylesheet" href="../resources/css/style.css">
 </head>
 <body>
-  <jsp:include page="../includes/header.jsp" />
+  <header class="lp-top">
+  <div class="in">
+    <a class="logo" href="${ctx}/">다<b>모여</b></a>
+    <div class="r">
+      <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
+      <a class="btn pri sm" href="${ctx}/auth/signup">시작하기</a>
+    </div>
+  </div>
+</header>
   <!-- ========== 로그인 (별도 화면) ========== -->
 <main>
   <section id="v-login">
@@ -30,16 +38,19 @@
         <div class="login-box">
           <div class="eyebrow">Welcome back</div>
           <h3>로그인</h3>
-          <div class="field"><label>아이디</label><input type="text" placeholder="학교 이메일 또는 아이디"></div>
-          <div class="field"><label>비밀번호</label><input type="password" placeholder="••••••••"></div>
-          <button class="btn pri" onclick="go('home')">로그인</button>
-          <div class="alt">아직 계정이 없나요? <a onclick="go('signup')" style="cursor:pointer">회원가입</a></div>
+          <form action="/auth/login" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="field"><label>아이디</label><input type="text" placeholder="학교 이메일 또는 아이디" name="login_id"></div>
+            <div class="field"><label>비밀번호</label><input type="password" placeholder="••••••••" name="password"></div>
+            <button class="btn pri" type="submit">로그인</button>
+          </form>
+          <div class="alt">아직 계정이 없나요? <a href="${ctx}/auth/signup">회원가입</a></div>
           <div class="role-hint"><b>가입 후</b> 학교·학과를 등록하면 관리자 인증을 거쳐 교내 매칭을 이용할 수 있어요. 멘토는 팀장의 초대로 참여합니다.</div>
         </div>
       </div>
     </div>
   </section>
 </main>
-  <jsp:include page="../includes/footer.jsp" />
+<jsp:include page="../includes/footer.jsp" />
 </body>
 </html>

@@ -19,29 +19,29 @@
   <section class="view on" id="v-home">
     <div class="home-hero">
       <div>
-        <div class="greet">안녕하세요, <em>김민재</em>님 👋</div>
+        <div class="greet">안녕하세요, <em>${member.name}</em> 님 👋</div>
         <div class="gsub">오늘도 팀 프로젝트를 이어가 볼까요? 지금 확인할 것들을 모아봤어요.</div>
       </div>
-      <button class="btn pri" onclick="go('create')">+ 프로젝트 모집하기</button>
+      <a class="btn pri" href="${ctx}/project/form">+ 프로젝트 모집하기</a>
     </div>
 
     <div class="home-stats">
-      <div class="hstat" onclick="go('myprojects')">
+      <a class="hstat" href="${ctx}/project/my">
         <div class="ic a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
         <div><div class="n">3</div><div class="k">참여 중 프로젝트</div></div>
-      </div>
-      <div class="hstat" onclick="go('tasks')">
+      </a>
+      <a class="hstat" href="${ctx}/workspace/overview">
         <div class="ic b"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
         <div><div class="n">2</div><div class="k">진행 중 내 업무</div></div>
-      </div>
-      <div class="hstat" onclick="go('mypage')">
+      </a>
+      <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic c"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
         <div><div class="n">2</div><div class="k">지원 진행 중</div></div>
-      </div>
-      <div class="hstat" onclick="go('mypage')">
+      </a>
+      <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
         <div><div class="n">3</div><div class="k">새 알림</div></div>
-      </div>
+      </a>
     </div>
 
     <div class="ov-grid two">

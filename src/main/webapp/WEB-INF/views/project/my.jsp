@@ -19,14 +19,14 @@
     <p class="sub">참여 중인 프로젝트예요. 눌러서 들어가면 개요·업무·회의를 관리할 수 있어요.</p>
 
     <div class="psel-list">
-      <div class="psel-card" style="--c:var(--cat-contest)" onclick="go('overview')" tabindex="0" onkeydown="if(event.key==='Enter')go('overview')">
+      <a class="psel-card" style="--c:var(--cat-contest)" href="${ctx}/workspace/overview">
         <div class="psel-main">
           <div class="psel-top"><span class="psel-cat">공모전 · 교내</span><span class="psel-role lead">팀장</span><span class="chip ing">진행중</span></div>
           <h3>AI 헬스케어 웹서비스</h3>
           <div class="psel-meta"><span>팀원 4명</span><span>D-24</span><span>내 업무 4건</span></div>
         </div>
         <svg class="psel-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
+      </a>
 
       <div class="psel-card" style="--c:var(--cat-major)" onclick="go('overview')" tabindex="0" onkeydown="if(event.key==='Enter')go('overview')">
         <div class="psel-main">

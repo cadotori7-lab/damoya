@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,7 +18,7 @@
      <!-- ========== 업무 등록 ========== -->
   <section id="v-taskform">
     <div class="form-wrap">
-      <button class="back" onclick="go('tasks')">← 업무 보드</button>
+      <a class="back" href="${ctx}/workspace/board">← 업무 보드</a>
       <div class="eyebrow">New task</div>
       <h1 class="page"><em>업무 등록</em></h1>
       <p class="sub">AI 헬스케어 웹서비스 · 팀장이 업무를 등록하고 담당자를 배정해요.</p>
@@ -41,8 +44,8 @@
           <div class="hint">담당자가 결과물을 제출하면 검수 대기로, 팀장이 검수하면 승인/반려로 넘어가요.</div>
         </div>
         <div class="form-foot">
-          <button class="btn ghost" onclick="go('tasks')">취소</button>
-          <button class="btn pri" onclick="go('tasks')">업무 등록</button>
+          <a class="btn ghost" href="${ctx}/workspace/board">취소</a>
+          <a class="btn pri" href="${ctx}/workspace/board">업무 등록</a>
         </div>
       </div>
     </div>
