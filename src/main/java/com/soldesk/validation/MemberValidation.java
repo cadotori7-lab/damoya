@@ -35,7 +35,24 @@ public class MemberValidation implements Validator {
             errors.rejectValue("email", "email.invalid", 
                 "이메일 형식이 올바르지 않습니다.");
         }
-
+        //로그인 아이디
+        ValidationUtils.rejectIfEmptyOrWhitespace(
+            errors, "login_id", "login_id.required", "로그인 아이디를 입력하세요.");
+        if (member.getLogin_id() != null && member.getLogin_id().length() < 4) {
+            errors.rejectValue("login_id", "login_id.invalid", 
+                "로그인 아이디는 4자 이상이어야 합니다.");
+        }
+        // 이름
+        ValidationUtils.rejectIfEmptyOrWhitespace(
+            errors, "name", "name.required", "이름을 입력하세요.");
+        if (member.getName() != null && member.getName().length() < 2) {
+            errors.rejectValue("name", "name.invalid", 
+                "이름은 2자 이상이어야 합니다.");
+        }
+        if (member.getName() != null && member.getName().length() > 10) {
+            errors.rejectValue("name", "name.invalid", 
+                "이름은 10자 이하이어야 합니다.");
+        }
         // 비밀번호
         ValidationUtils.rejectIfEmptyOrWhitespace(
             errors, "password", "password.required", "비밀번호를 입력하세요.");

@@ -1,7 +1,10 @@
 package com.soldesk.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.soldesk.service.MemberService;
 import com.soldesk.validation.MemberValidation;
 import com.soldesk.vo.MemberVO;
+
 
 @Controller
 @RequestMapping("/auth")
@@ -30,12 +34,14 @@ public class LoginController {
     } // MemberValidation을 WebDataBinder에 등록하여 유효성 검증 수행/컨트롤러 실행 전 검증 수행
     
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(Model model) {
+        model.addAttribute("signupMember", new MemberVO());
         return "auth/signup"; 
     }
     @PostMapping("/signup")
-    public String signupPost(@ModelAttribute("signupMember") MemberVO member, BindingResult bindingResult) {
+    public String signupPost(@Valid @ModelAttribute("signupMember") MemberVO member, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> System.out.println("❌ 진짜 에러 원인: " + error.toString()));
             return "auth/signup";
         }
         memberService.registerMember(member);
