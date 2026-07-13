@@ -1,0 +1,6 @@
+필요 모듈
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+easyocr
