@@ -21,8 +21,6 @@
                     ${result.matched ? '일치' : '불일치'}
                 </strong>
             </p>
-            <p>유사도 점수: ${result.score} (임계값: ${result.threshold})</p>
-            <p>추출된 텍스트: ${result.extracted_text}</p>
         </c:otherwise>
     </c:choose>
 
