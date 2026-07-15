@@ -20,7 +20,6 @@
       <a class="logo" href="${ctx}/">다<b>모여</b></a>
       <div class="r">
         <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-        <a class="btn pri sm" href="${ctx}/auth/signup">시작하기</a>
       </div>
     </div>
   </header>
@@ -33,7 +32,17 @@
           <div class="eyebrow">Create account</div>
           <h1 class="page"><em>회원가입</em></h1>
           <p class="sub">학교 정보를 등록하면 관리자 인증 후 교내 매칭을 이용할 수 있어요.</p>
-
+          <!-- 가입 유형 전환 (페이지가 분리되어 있으므로 링크) -->
+          <div class="role-toggle">
+            <a class="opt on" href="${ctx}/auth/signup">
+              <div class="rt">🎓 일반 회원</div>
+              <div class="rd">프로젝트를 찾거나 모집하는 학생</div>
+            </a>
+            <a class="opt" href="${ctx}/auth/signup/mentor">
+              <div class="rt">🧭 멘토</div>
+              <div class="rd">팀에 조언·피드백을 주는 교수·전문가</div>
+            </a>
+          </div>
           <!-- 1. 계정 -->
           <div class="form-card">
             <div class="fsec-title"><span>1</span>계정</div>
@@ -68,7 +77,24 @@
           <!-- 2. 학적 정보 -->
           <div class="form-card">
             <div class="fsec-title"><span>2</span>학적 정보</div>
-
+            <div class="frow">
+              <div class="fld">
+                <label>학교<span class="req">*</span></label>
+                <select name="univ_name" id="univSelect" required>
+                  <option value="" selected>학교를 선택하세요</option>
+                  <c:forEach var="univ" items="${univList}">
+                    <option value="${univ.univ_name}">${univ.univ_name}</option>
+                  </c:forEach>
+                </select>
+                <label>학과<span class="req">*</span></label>
+                <select name="dept_id" id="deptSelect" required>
+                  <option value="" selected>학과를 선택하세요</option>
+                  <c:forEach var="dept" items="${univList}">
+                    <option value="${dept.dept_id}" data-univ-name="${dept.univ_name}">${dept.dept_name}</option>
+                  </c:forEach>
+                </select>
+              </div>
+            </div>
             <div class="frow">
               <div class="fld">
                 <label>이름<span class="req">*</span></label>
@@ -116,5 +142,6 @@
   </main>
 
   <jsp:include page="../includes/footer.jsp" />
+  <script src="${ctx}/resources/js/login.js"></script>
 </body>
 </html>

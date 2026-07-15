@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.soldesk.mapper.MemberMapper;
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.MentorSignupVO;
 
 @Service
 public class MemberService {
@@ -15,7 +16,7 @@ public class MemberService {
     private MemberMapper memberMapper;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // 비밀번호 암호화를 위한 PasswordEncoder 주입
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerMember(MemberVO member) { //회원가입
@@ -36,5 +37,12 @@ public class MemberService {
     @Transactional
     public int countByEmail(String email) {
         return memberMapper.countByEmail(email);
+    }
+    // 멘토 회원가입 (member + mentor 테이블)
+    @Transactional
+    public void registerMentor(MentorSignupVO form) { 
+        form.setPassword(passwordEncoder.encode(form.getPassword()));
+        memberMapper.insertMemberForMentor(form); 
+        memberMapper.insertMentor(form);
     }
 }

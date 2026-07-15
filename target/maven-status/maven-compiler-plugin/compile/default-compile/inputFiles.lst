@@ -9,7 +9,11 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\WorkspaceController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\security\MemberDetailsService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MemberService.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\UnivService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MemberVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java

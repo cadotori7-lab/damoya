@@ -53,6 +53,12 @@ public class MemberValidation implements Validator {
             errors.rejectValue("name", "name.invalid", 
                 "이름은 10자 이하이어야 합니다.");
         }
+
+        // 학과
+        if (member.getDept_id() <= 0) {
+            errors.rejectValue("dept_id", "dept_id.required", "학과를 선택하세요.");
+        }
+
         // 비밀번호
         ValidationUtils.rejectIfEmptyOrWhitespace(
             errors, "password", "password.required", "비밀번호를 입력하세요.");

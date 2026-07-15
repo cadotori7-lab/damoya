@@ -25,8 +25,8 @@
 
     <!-- 회원가입 -->
     <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
-        INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved)
-        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved})
+        INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved, dept_id)
+        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved}, #{dept_id})
     </insert>
     <!-- 로그인 -->
     <select id="findByLoginId" parameterType="String" resultMap="memberResultMap">
@@ -38,4 +38,20 @@
     <select id="countByEmail" resultType="int">
         SELECT COUNT(*) FROM member WHERE email = #{email}
     </select>
+    <!-- 멘토 회원가입 (member 테이블에 INSERT) -->
+    <insert id="insertMemberForMentor"
+          parameterType="com.soldesk.vo.MentorSignupVO"
+          useGeneratedKeys="true" keyProperty="member_id">
+        INSERT INTO member
+        (login_id, password, email, name, dept_id, intro,
+        role, account_status, approved)
+        VALUES
+        (#{login_id}, #{password}, #{email}, #{name}, #{dept_id}, #{intro},
+        'USER', 'PENDING', FALSE)
+    </insert>
+    <!-- 멘토 정보 INSERT -->
+    <insert id="insertMentor" parameterType="com.soldesk.vo.MentorSignupVO">
+        INSERT INTO mentor (member_id, career, cert, field)
+        VALUES (#{member_id}, #{career}, #{cert}, #{field})
+    </insert>
 </mapper>
