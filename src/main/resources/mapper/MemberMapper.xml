@@ -54,4 +54,8 @@
         INSERT INTO mentor (member_id, career, cert, field)
         VALUES (#{member_id}, #{career}, #{cert}, #{field})
     </insert>
+    <!-- 멘토인지 확인 -->
+    <select id="selectMentorById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
+    </select>
 </mapper>

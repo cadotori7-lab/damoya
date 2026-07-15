@@ -29,14 +29,17 @@ public class MemberDetailsService implements UserDetailsService {
         return User.builder()
             .username(member.getLogin_id()) // 사용자 이름 설정 (로그인 ID 사용)
             .password(member.getPassword()) // 암호화된 비밀번호 설정
-            .roles(resolveRole(member.getRole())) // 사용자 역할 설정
+            .roles(resolveRole(member)) // 사용자 역할 설정
             .build(); // 인증된 사용자 객체 반환
     }
     // 권한설정(단순 문자열을 권한으로 변환)
-    private String resolveRole(String role){
-        if(role.equalsIgnoreCase("ADMIN")){
+    private String resolveRole(MemberVO member){
+        if("ADMIN".equalsIgnoreCase(member.getRole())){
             return "ADMIN";
         } else {
+            if (memberMapper.selectMentorById(member.getMember_id()) > 0) {
+                return "MENTOR";
+            }
             return "USER";
         }
     }
