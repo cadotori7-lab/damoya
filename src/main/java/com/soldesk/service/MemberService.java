@@ -23,8 +23,18 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberMapper.registerMember(member);
     }
-
+    @Transactional
     public MemberVO findByLoginId(String login_id) {
         return memberMapper.findByLoginId(login_id);
+    }
+    // 로그인 ID 중복 확인
+    @Transactional
+    public int countByLoginId(String loginId) {
+        return memberMapper.countByLoginId(loginId);
+    }
+    // 이메일 중복 확인
+    @Transactional
+    public int countByEmail(String email) {
+        return memberMapper.countByEmail(email);
     }
 }

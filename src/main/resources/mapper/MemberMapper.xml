@@ -32,4 +32,10 @@
     <select id="findByLoginId" parameterType="String" resultMap="memberResultMap">
         SELECT * FROM member WHERE login_id = #{login_id};
     </select>
+    <select id="countByLoginId" resultType="int">
+        SELECT COUNT(*) FROM member WHERE login_id = #{loginId}
+    </select>
+    <select id="countByEmail" resultType="int">
+        SELECT COUNT(*) FROM member WHERE email = #{email}
+    </select>
 </mapper>
