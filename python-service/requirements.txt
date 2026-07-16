@@ -1,0 +1,7 @@
+필요 모듈
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+langchain-openai>=1.0,<2.0
+easyocr
