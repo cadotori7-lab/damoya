@@ -8,14 +8,19 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,11 +33,63 @@ public class TestController {
 
     // FastAPI OCR 검증 서비스 주소
     private static final String FASTAPI_VERIFY_URL = "http://localhost:8000/verify";
+    private static final String FASTAPI_CHAT_URL = "http://localhost:8000/chat";
 
     @GetMapping("/")
     public String mentorHome() {
         logger.info("mentorHome");
         return "test/home";
+    }
+
+    @GetMapping("/chat")
+    public String chat() {
+        return "test/chat";
+    }
+
+    @PostMapping(
+        value = "/chat/api",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> chatApi(
+            @RequestBody Map<String, String> request) {
+        String message = request.getOrDefault("message", "").trim();
+
+        if (message.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("detail", "메시지를 입력하세요.")
+            );
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map<String, String>> fastApiRequest = new HttpEntity<>(
+                Map.of("message", message),
+                headers
+            );
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restTemplate.postForObject(
+                FASTAPI_CHAT_URL,
+                fastApiRequest,
+                Map.class
+            );
+
+            return ResponseEntity.ok(response == null ? Map.of() : response);
+        } catch (HttpStatusCodeException e) {
+            logger.warning("FastAPI 챗봇 오류: " + e.getResponseBodyAsString());
+            return ResponseEntity.status(e.getStatusCode()).body(
+                Map.of("detail", "GPT 요청이 실패했습니다: " + e.getResponseBodyAsString())
+            );
+        } catch (ResourceAccessException e) {
+            logger.warning("FastAPI 챗봇 연결 실패: " + e.getMessage());
+            return ResponseEntity.status(503).body(
+                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8000 서버를 확인하세요.")
+            );
+        }
     }
 
     @GetMapping("/mentor/register")

@@ -1,3 +1,4 @@
+C:\soldesk\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\AdminController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\HomeController.java
@@ -8,3 +9,8 @@ C:\soldesk\damoya\src\main\java\com\soldesk\controller\TalentController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\AdminService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\AdminDashboardStats.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberDocument.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberVO.java

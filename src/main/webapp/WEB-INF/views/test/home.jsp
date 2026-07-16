@@ -9,5 +9,6 @@
 </head>
 <body>
     <a href="/test/mentor/register">멘토 등록</a>
+    <a href="${pageContext.request.contextPath}/test/chat">챗봇 테스트</a>
 </body>
 </html>
