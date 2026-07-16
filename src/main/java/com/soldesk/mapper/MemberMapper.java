@@ -1,5 +1,7 @@
 package com.soldesk.mapper;
 
+import java.util.List;
+
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
 
@@ -13,4 +15,6 @@ public interface MemberMapper {
     void insertMentor(MentorSignupVO vo); // 멘토 가입 - mentor 테이블 INSERT
     MemberVO selectMemberById(int member_id); // 회원 고유번호로 회원 조회
     int selectMentorById(int member_id); // 멘토인지 확인
+
+    List<MemberVO> findAllMembers(); // 모든 회원 조회
 }

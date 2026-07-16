@@ -6,7 +6,7 @@ public class MemberDocument {
     private String login_id; // 로그인 아이디
     private String email; // 이메일
     private String name; // 이름
-    private Long dept_id; // 학과 고유번호
+    private int dept_id; // 학과 고유번호
     private int grade; // 학년
     private String major; // 전공
     private String double_major; // 복수전공
@@ -86,11 +86,11 @@ public class MemberDocument {
         this.name = name;
     }
 
-    public Long getDept_id() {
+    public int getDept_id() {
         return dept_id;
     }
 
-    public void setDept_id(Long dept_id) {
+    public void setDept_id(int dept_id) {
         this.dept_id = dept_id;
     }
 
