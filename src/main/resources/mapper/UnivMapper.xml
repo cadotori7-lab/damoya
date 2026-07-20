@@ -12,5 +12,9 @@
     <select id="getAllUniv" resultMap="univResultMap">
         SELECT distinct univ_name, dept_id, dept_name FROM univ_department;
     </select>
+    <!-- 학생의 대학 이름, 학과 이름 조회 -->
+    <select id="getUnivByDeptId" parameterType="int" resultMap="univResultMap">
+        SELECT univ_name, dept_id, dept_name FROM univ_department WHERE dept_id = #{dept_id}
+    </select>
 
 </mapper>

@@ -15,14 +15,7 @@
     <link rel="stylesheet" href="../resources/css/style.css">
 </head>
 <body>
-  <header class="lp-top">
-    <div class="in">
-      <a class="logo" href="${ctx}/">다<b>모여</b></a>
-      <div class="r">
-        <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-      </div>
-    </div>
-  </header>
+  <jsp:include page="../includes/header.jsp" />
 
   <!-- ========== 회원가입 ========== -->
   <main>

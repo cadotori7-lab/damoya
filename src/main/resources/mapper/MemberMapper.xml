@@ -58,4 +58,10 @@
     <select id="selectMentorById" parameterType="int" resultType="int">
         SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
     </select>
+    <!-- 회원 정보 업데이트 -->
+    <update id="updateMember" parameterType="com.soldesk.vo.MemberVO">
+        UPDATE member
+        SET name = #{name}, grade = #{grade}, major = #{major}, double_major = #{double_major}, intro = #{intro}
+        WHERE login_id = #{login_id}
+    </update>
 </mapper>

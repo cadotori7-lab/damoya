@@ -45,4 +45,9 @@ public class MemberService {
         memberMapper.insertMemberForMentor(form); 
         memberMapper.insertMentor(form);
     }
+    // 회원 정보 업데이트
+    @Transactional
+    public void updateMember(MemberVO member) {
+        memberMapper.updateMember(member);
+    }
 }

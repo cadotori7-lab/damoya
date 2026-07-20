@@ -12,15 +12,7 @@
     <link rel="stylesheet" href="../resources/css/style.css">
 </head>
 <body>
-  <header class="lp-top">
-  <div class="in">
-    <a class="logo" href="${ctx}/">다<b>모여</b></a>
-    <div class="r">
-      <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-      <a class="btn pri sm" href="${ctx}/auth/signup">시작하기</a>
-    </div>
-  </div>
-</header>
+<jsp:include page="../includes/header.jsp" />
   <!-- ========== 로그인 (별도 화면) ========== -->
 <main>
   <section id="v-login">

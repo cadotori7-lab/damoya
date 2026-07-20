@@ -802,3 +802,30 @@
 
   @media(max-width:860px){.lp-features,.lp-steps{grid-template-columns:1fr}.lp-hero{padding:64px 0 52px}.lp-band{padding:44px 24px}}
 
+
+  /* ===== 상단 네비: <a> 버전 ===== */
+nav.main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+nav.main a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-decoration: none;        /* 링크 밑줄 제거 */
+  white-space: nowrap;
+  transition: .15s;
+}
+nav.main a:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+nav.main a.on {                 /* 현재 페이지 강조 */
+  background: var(--accent-soft);
+  color: var(--accent);
+}

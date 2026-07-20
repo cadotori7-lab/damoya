@@ -17,4 +17,6 @@ public interface MemberMapper {
     int selectMentorById(int member_id); // 멘토인지 확인
 
     List<MemberVO> findAllMembers(); // 모든 회원 조회
+
+    void updateMember(MemberVO member); // 회원 정보 업데이트
 }

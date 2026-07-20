@@ -15,15 +15,7 @@
 </head>
 <body>
 
-<%-- 비로그인 화면이므로 랜딩용 상단바 --%>
-<header class="lp-top">
-  <div class="in">
-    <a class="logo" href="${ctx}/">다<b>모여</b></a>
-    <div class="r">
-      <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-    </div>
-  </div>
-</header>
+<jsp:include page="../includes/header.jsp" />
 
 <main>
   <section id="v-signup-mentor">
