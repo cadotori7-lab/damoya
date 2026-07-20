@@ -3,69 +3,69 @@ package com.soldesk.vo;
 import java.time.LocalDateTime;
 
 public class ParticipationVO {
-    private Long partId; //참여pk
+    private Long part_id; //참여pk
 
-    private Long projectId; //프로젝트pk
+    private Long project_id; //프로젝트pk
 
-    private Long memberId; //사용자pk
+    private Long member_id; //사용자pk
 
-    private String projectRole; //프로젝트 역할
+    private String project_role; //프로젝트 역할
 
-    private String joinStatus; //참여여부(대기/면접/참여)
+    private String join_status; //참여여부(대기/면접/참여)
 
-    private Integer successionOrder; //승계우선순위(팀원)
+    private Integer succession_order; //승계우선순위(팀원)
 
     private Integer contribution; //기여도(완료 업무 수 등)
 
-    private LocalDateTime appliedAt; //지원&합루 시각
+    private LocalDateTime applied_at; //지원&합류 시각
 
-    //getter,setter
-    public Long getPartId() {
-        return partId;
+    //get/set
+    public Long getPart_id() {
+        return part_id;
     }
 
-    public void setPartId(Long partId) {
-        this.partId = partId;
+    public void setPart_id(Long part_id) {
+        this.part_id = part_id;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getProject_id() {
+        return project_id;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setProject_id(Long project_id) {
+        this.project_id = project_id;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public Long getMember_id() {
+        return member_id;
     }
 
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
+    public void setMember_id(Long member_id) {
+        this.member_id = member_id;
     }
 
-    public String getProjectRole() {
-        return projectRole;
+    public String getProject_role() {
+        return project_role;
     }
 
-    public void setProjectRole(String projectRole) {
-        this.projectRole = projectRole;
+    public void setProject_role(String project_role) {
+        this.project_role = project_role;
     }
 
-    public String getJoinStatus() {
-        return joinStatus;
+    public String getJoin_status() {
+        return join_status;
     }
 
-    public void setJoinStatus(String joinStatus) {
-        this.joinStatus = joinStatus;
+    public void setJoin_status(String join_status) {
+        this.join_status = join_status;
     }
 
-    public Integer getSuccessionOrder() {
-        return successionOrder;
+    public Integer getSuccession_order() {
+        return succession_order;
     }
 
-    public void setSuccessionOrder(Integer successionOrder) {
-        this.successionOrder = successionOrder;
+    public void setSuccession_order(Integer succession_order) {
+        this.succession_order = succession_order;
     }
 
     public Integer getContribution() {
@@ -76,11 +76,12 @@ public class ParticipationVO {
         this.contribution = contribution;
     }
 
-    public LocalDateTime getAppliedAt() {
-        return appliedAt;
+    public LocalDateTime getApplied_at() {
+        return applied_at;
     }
 
-    public void setAppliedAt(LocalDateTime appliedAt) {
-        this.appliedAt = appliedAt;
+    public void setApplied_at(LocalDateTime applied_at) {
+        this.applied_at = applied_at;
     }
+
 }

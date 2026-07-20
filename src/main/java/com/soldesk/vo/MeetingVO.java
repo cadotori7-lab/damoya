@@ -3,34 +3,32 @@ package com.soldesk.vo;
 import java.time.LocalDateTime;
 
 public class MeetingVO {
-    private Long meetingId; //회의 pk
-    private Long projectId; //프로젝트 pk
+    private Long meeting_id; //회의 pk
+    private Long project_id; //프로젝트 pk
 
     private String title; //회의명
 
-    private LocalDateTime meetDate; //날짜/시간
+    private LocalDateTime meet_date; //날짜/시간
 
     private String summary; //설명(한줄 요약)
 
     private String content; //내용(회의록)
 
-    private LocalDateTime createdAt; //timestamp
-
-    //getter,setter
-    public Long getMeetingId() {
-        return meetingId;
+    //get/set
+    public Long getMeeting_id() {
+        return meeting_id;
     }
 
-    public void setMeetingId(Long meetingId) {
-        this.meetingId = meetingId;
+    public void setMeeting_id(Long meeting_id) {
+        this.meeting_id = meeting_id;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getProject_id() {
+        return project_id;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setProject_id(Long project_id) {
+        this.project_id = project_id;
     }
 
     public String getTitle() {
@@ -41,12 +39,12 @@ public class MeetingVO {
         this.title = title;
     }
 
-    public LocalDateTime getMeetDate() {
-        return meetDate;
+    public LocalDateTime getMeet_date() {
+        return meet_date;
     }
 
-    public void setMeetDate(LocalDateTime meetDate) {
-        this.meetDate = meetDate;
+    public void setMeet_date(LocalDateTime meet_date) {
+        this.meet_date = meet_date;
     }
 
     public String getSummary() {
@@ -64,12 +62,5 @@ public class MeetingVO {
     public void setContent(String content) {
         this.content = content;
     }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    
 }

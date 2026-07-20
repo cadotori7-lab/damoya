@@ -4,49 +4,49 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TaskVO {
-    private Long taskId; //업무pk
-    private Long projectId; //프로젝트pk
-    private Long assigneeId; //담당자 fk(member)
+    private Long task_id; //업무pk
+    private Long project_id; //프로젝트pk
+    private Long assignee_id; //담당자 fk(member)
 
-    private String taskName; //업무명
+    private String task_name; //업무명
     private String description; //설명
     private String status; //상태(등록/진행/검수/승인/반려)
 
-    private LocalDate dueDate; //마감일
+    private LocalDate due_date; //마감일
 
-    private String submitTitle; //제출제목
-    private String submitContent; //제출내용
-    private String submitFile; //제출물(파일경로)
+    private String submit_title; //제출제목
+    private String submit_content; //제출내용
+    private String submit_file; //제출물(파일경로)
 
-    private String rejectReason; //반려 사유
+    private String reject_reason; //반려 사유
 
-    private LocalDateTime submittedAt; //제출시간
-    private LocalDateTime createdAt; //timestamp
+    private LocalDateTime submitted_at; //제출시간
 
-    //getter,setter
-    public Long getTaskId() {
-        return taskId;
+
+    //get/set
+    public Long getTask_id() {
+        return task_id;
     }
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setTask_id(Long task_id) {
+        this.task_id = task_id;
     }
-    public Long getProjectId() {
-        return projectId;
+    public Long getProject_id() {
+        return project_id;
     }
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setProject_id(Long project_id) {
+        this.project_id = project_id;
     }
-    public Long getAssigneeId() {
-        return assigneeId;
+    public Long getAssignee_id() {
+        return assignee_id;
     }
-    public void setAssigneeId(Long assigneeId) {
-        this.assigneeId = assigneeId;
+    public void setAssignee_id(Long assignee_id) {
+        this.assignee_id = assignee_id;
     }
-    public String getTaskName() {
-        return taskName;
+    public String getTask_name() {
+        return task_name;
     }
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+    public void setTask_name(String task_name) {
+        this.task_name = task_name;
     }
     public String getDescription() {
         return description;
@@ -60,47 +60,41 @@ public class TaskVO {
     public void setStatus(String status) {
         this.status = status;
     }
-    public LocalDate getDueDate() {
-        return dueDate;
+    public LocalDate getDue_date() {
+        return due_date;
     }
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setDue_date(LocalDate due_date) {
+        this.due_date = due_date;
     }
-    public String getSubmitTitle() {
-        return submitTitle;
+    public String getSubmit_title() {
+        return submit_title;
     }
-    public void setSubmitTitle(String submitTitle) {
-        this.submitTitle = submitTitle;
+    public void setSubmit_title(String submit_title) {
+        this.submit_title = submit_title;
     }
-    public String getSubmitContent() {
-        return submitContent;
+    public String getSubmit_content() {
+        return submit_content;
     }
-    public void setSubmitContent(String submitContent) {
-        this.submitContent = submitContent;
+    public void setSubmit_content(String submit_content) {
+        this.submit_content = submit_content;
     }
-    public String getSubmitFile() {
-        return submitFile;
+    public String getSubmit_file() {
+        return submit_file;
     }
-    public void setSubmitFile(String submitFile) {
-        this.submitFile = submitFile;
+    public void setSubmit_file(String submit_file) {
+        this.submit_file = submit_file;
     }
-    public String getRejectReason() {
-        return rejectReason;
+    public String getReject_reason() {
+        return reject_reason;
     }
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
+    public void setReject_reason(String reject_reason) {
+        this.reject_reason = reject_reason;
     }
-    public LocalDateTime getSubmittedAt() {
-        return submittedAt;
+    public LocalDateTime getSubmitted_at() {
+        return submitted_at;
     }
-    public void setSubmittedAt(LocalDateTime submittedAt) {
-        this.submittedAt = submittedAt;
+    public void setSubmitted_at(LocalDateTime submitted_at) {
+        this.submitted_at = submitted_at;
     }
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
+    
 }
