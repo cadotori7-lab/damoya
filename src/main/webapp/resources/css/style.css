@@ -798,4 +798,7 @@
   .lp-foot{border-top:1px solid var(--line);padding:36px 24px;text-align:center;color:var(--ink-soft);font-size:13px}
   .lp-foot .logo{font-weight:800;font-size:16px;color:var(--ink);margin-bottom:8px}
 
+  .error{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--reject);font-family:var(--mono)}
+
   @media(max-width:860px){.lp-features,.lp-steps{grid-template-columns:1fr}.lp-hero{padding:64px 0 52px}.lp-band{padding:44px 24px}}
+

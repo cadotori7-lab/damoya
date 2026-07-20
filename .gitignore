@@ -525,3 +525,9 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/java,python,windows,macos,git,maven,eclipse,intellij,gradle,netbeans,visualstudiocode
+
+# deploy.bat
+deploy.bat
+
+# README.md
+README.md
