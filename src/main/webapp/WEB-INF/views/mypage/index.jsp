@@ -50,6 +50,8 @@
       <button data-t="liked">관심 목록</button>
     </div>
     <div class="mp-list" id="mpList"></div>
+
+    <jsp:include page="withdraw-modal.jsp" />
   </section>
   </main>
   <!-- 프로필 수정 모달 -->
@@ -63,6 +65,7 @@
     </div>
     <div class="modal-body" id="profileBody">
       <form:form id="profileForm" modelAttribute="member" action="${ctx}/mypage/update" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
           <span class="big" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none"><c:out value="${member.name.substring(0, 1)}" /></span>
           <button class="btn ghost sm">사진 변경</button>

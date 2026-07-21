@@ -25,7 +25,9 @@ public class MemberDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + login_id); // 사용자가 존재하지 않을 경우 예외 발생
         } // login_id와 일치하는 사용자가 DB에 존재하지 않을 경우 예외 발생
          // UserDetails 객체 생성 및 반환
-
+        if ("WITHDRAWN".equals(member.getAccount_status())) {
+            throw new UsernameNotFoundException("탈퇴한 계정입니다.");
+        }
         return User.builder()
             .username(member.getLogin_id()) // 사용자 이름 설정 (로그인 ID 사용)
             .password(member.getPassword()) // 암호화된 비밀번호 설정
@@ -43,4 +45,5 @@ public class MemberDetailsService implements UserDetailsService {
             return "USER";
         }
     }
+
 }

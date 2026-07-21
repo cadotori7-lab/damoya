@@ -1,12 +1,17 @@
 package com.soldesk.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.soldesk.service.MemberService;
 import com.soldesk.service.UnivService;
@@ -23,6 +28,9 @@ public class MypageController {
 
     @Autowired
     private UnivService univService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @GetMapping("/index")
     public String index(Model model) {
@@ -41,5 +49,38 @@ public class MypageController {
         member.setLogin_id(member_id); // 로그인한 사용자의 ID를 설정
         memberService.updateMember(member); // 회원 정보 업데이트
         return "redirect:/mypage/index"; // 업데이트 후 마이페이지로 리다이렉트
+    }
+
+    @PostMapping("/withdraw")
+    public String withdraw(@RequestParam("password") String password,
+                           HttpServletRequest request,
+                           Model model) {
+        // 현재 로그인 사용자
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
+ 
+        // 비밀번호 재확인 (모달에서 입력받은 값)
+        String storedHash = member.getPassword();
+        if (storedHash == null || !passwordEncoder.matches(password, storedHash)) {
+            // 실패 시 마이페이지 데이터를 다시 채워서 모달을 자동으로 다시 열어줌
+            UnivVO univ = univService.getUnivByDeptId(member.getDept_id());
+            model.addAttribute("member", member);
+            model.addAttribute("univList", univService.getAllUniv());
+            model.addAttribute("univ", univ);
+            model.addAttribute("withdrawError", "비밀번호가 일치하지 않아요.");
+            model.addAttribute("openWithdraw", true); // JSP에서 모달 자동 오픈용
+            return "mypage/index";
+        }
+
+        // soft delete + 팀장 승계 (서비스에서 트랜잭션으로 처리)
+        memberService.withdraw(member_id);
+
+        // 로그아웃 처리: 세션 무효화 + 인증정보 제거
+        HttpSession session = request.getSession(false);
+        if (session != null) session.invalidate();
+        SecurityContextHolder.clearContext();
+ 
+        // 탈퇴 완료 → 랜딩(또는 로그인)으로
+        return "redirect:/";
     }
 }

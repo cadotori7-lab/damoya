@@ -829,3 +829,16 @@ nav.main a.on {                 /* 현재 페이지 강조 */
   background: var(--accent-soft);
   color: var(--accent);
 }
+
+/* style.css 맨 끝에 추가하세요 (회원 탈퇴 UI) */
+
+.danger-zone{margin-top:40px;padding:20px 22px;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:16px;background:var(--surface)}
+.danger-zone .dz-text{flex:1;min-width:0}
+.danger-zone .dz-text b{display:block;font-size:15px;font-weight:800;color:var(--reject)}
+.danger-zone .dz-text span{font-size:13px;color:var(--ink-soft)}
+.btn.danger{color:var(--reject);border-color:var(--reject)}
+.btn.danger:hover{background:var(--reject-bg,#fdecec)}
+.btn.danger-solid{background:var(--reject);color:#fff}
+.btn.danger-solid:hover{background:#c0392b}
+.wd-notice{margin:0 0 18px;padding:14px 16px 14px 32px;background:var(--paper);border-radius:11px;font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+.wd-notice li{margin-bottom:4px}

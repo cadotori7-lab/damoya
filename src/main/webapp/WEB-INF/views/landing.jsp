@@ -117,11 +117,7 @@
 
 </main>
 
-<%-- 랜딩 전용 푸터 --%>
-<footer class="lp-foot">
-  <div class="logo">다모여</div>
-  대학생 프로젝트 매칭·협업 플랫폼 · 캡스톤 팀 프로젝트
-</footer>
+<jsp:include page="includes/footer.jsp" />
 
 </body>
 </html>
