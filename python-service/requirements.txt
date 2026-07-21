@@ -1,7 +1,10 @@
-필요 모듈
+# 필요 모듈
 fastapi
 uvicorn[standard]
 python-multipart
 python-dotenv
+langchain-core>=0.3
 langchain-openai>=1.0,<2.0
+elasticsearch>=8.13,<9.0
+sentence-transformers>=3.0,<6.0
 easyocr

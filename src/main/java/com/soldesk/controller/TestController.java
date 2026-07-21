@@ -1,8 +1,12 @@
 package com.soldesk.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -42,7 +46,10 @@ public class TestController {
     }
 
     @GetMapping("/chat")
-    public String chat() {
+    public String chat(HttpSession session) {
+        // 채팅 페이지 진입 시 메뉴부터 시작
+        session.setAttribute("chatStep", "menu");
+        session.setAttribute("chatHistory", new ArrayList<String>());
         return "test/chat";
     }
 
@@ -53,23 +60,37 @@ public class TestController {
     )
     @ResponseBody
     public ResponseEntity<Map<String, Object>> chatApi(
-            @RequestBody Map<String, String> request) {
+            @RequestBody Map<String, String> request,
+            HttpSession session) {
         String message = request.getOrDefault("message", "").trim();
+        String requestedStep = request.getOrDefault("step", "").trim();
+        Object sessionStep = session.getAttribute("chatStep");
+        String step = sessionStep == null ? "menu" : String.valueOf(sessionStep);
 
-        if (message.isEmpty()) {
-            return ResponseEntity.badRequest().body(
-                Map.of("detail", "메시지를 입력하세요.")
-            );
+        @SuppressWarnings("unchecked")
+        List<String> history = (List<String>) session.getAttribute("chatHistory");
+        if (history == null) {
+            history = new ArrayList<>();
+            session.setAttribute("chatHistory", history);
+        }
+
+        // 페이지의 '처음부터' 버튼은 빈 메시지와 menu 단계로 초기화를 요청한다.
+        if (message.isEmpty() && "menu".equals(requestedStep)) {
+            step = "menu";
+            history.clear();
+            session.setAttribute("chatStep", step);
         }
 
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<Map<String, String>> fastApiRequest = new HttpEntity<>(
-                Map.of("message", message),
-                headers
-            );
+            Map<String, Object> body = new java.util.HashMap<>();
+            body.put("message", message);
+            body.put("step", step);
+            body.put("history", new ArrayList<>(history));
+
+            HttpEntity<Map<String, Object>> fastApiRequest = new HttpEntity<>(body, headers);
 
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.postForObject(
@@ -78,11 +99,23 @@ public class TestController {
                 Map.class
             );
 
+            if (response != null && response.get("step") != null) {
+                session.setAttribute("chatStep", String.valueOf(response.get("step")));
+            }
+
+            if (!message.isEmpty() && response != null && response.get("reply") != null) {
+                history.add("사용자: " + message);
+                history.add("AI: " + String.valueOf(response.get("reply")));
+                while (history.size() > 12) {
+                    history.remove(0);
+                }
+            }
+
             return ResponseEntity.ok(response == null ? Map.of() : response);
         } catch (HttpStatusCodeException e) {
             logger.warning("FastAPI 챗봇 오류: " + e.getResponseBodyAsString());
             return ResponseEntity.status(e.getStatusCode()).body(
-                Map.of("detail", "GPT 요청이 실패했습니다: " + e.getResponseBodyAsString())
+                Map.of("detail", "챗봇 요청이 실패했습니다: " + e.getResponseBodyAsString())
             );
         } catch (ResourceAccessException e) {
             logger.warning("FastAPI 챗봇 연결 실패: " + e.getMessage());

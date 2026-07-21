@@ -9,6 +9,7 @@
 </head>
 <body>
     <form action="/test/mentor/register" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="text" name="name" placeholder="이름" required>
         <input type="file" name="file" accept="image/*" required>
         <input type="submit" value="등록">
