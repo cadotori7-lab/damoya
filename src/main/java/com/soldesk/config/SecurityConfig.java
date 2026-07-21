@@ -13,12 +13,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.soldesk.security.MemberDetailsService;
 
-@Configuration // 스프링 시큐리티 설정을 위한 구성 클래스, 스프링 설정 파일임을 명시
-@EnableWebSecurity // 스프링 시큐리티를 활성화
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
-    private MemberDetailsService memberDetailsService; // 사용자 인증을 위한 MemberDetailsService 주입
+    private MemberDetailsService memberDetailsService; 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider)
@@ -53,31 +53,24 @@ public class SecurityConfig {
                 .invalidateHttpSession(true) // 로그아웃 시 세션 무효화
                 .deleteCookies("JSESSIONID") // 로그아웃 시 쿠키 삭제
                 .permitAll()) // 로그아웃은 인증 없이 접근 허용
-            .authenticationProvider(authenticationProvider) // 사용자 인증을 위한 DaoAuthenticationProvider 설정
+            .authenticationProvider(authenticationProvider) 
             .exceptionHandling(exception -> exception
                 .accessDeniedPage("/error/403") // 권한 없는 접근 시 이 URL로 리다이렉트
             );
         return http.build();
         
-    } //사용자의 요청을 단계적으로 어떤 보안 필터를 적용할 지 결정하는 객체
-    //1) .authenticated() : 인증된 사용자만 접근 가능
-    // .authorizeHttpRequests() : 사용자의 요청에 대한 접근 권한을 설정
-    // .anyRequest().permitAll() : 위에서 지정하지 않은 모든 요청에 대해 접근 허용
-    //2) formLogin() : 로그인 페이지 관련 설정
-    //3) logout() : 로그아웃 관련 설정
-    //4) authenticationProvider() : 사용자 인증을 위한 DaoAuthenticationProvider 설정
-
+    } 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // 비밀번호 암호화를 위한 BCryptPasswordEncoder 빈 생성
-    }// 비밀번호 암호화를 위한 PasswordEncoder 빈 생성
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(memberDetailsService); // 사용자 정보를 가져오는 UserDetailsService 설정
-        authProvider.setPasswordEncoder(passwordEncoder); // 비밀번호 암호화 방식 설정
+        authProvider.setUserDetailsService(memberDetailsService); 
+        authProvider.setPasswordEncoder(passwordEncoder); 
         return authProvider;
-    } // 사용자 인증을 처리하는 객체
+    } 
    
 }

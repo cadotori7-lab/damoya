@@ -17,7 +17,6 @@
 <jsp:include page="includes/header.jsp" />
 
 <main>
-<%-- 히어로 --%>
 <section class="lp-hero">
   <div class="lp-wrap">
     <div class="lp-eyebrow">대학생 프로젝트 매칭 · 협업 플랫폼</div>
@@ -32,7 +31,6 @@
   </div>
 </section>
 
-<%-- 핵심 기능 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -66,7 +64,6 @@
   </div>
 </section>
 
-<%-- 카테고리 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -82,7 +79,6 @@
   </div>
 </section>
 
-<%-- 이용 흐름 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -106,7 +102,6 @@
   </div>
 </section>
 
-<%-- 하단 CTA --%>
 <div class="lp-wrap">
   <div class="lp-band">
     <h2>이번 학기 팀 프로젝트, 다모여에서 시작하세요</h2>

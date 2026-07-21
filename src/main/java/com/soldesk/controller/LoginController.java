@@ -26,10 +26,10 @@ import com.soldesk.vo.MentorSignupVO;
 public class LoginController {
 
     @Autowired
-    private MemberValidation memberValidation; // 회원가입 유효성 검증을 위한 MemberValidation 주입
+    private MemberValidation memberValidation;
 
     @Autowired
-    private MemberService memberService; // 회원가입 처리를 위한 MemberService 주입
+    private MemberService memberService; 
 
     @Autowired
     private UnivService univService;
@@ -37,7 +37,7 @@ public class LoginController {
     @InitBinder({"signupMember"})
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(memberValidation);
-    } // MemberValidation을 WebDataBinder에 등록하여 유효성 검증 수행/컨트롤러 실행 전 검증 수행
+    } 
     
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -48,7 +48,7 @@ public class LoginController {
     @PostMapping("/signup")
     public String signupPost(@Valid @ModelAttribute("signupMember") MemberVO member, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> System.out.println("❌ 진짜 에러 원인: " + error.toString()));
+            bindingResult.getAllErrors().forEach(error -> System.out.println(" 에러 원인: " + error.toString()));
             model.addAttribute("univList", univService.getAllUniv());
             return "auth/signup";
         }
@@ -98,7 +98,7 @@ public class LoginController {
         if (!form.getPassword().equals(form.getPasswordConfirm())) {
             bindingResult.rejectValue("passwordConfirm", "mismatch", "비밀번호가 일치하지 않아요.");
         }
-        // 3) 중복 검사 — 일반 회원과 같은 member 테이블을 쓰므로 동일하게 검사
+        // 3) 중복 검사 
         if (memberService.countByLoginId(form.getLogin_id()) > 0) {
             bindingResult.rejectValue("login_id", "duplicate", "이미 사용 중인 아이디예요.");
         }

@@ -72,15 +72,13 @@ public class MypageController {
             return "mypage/index";
         }
 
-        // soft delete + 팀장 승계 (서비스에서 트랜잭션으로 처리)
+        // soft delete + 팀장 승계
         memberService.withdraw(member_id);
 
         // 로그아웃 처리: 세션 무효화 + 인증정보 제거
         HttpSession session = request.getSession(false);
         if (session != null) session.invalidate();
         SecurityContextHolder.clearContext();
- 
-        // 탈퇴 완료 → 랜딩(또는 로그인)으로
         return "redirect:/";
     }
 }
