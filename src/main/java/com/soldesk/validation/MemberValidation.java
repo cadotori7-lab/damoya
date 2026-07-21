@@ -70,8 +70,8 @@ public class MemberValidation implements Validator {
 
         // 비밀번호 확인
         if (!Objects.equals(member.getPassword(), 
-                            member.getPasswordConfirm())) {
-            errors.rejectValue("passwordConfirm", "password.mismatch", 
+                            member.getPassword_confirm())) {
+            errors.rejectValue("password_confirm", "password.mismatch", 
                 "비밀번호가 일치하지 않습니다.");
         }
 

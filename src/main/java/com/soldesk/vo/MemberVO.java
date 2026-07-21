@@ -15,8 +15,11 @@ public class MemberVO {
    private String account_status; // 계정 상태
    private boolean approved; // 승인 여부(대학 관련)
    private boolean profile_public; // 프로필 공개 여부
+   private String password_confirm; // 비밀번호 확인
 
-   private String passwordConfirm; // 비밀번호 확인
+   //oauth 관련 필드
+   private String provider; // OAuth2 제공자 (예: Google, Facebook)
+   private String provider_id; // OAuth2 제공자에서 제공하는 사용자 ID
 
    public int getMember_id() {
     return member_id;
@@ -102,11 +105,27 @@ public class MemberVO {
    public void setProfile_public(boolean profile_public) {
     this.profile_public = profile_public;
    }
-   public String getPasswordConfirm() {
-    return passwordConfirm;
+   public String getPassword_confirm() {
+    return password_confirm;
    }
-   public void setPasswordConfirm(String passwordConfirm) {
-    this.passwordConfirm = passwordConfirm;
+   public void setPassword_confirm(String password_confirm) {
+    this.password_confirm = password_confirm;
    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProvider_id() {
+        return provider_id;
+    }
+
+    public void setProvider_id(String provider_id) {
+        this.provider_id = provider_id;
+    }
 
 }

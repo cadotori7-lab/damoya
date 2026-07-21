@@ -20,7 +20,7 @@
         <result property="role" column="role" />
         <!--  OAuth 칼럼 매핑  -->
         <result column="provider" property="provider"/>
-        <result column="provider_id" property="providerId"/>
+        <result column="provider_id" property="provider_id"/>
     </resultMap>
 
     <!-- 회원가입 -->
@@ -74,6 +74,19 @@
     </update>
     <!-- 회원 계정 상태 업데이트 -->
     <update id="updateAccountStatus">
-    UPDATE member SET account_status = #{status} WHERE member_id = #{memberId}
+        UPDATE member SET account_status = #{status} WHERE member_id = #{memberId}
     </update>
+    <!-- oAuth 관련 처리 -->
+    <select id="findByProviderAndProviderId" resultType="MemberVO">
+        SELECT * FROM member WHERE provider = #{provider} AND provider_id = #{provider_id}
+    </select>
+    <select id="findByEmail" resultType="MemberVO">
+        SELECT * FROM member WHERE email = #{email}
+    </select>
+    <insert id="insertOAuthMember" useGeneratedKeys="true" keyProperty="member_id">
+        INSERT INTO member (email, name, provider, provider_id, password,
+                        role, account_status, approved)
+        VALUES (#{email}, #{name}, #{provider}, #{provider_id}, #{password},
+            'USER', 'ACTIVE', FALSE)
+    </insert>
 </mapper>

@@ -24,4 +24,9 @@ public interface MemberMapper {
     void updateAccountStatus(@Param("memberId") int memberId, @Param("status") String status); // 회원 계정 상태 업데이트
     void anonymize(int memberId); // 회원 정보 익명화
 
+    // 구글 OAuth2 로그인 관련 메서드
+    MemberVO findByProviderAndProviderId(String provider, String providerId);
+    MemberVO findByEmail(String email);
+    void insertOAuthMember(MemberVO member);
+
 }
