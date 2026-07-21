@@ -1,9 +1,6 @@
 package com.soldesk.config;
 
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +18,16 @@ public class ElasticSearchConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticSearchConfig.class);
 
-    @Value("${elasticsearch.scheme:${ELASTICSEARCH_SCHEME:http}}")
+    @Value("${elasticsearch.scheme}")
     private String scheme;
 
-    @Value("${elasticsearch.host:${ELASTICSEARCH_HOST:localhost}}")
+    @Value("${elasticsearch.host}")
     private String host;
 
-    @Value("${elasticsearch.port:${ELASTICSEARCH_PORT:9200}}")
+    @Value("${elasticsearch.port}")
     private int port;
 
-    @Value("${elasticsearch.username:${ELASTICSEARCH_USERNAME:}}")
-    private String username;
-
-    @Value("${elasticsearch.password:${ELASTICSEARCH_PASSWORD:}}")
-    private String password;
-
+    // 클라이언트 생성
     @Bean(destroyMethod = "close")
     public RestClient restClient() {
         log.info("Elasticsearch 클라이언트 생성: {}://{}:{}", scheme, host, port);
@@ -45,19 +37,9 @@ public class ElasticSearchConfig {
             .setConnectTimeout(3_000)
             .setSocketTimeout(5_000));
 
-        if (username != null && !username.isBlank()) {
-            BasicCredentialsProvider credentials = new BasicCredentialsProvider();
-            credentials.setCredentials(
-                AuthScope.ANY,
-                new UsernamePasswordCredentials(username, password)
-            );
-            builder.setHttpClientConfigCallback(httpClient ->
-                httpClient.setDefaultCredentialsProvider(credentials));
-        }
-
         return builder.build();
     }
-
+    //엘라스틱서치 클라이언트 생성
     @Bean
     public ElasticsearchClient elasticsearchClient(RestClient restClient) {
         ElasticsearchTransport transport = new RestClientTransport(

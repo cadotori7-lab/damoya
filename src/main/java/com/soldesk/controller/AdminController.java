@@ -5,21 +5,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.soldesk.service.AdminService;
+import com.soldesk.service.ElasticSearchService;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final AdminService adminService;
+    private final ElasticSearchService elasticSearchService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public AdminController(ElasticSearchService elasticSearchService) {
+        this.elasticSearchService = elasticSearchService;
     }
 
     @GetMapping("/dashboard")
     public String admin(Model model) {
-        model.addAttribute("dashboard", adminService.getDashboardStats());
+        model.addAttribute("dashboard", elasticSearchService.getDashboardStats());
         return "admin/dashboard";
     }
     @GetMapping("/accounts")

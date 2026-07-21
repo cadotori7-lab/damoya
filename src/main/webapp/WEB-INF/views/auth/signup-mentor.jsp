@@ -107,8 +107,20 @@
           </div>
 
           <div class="fld one">
-            <label>자격증 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
+            <label>자격증 <span style="color:var(--ink-soft);font-weight:500">(필수)</span></label>
             <form:input path="cert" placeholder="예: 정보처리기사, AWS SA Professional"/>
+          </div>
+
+          <div class="fld one">
+            <label>자격증 이미지 인증<span class="req">*</span></label>
+            <div class="cert-verify">
+              <input type="file" id="certFile" accept="image/*">
+              <button type="button" id="certVerifyBtn" class="btn ghost">자격증 인증</button>
+            </div>
+            <div id="certStatus" class="hint cert-status">위의 <b>이름</b>과 자격증 이미지를 올린 뒤 인증해주세요. 인증되어야 가입할 수 있어요.</div>
+            <c:if test="${not empty certError}">
+              <div class="hint cert-status bad">${certError}</div>
+            </c:if>
           </div>
 
           <div class="fld one">
@@ -123,7 +135,7 @@
 
           <div class="form-foot">
             <a class="btn ghost" href="${ctx}/auth/login">이미 계정이 있어요</a>
-            <button type="submit" class="btn pri">멘토로 가입하기</button>
+            <button type="submit" class="btn pri" id="submitBtn" ${certVerified ? '' : 'disabled'}>멘토로 가입하기</button>
           </div>
         </div>
       </form:form>
@@ -133,5 +145,65 @@
 
 <jsp:include page="/WEB-INF/views/includes/footer.jsp" />
 <script src="${ctx}/resources/js/common.js"></script>
+<script>
+  (function () {
+    const ctx = '${ctx}';
+    const csrfToken = '${_csrf.token}';
+    const csrfHeader = '${_csrf.headerName}';
+
+    const nameInput = document.getElementById('name');
+    const certFile = document.getElementById('certFile');
+    const certVerifyBtn = document.getElementById('certVerifyBtn');
+    const certStatus = document.getElementById('certStatus');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function setStatus(text, state) {
+      certStatus.textContent = text;
+      certStatus.classList.remove('ok', 'bad');
+      if (state) certStatus.classList.add(state);
+    }
+
+    certVerifyBtn.addEventListener('click', async () => {
+      const name = (nameInput.value || '').trim();
+      const file = certFile.files[0];
+      if (!name) { setStatus('먼저 이름을 입력해주세요.', 'bad'); return; }
+      if (!file) { setStatus('자격증 이미지를 선택해주세요.', 'bad'); return; }
+
+      certVerifyBtn.disabled = true;
+      setStatus('인증 중... (수 초 걸릴 수 있어요)');
+
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('file', file);
+
+      try {
+        const res = await fetch(ctx + '/auth/signup/mentor/verify-cert', {
+          method: 'POST',
+          headers: { [csrfHeader]: csrfToken }, // CSRF 는 헤더로 전송(멀티파트 본문 파싱 전에 검증됨)
+          body: fd
+        });
+        const data = await res.json();
+        if (res.ok && data.matched) {
+          setStatus('✅ 자격증 인증 완료', 'ok');
+          submitBtn.disabled = false;
+        } else {
+          setStatus('❌ ' + (data.detail || '이름과 자격증이 일치하지 않아요.'), 'bad');
+          submitBtn.disabled = true;
+        }
+      } catch (e) {
+        setStatus('오류: ' + e.message, 'bad');
+        submitBtn.disabled = true;
+      } finally {
+        certVerifyBtn.disabled = false;
+      }
+    });
+
+    // 이름을 바꾸면 다시 인증해야 함
+    nameInput.addEventListener('input', () => {
+      submitBtn.disabled = true;
+      setStatus('이름이 바뀌었어요. 다시 인증해주세요.');
+    });
+  })();
+</script>
 </body>
 </html>

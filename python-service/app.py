@@ -1,4 +1,4 @@
-"""애플리케이션 진입점: FastAPI 앱 생성 및 실행."""
+# 애플리케이션 진입점: FastAPI 앱 생성 및 실행
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

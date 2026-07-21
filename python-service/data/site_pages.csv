@@ -1,0 +1,18 @@
+id,title,path,description,keywords
+landing,랜딩(소개),/,다모여 서비스 소개 화면,랜딩|소개|첫 화면|시작
+home,홈,/home,로그인 후 메인 홈,홈|메인|홈 화면
+login,로그인,/auth/login,회원 로그인 화면,로그인|login|접속
+signup,일반 회원가입,/auth/signup,학생 일반 회원 가입,회원가입|가입|학생 가입
+signup_mentor,멘토 회원가입,/auth/signup/mentor,자격증 이미지 인증을 포함한 멘토 가입,멘토 가입|자격증 인증|멘토 등록
+project_list,프로젝트 목록,/project/list,모집 중인 프로젝트 찾기,프로젝트|모집|프로젝트 목록|지원
+project_form,프로젝트 등록,/project/form,새 프로젝트 모집 글 작성,프로젝트 등록|모집 글|프로젝트 만들기
+project_my,내 프로젝트,/project/my,내가 참여하거나 모집 중인 프로젝트,내 프로젝트|참여 프로젝트
+talent_list,인재풀 목록,/talent/list,팀원과 멘토 후보 검색,인재풀|팀원 찾기|멘토 찾기
+talent_form,인재 등록,/talent/form,내 인재 프로필 등록,인재 등록|프로필 등록
+mypage,마이페이지,/mypage/index,내 정보와 프로필 관리,마이페이지|내 정보|프로필
+workspace_overview,워크스페이스 개요,/workspace/overview,팀 작업 공간 요약,워크스페이스|작업 공간|개요
+workspace_board,업무 보드,/workspace/board,업무 칸반 보드,업무|보드|칸반|할 일
+workspace_schedule,일정,/workspace/schedule,팀 일정 확인,일정|스케줄|캘린더
+workspace_meetings,회의,/workspace/meetings,회의 목록,회의|미팅
+feedback,멘토 피드백,/feedback/feedback,멘토 피드백 화면,피드백|멘토 피드백|검토
+admin,관리자 대시보드,/admin/dashboard,관리자 전용 대시보드,관리자|어드민|대시보드
