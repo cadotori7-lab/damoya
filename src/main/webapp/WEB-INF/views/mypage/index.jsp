@@ -32,6 +32,7 @@
             <span class="b">✓ 학교 인증됨</span>
           </c:if>
         </div>
+        <div class="bio">"${member.intro}"</div>
       </div>
       <button class="btn ghost edit" onclick="openModal('profileModal')">프로필 수정</button>
     </div>

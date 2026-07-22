@@ -72,7 +72,7 @@ public class MypageController {
             return "mypage/index";
         }
 
-        // soft delete + 팀장 승계
+        // soft delete + 팀장 승계(아직 미구현)
         memberService.withdraw(member_id);
 
         // 로그아웃 처리: 세션 무효화 + 인증정보 제거

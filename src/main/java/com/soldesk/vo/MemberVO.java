@@ -18,7 +18,7 @@ public class MemberVO {
    private String password_confirm; // 비밀번호 확인
 
    //oauth 관련 필드
-   private String provider; // OAuth2 제공자 (예: Google, Facebook)
+   private String provider; // OAuth2 제공자
    private String provider_id; // OAuth2 제공자에서 제공하는 사용자 ID
 
    public int getMember_id() {

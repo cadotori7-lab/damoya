@@ -88,8 +88,7 @@ public class LoginController {
     public String mentorSignup(@Valid @ModelAttribute("signupMentor") MentorSignupVO form,
                                BindingResult bindingResult,
                                Model model) {
- 
-        // 1) 형식 검증(@Valid)
+        // 1) 형식 검증
         if (bindingResult.hasErrors()) {
              bindingResult.getAllErrors().forEach(error -> System.out.println("에러 원인: " + error.toString()));
             return "auth/signup-mentor";

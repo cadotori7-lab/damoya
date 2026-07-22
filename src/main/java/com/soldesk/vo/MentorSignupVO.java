@@ -42,7 +42,6 @@ public class MentorSignupVO {
     /** 소속 학과. 교내 교수면 선택, 외부 전문가면 비워둠(NULL 허용) */
     private Long dept_id;
 
-    /** 소개글 — 프로필에 노출 */
     private String intro;
 
     /* ---------- 3. 멘토 전용 (mentor 테이블) ---------- */
