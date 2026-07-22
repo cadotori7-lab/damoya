@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.ProjectMapper">
+    <resultMap id="projectResultMap" type="com.soldesk.vo.ProjectVO">
+        <id column="project_id" property="projectId"/>
+        <id column="owner_id" property="ownerId"/>
+        <id column="title" property="title"/>
+        <id column="category" property="category"/>
+        <id column="summary" property="summary"/>
+        <id column="capacity" property="capacity"/>
+        <id column="target_grade" property="targetGrade"/>
+        <id column="start_date" property="startDate"/>
+        <id column="end_date" property="endDate"/>
+        <id column="status" property="status"/>
+        <id column="is_public" property="isPublic"/>
+        <id column="created_at" property="createdAt"/>
+        <result column="match_scope" property="matchScope"/>
+        <result column="tags" property="tags"/>
+    </resultMap>
+
+    <!-- 프로젝트 등록-->
+    <insert id="insertProject" parameterType="com.soldesk.vo.ProjectVO" 
+            useGeneratedKeys="true" keyProperty="projectId">
+        insert into project (owner_id, title, category, summary, capacity, target_grade, status, is_public, match_scope, tags) 
+        values (#{ownerId}, #{title}, #{category}, #{summary}, #{capacity}, #{targetGrade}, #{status}, #{isPublic}, #{matchScope}, #{tags})
+    </insert>
+
+    <!-- 프로젝트 전체 목록 조회-->
+    <select id="getAllProjects" resultMap="projectResultMap">
+        select * from project order by created_at desc
+    </select>
+
+    <!-- 프로잭트 상세 조회-->
+     <select id="getProjectById" parameterType="long" resultMap="projectResultMap" >
+        select *
+        from project 
+        where project_id = #{projectId}
+     </select>
+
+
+
+</mapper>

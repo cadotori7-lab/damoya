@@ -17,6 +17,15 @@ public class MemberVO {
    private boolean profile_public; // 프로필 공개 여부
 
    private String passwordConfirm; // 비밀번호 확인
+   private String provider;
+
+   public String getProvider() {
+      return provider;
+   }
+
+   public void setProvider(String provider) {
+      this.provider = provider;
+   }
 
    public int getMember_id() {
     return member_id;

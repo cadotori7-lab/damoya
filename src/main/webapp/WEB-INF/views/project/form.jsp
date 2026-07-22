@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../resources/css/style.css">
+    <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
     <jsp:include page="../includes/header.jsp" />
@@ -16,6 +19,7 @@
   <!-- ========== 프로젝트 생성 ========== -->
   <section id="v-create">
   <form class="form-wrap" id="projectForm" action="${ctx}/project/register" method="POST">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <a class="back" href="${ctx}/project/list">← 목록으로</a>
       <div class="eyebrow">New project</div>
       <h1 class="page"><em>프로젝트 모집</em> 등록</h1>
@@ -24,14 +28,14 @@
       <div class="form-card">
         <div class="fsec-title"><span>1</span>어떤 프로젝트인가요?</div>
         
+        <!-- 카테고리 -->
         <div class="fld">
           <label>카테고리<span class="req">*</span></label>
           <div class="picker cats">
-            <!-- 2. name="category" 와 value 추가 -->
-            <input type="radio" name="category" value="공모전" id="pc1" checked><label for="pc1">공모전</label>
-            <input type="radio" name="category" value="학과" id="pc2"><label for="pc2">학과</label>
-            <input type="radio" name="category" value="교양" id="pc3"><label for="pc3">교양</label>
-            <input type="radio" name="category" value="교내활동" id="pc4"><label for="pc4">교내활동</label>
+            <input type="radio" name="category" value="CONTEST" id="pc1" checked><label for="pc1">공모전</label>
+            <input type="radio" name="category" value="DEPARTMENT" id="pc2"><label for="pc2">학과</label>
+            <input type="radio" name="category" value="LIBERAL" id="pc3"><label for="pc3">교양</label>
+            <input type="radio" name="category" value="CLUB" id="pc4"><label for="pc4">교내활동</label>
           </div>
         </div>
     
@@ -41,7 +45,7 @@
         </div>
         <div class="fld one">
           <label>소개<span class="req">*</span></label>
-          <textarea name="content" id="content" placeholder="프로젝트 목표, 진행 방식, 어떤 팀원을 찾는지 자유롭게 적어주세요."></textarea>
+          <textarea name="summary" id="summary" placeholder="프로젝트 목표, 진행 방식, 어떤 팀원을 찾는지 자유롭게 적어주세요."></textarea>
         </div>
       </div>
 
@@ -56,7 +60,7 @@
             </select>
           </div>
           <div class="fld"><label>모집 인원<span class="req">*</span></label>
-            <input type="number" name="recruitCount" value="4" min="1">
+            <input type="number" name="capacity" value="4" min="1">
           </div>
         </div>
         
@@ -70,19 +74,16 @@
             </div>
           </div>
           <div class="fld"><label>모집 마감일<span class="req">*</span></label>
-            <input type="date" name="deadline" value="2026-08-14">
+            <input type="date" name="endDate" value="2026-08-14">
           </div>
         </div>
         
         <div class="fld one">
           <label>태그</label>
-          <div class="tag-input" onclick="this.querySelector('input').focus()">
-            <span class="tg">Spring <b>×</b></span>
-            <span class="tg">React <b>×</b></span>
-            <span class="tg">MySQL <b>×</b></span>
-            <input type="text" placeholder="태그 입력 후 Enter">
+          <div class="tag-input" id="tagBox" onclick="this.querySelector('input').focus()">
+            <input type="text" id="tagInput" placeholder="태그 입력 후 Enter" onkeydown="handleTagInput(event)">
           </div>
-          <div class="hint">기술·분야 태그로 검색 노출이 잘 돼요.</div>
+          <div class="hint">기술·분야 태그로 검색 노출이 잘 돼요. (Enter로 추가)</div>
           <input type="hidden" name="tags" id="hiddenTags">
         </div>
         
@@ -96,6 +97,6 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
-   <script src="/src/main/webapp/resources/js/projectBoard.js"></script>
+<script src="${ctx}/resources/js/projectForm.js"></script>
 </body>
 </html>
