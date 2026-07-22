@@ -26,7 +26,7 @@
     <!-- 회원가입 -->
     <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
         INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved, dept_id, role, account_status, profile_public)
-        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved}, #{dept_id}, 'USER', 'Active', TRUE)
+        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved}, #{dept_id}, 'USER', 'ACTIVE', TRUE)
     </insert>
     <!-- 로그인 -->
     <select id="findByLoginId" parameterType="String" resultMap="memberResultMap">
