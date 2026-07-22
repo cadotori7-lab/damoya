@@ -219,6 +219,9 @@
   .field input{width:100%;height:46px;border:1px solid var(--line-strong);border-radius:11px;padding:0 15px;font-size:15px;font-family:inherit}
   .field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   .login-box .btn.pri{width:100%;justify-content:center;height:48px;margin-top:8px}
+  .oauth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--ink-soft);font-size:12.5px}
+  .oauth-divider::before,.oauth-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+  .oauth-google{width:100%;justify-content:center;height:48px;text-decoration:none}
   .login-box .alt{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:18px}
   .login-box .alt a{color:var(--accent);font-weight:700}
   .role-hint{margin-top:22px;background:var(--paper);border-radius:11px;padding:13px 15px;font-size:12.5px;color:var(--ink-soft);line-height:1.6}
@@ -823,4 +826,47 @@
   .lp-foot{border-top:1px solid var(--line);padding:36px 24px;text-align:center;color:var(--ink-soft);font-size:13px}
   .lp-foot .logo{font-weight:800;font-size:16px;color:var(--ink);margin-bottom:8px}
 
+  .error{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--reject);font-family:var(--mono)}
+
   @media(max-width:860px){.lp-features,.lp-steps{grid-template-columns:1fr}.lp-hero{padding:64px 0 52px}.lp-band{padding:44px 24px}}
+
+
+  /* ===== 상단 네비: <a> 버전 ===== */
+nav.main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+nav.main a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-decoration: none;        /* 링크 밑줄 제거 */
+  white-space: nowrap;
+  transition: .15s;
+}
+nav.main a:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+nav.main a.on {                 /* 현재 페이지 강조 */
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* style.css 맨 끝에 추가하세요 (회원 탈퇴 UI) */
+
+.danger-zone{margin-top:40px;padding:20px 22px;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:16px;background:var(--surface)}
+.danger-zone .dz-text{flex:1;min-width:0}
+.danger-zone .dz-text b{display:block;font-size:15px;font-weight:800;color:var(--reject)}
+.danger-zone .dz-text span{font-size:13px;color:var(--ink-soft)}
+.btn.danger{color:var(--reject);border-color:var(--reject)}
+.btn.danger:hover{background:var(--reject-bg,#fdecec)}
+.btn.danger-solid{background:var(--reject);color:#fff}
+.btn.danger-solid:hover{background:#c0392b}
+.wd-notice{margin:0 0 18px;padding:14px 16px 14px 32px;background:var(--paper);border-radius:11px;font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+.wd-notice li{margin-bottom:4px}

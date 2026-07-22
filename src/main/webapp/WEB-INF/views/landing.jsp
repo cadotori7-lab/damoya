@@ -14,19 +14,9 @@
 </head>
 <body>
 
-<%-- 랜딩 전용 상단바 (회원 헤더와 별개) --%>
-<header class="lp-top">
-  <div class="in">
-    <a class="logo" href="${ctx}/">다<b>모여</b></a>
-    <div class="r">
-      <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-      <a class="btn pri sm" href="${ctx}/auth/signup">시작하기</a>
-    </div>
-  </div>
-</header>
+<jsp:include page="includes/header.jsp" />
 
 <main>
-<%-- 히어로 --%>
 <section class="lp-hero">
   <div class="lp-wrap">
     <div class="lp-eyebrow">대학생 프로젝트 매칭 · 협업 플랫폼</div>
@@ -35,13 +25,12 @@
        모집부터 업무·회의·검수까지 한곳에서 끝내요.</p>
     <div class="cta">
       <a class="btn pri big" href="${ctx}/auth/signup">무료로 시작하기</a>
-      <a class="btn ghost big" href="${ctx}/projects">프로젝트 둘러보기</a>
+      <a class="btn ghost big" href="${ctx}/project/list">프로젝트 둘러보기</a>
     </div>
     <div class="trust">학교 인증 회원만 · 대학생 팀 프로젝트에 딱 맞게</div>
   </div>
 </section>
 
-<%-- 핵심 기능 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -75,7 +64,6 @@
   </div>
 </section>
 
-<%-- 카테고리 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -91,7 +79,6 @@
   </div>
 </section>
 
-<%-- 이용 흐름 --%>
 <section class="lp-section">
   <div class="lp-wrap">
     <div class="lp-sec-head">
@@ -115,7 +102,6 @@
   </div>
 </section>
 
-<%-- 하단 CTA --%>
 <div class="lp-wrap">
   <div class="lp-band">
     <h2>이번 학기 팀 프로젝트, 다모여에서 시작하세요</h2>
@@ -126,11 +112,7 @@
 
 </main>
 
-<%-- 랜딩 전용 푸터 --%>
-<footer class="lp-foot">
-  <div class="logo">다모여</div>
-  대학생 프로젝트 매칭·협업 플랫폼 · 캡스톤 팀 프로젝트
-</footer>
+<jsp:include page="includes/footer.jsp" />
 
 </body>
 </html>

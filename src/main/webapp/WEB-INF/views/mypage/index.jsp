@@ -1,9 +1,13 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>다모여 - 마이페이지</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -19,11 +23,16 @@
     <p class="sub" style="margin-bottom:22px">내 프로젝트, 지원 현황, 관심 목록을 한곳에서 확인해요.</p>
 
     <div class="mp-head">
-      <div class="big">민</div>
+      <div class="big"><c:out value="${member.name.substring(0, 1)}" /></div>
       <div class="info">
-        <h2>김민재</h2>
-        <div class="line">대진대학교 · 컴퓨터공학과 · 4학년</div>
-        <div class="badges"><span class="b">백엔드</span><span class="b">데이터</span><span class="b">✓ 학교 인증됨</span></div>
+        <h2><c:out value="${member.name}" /></h2>
+        <div class="line"><c:out value="${univ.univ_name}" /> · <c:out value="${univ.dept_name}" /> · <c:out value="${member.grade}" />학년</div>
+        <div class="badges">
+          <c:if test="${member.approved}">
+            <span class="b">✓ 학교 인증됨</span>
+          </c:if>
+        </div>
+        <div class="bio">"${member.intro}"</div>
       </div>
       <button class="btn ghost edit" onclick="openModal('profileModal')">프로필 수정</button>
     </div>
@@ -42,6 +51,8 @@
       <button data-t="liked">관심 목록</button>
     </div>
     <div class="mp-list" id="mpList"></div>
+
+    <jsp:include page="withdraw-modal.jsp" />
   </section>
   </main>
   <!-- 프로필 수정 모달 -->
@@ -54,45 +65,57 @@
       </button>
     </div>
     <div class="modal-body" id="profileBody">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
-        <span class="big" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none">민</span>
-        <button class="btn ghost sm">사진 변경</button>
-      </div>
-      <div class="fld one"><label>이름</label><input type="text" id="pfName" value="김민재"></div>
-      <div class="frow">
-        <div class="fld"><label>학과</label>
-          <select id="pfDept"><option selected>컴퓨터공학과</option><option>소프트웨어학과</option><option>산업경영공학과</option><option>게임공학과</option></select>
+      <form:form id="profileForm" modelAttribute="member" action="${ctx}/mypage/update" method="post">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+          <span class="big" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none"><c:out value="${member.name.substring(0, 1)}" /></span>
+          <button class="btn ghost sm">사진 변경</button>
         </div>
-        <div class="fld"><label>학년</label>
-          <select id="pfYear"><option>1학년</option><option>2학년</option><option>3학년</option><option selected>4학년</option><option>5학년 이상</option></select>
+        <div class="fld one"><label>이름</label><form:input path="name" type="text" id="pfName" name="name" value="${member.name}" /></div>
+        <div class="frow">
+          <div class="fld"><label>학교</label>
+              <select name="univ_name" id="univSelect" required>
+                  <option value="" <c:if test="${empty univ.univ_name}">selected</c:if>>학교를 선택하세요</option>
+                  <c:forEach var="u" items="${univList}">
+                    <option value="${u.univ_name}" <c:if test="${u.univ_name == univ.univ_name}">selected</c:if>>${u.univ_name}</option>
+                  </c:forEach>
+              </select>
+          </div>
+          <div class="fld"><label>학과</label>
+              <select name="dept_id" id="deptSelect" required>
+                  <option value="" <c:if test="${empty member.dept_id}">selected</c:if>>학과를 선택하세요</option>
+                  <c:forEach var="dept" items="${univList}">
+                    <option value="${dept.dept_id}" data-univ-name="${dept.univ_name}" <c:if test="${dept.dept_id == member.dept_id}">selected</c:if>>${dept.dept_name}</option>
+                  </c:forEach>
+              </select>
+          </div>
         </div>
-      </div>
-      <div class="frow">
-        <div class="fld"><label>주전공</label><input type="text" id="pfMajor" value="컴퓨터공학"></div>
-        <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><input type="text" id="pfMinor" placeholder="없으면 비워두세요"></div>
-      </div>
-      <div class="fld one">
-        <label>관심 분야</label>
-        <div class="picker" id="pfInterests">
-          <input type="checkbox" id="pf1" checked><label for="pf1">백엔드</label>
-          <input type="checkbox" id="pf2"><label for="pf2">프론트엔드</label>
-          <input type="checkbox" id="pf3" checked><label for="pf3">데이터</label>
-          <input type="checkbox" id="pf4"><label for="pf4">AI</label>
-          <input type="checkbox" id="pf5"><label for="pf5">기획</label>
-          <input type="checkbox" id="pf6"><label for="pf6">디자인</label>
-          <input type="checkbox" id="pf7"><label for="pf7">게임</label>
+        <div class="frow">
+          <div class="fld"><label>학년</label>
+            <select id="pfYear" name="grade">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><input type="text" id="pfBio" placeholder="예: Spring 백엔드에 관심 많은 4학년"></div>
-      <div class="form-foot">
-        <button class="btn ghost" onclick="closeProfile()">취소</button>
-        <button class="btn pri" onclick="saveProfile()">저장하기</button>
-      </div>
+        <div class="frow">
+          <div class="fld"><label>주전공</label><form:input path="major" type="text" id="pfMajor" name="major" value="${member.major}" /></div>
+          <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="double_major" type="text" id="pfMinor" name="double_major" value="${member.double_major}" placeholder="없으면 비워두세요" /></div>
+        </div>
+        <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="intro" type="text" id="pfBio" name="intro" value="${member.intro}" placeholder="예: Spring 백엔드에 관심 많은 4학년" /></div>
+        <div class="form-foot">
+          <button class="btn ghost" onclick="closeProfile()">취소</button>
+          <button class="btn pri" type="submit">저장하기</button>
+        </div>
+      </form:form>
     </div>
   </div>
 </div>
   <jsp:include page="../includes/footer.jsp" />
   <script src="${ctx}/resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/login.js"></script>
   <script src="${ctx}/resources/js/myPage.js"></script>
 </body>
 </html>

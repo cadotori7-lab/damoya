@@ -6,7 +6,7 @@ public class MemberVO {
    private String password; // 로그인 비밀번호
    private String email; // 이메일
    private String name; // 이름
-   private Long dept_id; // 학과 고유번호
+   private int dept_id; // 학과 고유번호
    private int grade; // 학년
    private String major; // 전공
    private String double_major; // 복수전공
@@ -15,17 +15,11 @@ public class MemberVO {
    private String account_status; // 계정 상태
    private boolean approved; // 승인 여부(대학 관련)
    private boolean profile_public; // 프로필 공개 여부
+   private String password_confirm; // 비밀번호 확인
 
-   private String passwordConfirm; // 비밀번호 확인
-   private String provider;
-
-   public String getProvider() {
-      return provider;
-   }
-
-   public void setProvider(String provider) {
-      this.provider = provider;
-   }
+   //oauth 관련 필드
+   private String provider; // OAuth2 제공자
+   private String provider_id; // OAuth2 제공자에서 제공하는 사용자 ID
 
    public int getMember_id() {
     return member_id;
@@ -57,10 +51,10 @@ public class MemberVO {
    public void setName(String name) {
     this.name = name;
    }
-   public Long getDept_id() {
+   public int getDept_id() {
     return dept_id;
    }
-   public void setDept_id(Long dept_id) {
+   public void setDept_id(int dept_id) {
     this.dept_id = dept_id;
    }
    public int getGrade() {
@@ -111,11 +105,27 @@ public class MemberVO {
    public void setProfile_public(boolean profile_public) {
     this.profile_public = profile_public;
    }
-   public String getPasswordConfirm() {
-    return passwordConfirm;
+   public String getPassword_confirm() {
+    return password_confirm;
    }
-   public void setPasswordConfirm(String passwordConfirm) {
-    this.passwordConfirm = passwordConfirm;
+   public void setPassword_confirm(String password_confirm) {
+    this.password_confirm = password_confirm;
    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProvider_id() {
+        return provider_id;
+    }
+
+    public void setProvider_id(String provider_id) {
+        this.provider_id = provider_id;
+    }
 
 }
