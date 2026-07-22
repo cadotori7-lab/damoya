@@ -61,8 +61,8 @@
               </div>
               <div class="fld">
                 <label>비밀번호 확인<span class="req">*</span></label>
-                <form:password path="passwordConfirm" placeholder="다시 입력" />
-                <form:errors path="passwordConfirm" element="span" cssClass="error" />
+                <form:password path="password_confirm" placeholder="다시 입력" />
+                <form:errors path="password_confirm" element="span" cssClass="error" />
               </div>
             </div>
           </div>

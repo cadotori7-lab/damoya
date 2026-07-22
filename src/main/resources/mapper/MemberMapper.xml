@@ -25,8 +25,8 @@
 
     <!-- 회원가입 -->
     <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
-        INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved, dept_id)
-        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved}, #{dept_id})
+        INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved, dept_id, role, account_status, profile_public)
+        VALUES (#{login_id}, #{email}, #{password}, #{name}, #{grade}, #{major}, #{double_major}, #{intro}, #{approved}, #{dept_id}, 'USER', 'Active', TRUE)
     </insert>
     <!-- 로그인 -->
     <select id="findByLoginId" parameterType="String" resultMap="memberResultMap">
@@ -47,7 +47,7 @@
         role, account_status, approved)
         VALUES
         (#{login_id}, #{password}, #{email}, #{name}, #{dept_id}, #{intro},
-        'USER', 'PENDING', FALSE)
+        'USER', 'Active', FALSE)
     </insert>
     <!-- 멘토 정보 INSERT -->
     <insert id="insertMentor" parameterType="com.soldesk.vo.MentorSignupVO">
@@ -61,11 +61,11 @@
     <!-- 회원 정보 업데이트 -->
     <update id="updateMember" parameterType="com.soldesk.vo.MemberVO">
         UPDATE member
-        SET name = #{name}, grade = #{grade}, major = #{major}, double_major = #{double_major}, intro = #{intro}
+        SET name = #{name}, grade = #{grade}, major = #{major}, double_major = #{double_major}, intro = #{intro}, dept_id = #{dept_id}
         WHERE login_id = #{login_id}
     </update>
     <!-- 회원 정보 익명화 -->
-    <update id="anonymize">
+    <update id="anonymize" parameterType="int">
         UPDATE member
             SET name = '탈퇴회원',
                 email = CONCAT('withdrawn_', member_id, '@removed.local'),
@@ -73,20 +73,20 @@
         WHERE member_id = #{memberId}
     </update>
     <!-- 회원 계정 상태 업데이트 -->
-    <update id="updateAccountStatus">
+    <update id="updateAccountStatus" parameterType="map">
         UPDATE member SET account_status = #{status} WHERE member_id = #{memberId}
     </update>
     <!-- oAuth 관련 처리 -->
-    <select id="findByProviderAndProviderId" resultType="MemberVO">
-        SELECT * FROM member WHERE provider = #{provider} AND provider_id = #{provider_id}
+    <select id="findByProviderAndProviderId" resultType="com.soldesk.vo.MemberVO">
+        SELECT * FROM member WHERE provider = #{provider} AND provider_id = #{providerId}
     </select>
-    <select id="findByEmail" resultType="MemberVO">
+    <select id="findByEmail" resultType="com.soldesk.vo.MemberVO">
         SELECT * FROM member WHERE email = #{email}
     </select>
-    <insert id="insertOAuthMember" useGeneratedKeys="true" keyProperty="member_id">
-        INSERT INTO member (email, name, provider, provider_id, password,
+    <insert id="insertOAuthMember" useGeneratedKeys="true" keyProperty="member_id" parameterType="com.soldesk.vo.MemberVO">
+        INSERT INTO member (login_id, email, name, provider, provider_id, password,
                         role, account_status, approved)
-        VALUES (#{email}, #{name}, #{provider}, #{provider_id}, #{password},
+        VALUES (#{login_id}, #{email}, #{name}, #{provider}, #{provider_id}, #{password},
             'USER', 'ACTIVE', FALSE)
     </insert>
 </mapper>

@@ -95,8 +95,8 @@ public class LoginController {
             return "auth/signup-mentor";
         }
         // 2) 비밀번호 일치
-        if (!form.getPassword().equals(form.getPasswordConfirm())) {
-            bindingResult.rejectValue("passwordConfirm", "mismatch", "비밀번호가 일치하지 않아요.");
+        if (!form.getPassword().equals(form.getPassword_confirm())) {
+            bindingResult.rejectValue("password_confirm", "mismatch", "비밀번호가 일치하지 않아요.");
         }
         // 3) 중복 검사 
         if (memberService.countByLoginId(form.getLogin_id()) > 0) {

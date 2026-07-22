@@ -19,10 +19,14 @@ public class MemberDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login_id) throws UsernameNotFoundException {
         
-        MemberVO member = memberMapper.findByLoginId(login_id); 
+        MemberVO member = memberMapper.findByLoginId(login_id);
+        if (member == null) {
+            // OAuth로 가입한 회원은 login_id가 없고 email로만 조회 가능
+            member = memberMapper.findByEmail(login_id);
+        }
         if(member == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + login_id); 
-        } 
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + login_id);
+        }
         if ("WITHDRAWN".equals(member.getAccount_status())) {
             throw new UsernameNotFoundException("탈퇴한 계정입니다.");
         }

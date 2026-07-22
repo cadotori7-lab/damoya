@@ -35,14 +35,14 @@ public class OAuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${google.client-id}")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
-    @Value("${google.client-secret}")
+    @Value("${GOOGLE_CLIENT_SECRET}")
     private String googleClientSecret;
 
-    @Value("${google.redirect-uri}")
-    private String gooleRedirectUri;
+    @Value("${GOOGLE_REDIRECT_URI}")
+    private String googleRedirectUri;
 
     @Autowired
     private MemberMapper memberMapper;
@@ -65,7 +65,7 @@ public class OAuthService {
     public String getGooleAuthUrl(){
         return "https://accounts.google.com/o/oauth2/v2/auth"
             + "?client_id=" + googleClientId
-            + "&redirect_uri=" + URLEncoder.encode(gooleRedirectUri, StandardCharsets.UTF_8)
+            + "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8)
             + "&response_type=code" 
             + "&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8)
             + "&access_type=online";
@@ -80,7 +80,7 @@ public class OAuthService {
             "code", code,
             "client_id", googleClientId,
             "client_secret", googleClientSecret,
-            "redirect_uri", gooleRedirectUri,
+            "redirect_uri", googleRedirectUri,
             "grant_type", "authorization_code"
         );
         StringBuilder tokenReqBody = new StringBuilder();
@@ -133,6 +133,7 @@ public class OAuthService {
         // 로컬로 가입된 회원이 아니면 DB에 새롭게 회원 정보를 저장
         if(member == null){
             member = new MemberVO();
+            member.setLogin_id(provider.toLowerCase() + "_" + providerId);
             member.setEmail(email);
             member.setName(name);
             member.setProvider(provider);

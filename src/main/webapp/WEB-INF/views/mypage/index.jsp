@@ -72,14 +72,24 @@
         </div>
         <div class="fld one"><label>이름</label><form:input path="name" type="text" id="pfName" name="name" value="${member.name}" /></div>
         <div class="frow">
-          <div class="fld"><label>학과</label>
-              <select name="dept_id" id="deptSelect" required>
-                  <option value="" selected>학과를 선택하세요</option>
-                  <c:forEach var="dept" items="${univList}">
-                    <option value="${dept.dept_id}" data-univ-name="${dept.univ_name}">${dept.dept_name}</option>
+          <div class="fld"><label>학교</label>
+              <select name="univ_name" id="univSelect" required>
+                  <option value="" <c:if test="${empty univ.univ_name}">selected</c:if>>학교를 선택하세요</option>
+                  <c:forEach var="u" items="${univList}">
+                    <option value="${u.univ_name}" <c:if test="${u.univ_name == univ.univ_name}">selected</c:if>>${u.univ_name}</option>
                   </c:forEach>
               </select>
           </div>
+          <div class="fld"><label>학과</label>
+              <select name="dept_id" id="deptSelect" required>
+                  <option value="" <c:if test="${empty member.dept_id}">selected</c:if>>학과를 선택하세요</option>
+                  <c:forEach var="dept" items="${univList}">
+                    <option value="${dept.dept_id}" data-univ-name="${dept.univ_name}" <c:if test="${dept.dept_id == member.dept_id}">selected</c:if>>${dept.dept_name}</option>
+                  </c:forEach>
+              </select>
+          </div>
+        </div>
+        <div class="frow">
           <div class="fld"><label>학년</label>
             <select id="pfYear" name="grade">
               <option>1</option>
@@ -105,6 +115,7 @@
 </div>
   <jsp:include page="../includes/footer.jsp" />
   <script src="${ctx}/resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/login.js"></script>
   <script src="${ctx}/resources/js/myPage.js"></script>
 </body>
 </html>

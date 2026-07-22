@@ -60,8 +60,8 @@
             </div>
             <div class="fld">
               <label>비밀번호 확인<span class="req">*</span></label>
-              <form:password path="passwordConfirm" placeholder="다시 입력"/>
-              <form:errors path="passwordConfirm" element="div" cssClass="hint" cssStyle="color:var(--reject)"/>
+              <form:password path="password_confirm" placeholder="다시 입력"/>
+              <form:errors path="password_confirm" element="div" cssClass="hint" cssStyle="color:var(--reject)"/>
             </div>
           </div>
         </div>
