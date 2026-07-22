@@ -32,6 +32,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    // 프로젝트 목록 페이지
     @GetMapping("/list")
     public String list(Model model) {
         
@@ -42,6 +43,7 @@ public class ProjectController {
         return "project/list";
     }
 
+    // 프로젝트 상세 페이지 
     @GetMapping("/detail")
     public String detail(@RequestParam("id") Long projectId, Model model) {
         ProjectVO project = projectService.getProjectById(projectId);
@@ -49,31 +51,46 @@ public class ProjectController {
         return "project/detail";
     }
 
-    
+    // 프로젝트 등록 폼 
     @GetMapping("/form")
     public String form() {
         return "project/form";
     }    
+
+    // 프로젝트 등록
     @PostMapping("/register")
-    public String registerProject(@ModelAttribute ProjectVO projectVO,
-                                    HttpSession session
-    ) { 
-        //     //로그인한 회원ID 가져오기
-        //    Long memberId = (Long) session.getAttribute("memberId");
+    public String registerProject(@ModelAttribute ProjectVO projectVO, HttpSession session) { 
+        projectVO.setOwnerId(1L); // 임시 오너 ID 설정
+        projectService.registerProject(projectVO);
+        return "redirect:/project/list";
+    }
+    
+    //수정 페이지
+    @GetMapping("/edit")
+    public String editForm(@RequestParam("id") Long projectId,
+                            Model model){
+        ProjectVO project = projectService.getProjectById(projectId);
+        model.addAttribute("project", project);
+        model.addAttribute("mode", "update");//수정 모드로
+        return "project/form";
+    }
+    
+    //수정 처리
+    @PostMapping("/update")
+    public String updateForm(@ModelAttribute ProjectVO projectVO){
+        projectService.updateProject(projectVO);
+        return "redirect:/project/detail?id=" + projectVO.getProjectId();
+    }
 
-        //     //로그인x시 더미데이터 
-        //     if (memberId==null){
-        //         memberId = 1L;
-        //     }
-
-            projectVO.setOwnerId(1L);
-
-            projectService.registerProject(projectVO);
-            
-            return "redirect:/project/list";
+    //삭제 처리 
+    @GetMapping("/delete")
+    public String deleteProject(@RequestParam("id") Long projectId) {
+        projectService.deleteProject(projectId);
+        return "redirect:/project/list";
     }
     
     
+
     @GetMapping("/my")
     public String my() {
         return "project/my";

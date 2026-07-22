@@ -7,11 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>프로젝트 상세</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../resources/css/style.css">
+    <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
   <jsp:include page="../includes/header.jsp" />
@@ -23,27 +23,32 @@
       <div>
         <div class="panel d-head">
           <div class="cat">${project.category} · ${project.matchScope}</div>
-          <h2>${project.title}</h2>
+          <h2><c:out value="${project.title}" /></h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <span class="chip recruit">${project.status == 'RECRUTING' ? '모집중': '임시저장'}</span>
-              <c:if test="${not empty project.tags}">
-                <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
-                  <span class="tag"><c:out value="${tag}" /></span>
-                </c:forEach>
-              </c:if>
+            <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '임시저장'}</span>
+            <c:if test="${not empty project.tags}">
+              <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
+                <span class="tag"><c:out value="${tag}" /></span>
+              </c:forEach>
+            </c:if>
           </div>
           <div class="d-meta">
             <div><div class="k">카테고리</div><div class="v">${project.category}</div></div>
             <div><div class="k">대상 학년</div><div class="v">${project.targetGrade}</div></div>
             <div><div class="k">모집 인원</div><div class="v">${project.capacity}명</div></div>
-            <div><div class="k">모집 기간</div><div class="v mono">${project.startDate}~ ${project.endDate}</div></div>
+            <div><div class="k">모집 마감일</div><div class="v mono"> ${project.endDate}</div></div>
             <div><div class="k">대학 / 학과</div><div class="v">대진대 · 컴퓨터공학</div></div>
           </div>
           <div class="prose">
             <p><c:out value="${project.summary}" /></p>
-           </div>
+          </div>
         </div>
-            
+
+        <!-- 프로젝트 수정 및 삭제 버튼 영역 -->
+        <div class="d-actions" style="margin-bottom: 16px; display: flex; gap: 8px;">
+          <a class="btn ghost sm" href="${ctx}/project/edit?id=${project.projectId}">수정하기</a>
+          <button type="button" class="btn ghost sm" style="color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
+        </div>
 
         <div class="panel">
           <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">3</span></h5>
@@ -72,9 +77,9 @@
 
       <div class="side">
         <div class="apply-card">
-          <div class="num">2<small> / 4명 모집</small></div>
+          <div class="num">2<small> / ${project.capacity}명 모집</small></div>
           <div class="bar"><span style="width:50%"></span></div>
-          <div class="team-need mono" style="font-size:12px;color:var(--ink-soft)">백엔드 1 · 프론트 1 · 기획 1 남음</div>
+          <div class="team-need mono" style="font-size:12px;color:var(--ink-soft)">팀원 모집 진행 중</div>
           <div class="lead">
             <div class="pic">최</div>
             <div class="nm">최윤서 <small>팀장 · 컴퓨터공학 4학년</small></div>
@@ -91,6 +96,11 @@
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
-  <script src="../resources/js/detail.js"></script>
+  
+  <script>
+      const ctx = '${pageContext.request.contextPath}';
+  </script>
+  
+  <script src="${ctx}/resources/js/detail.js"></script>
 </body>
 </html>

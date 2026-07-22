@@ -10,8 +10,8 @@ public class ProjectVO {
     private String summary;      // 소개
     private Integer capacity;    // 모집 인원수
     private String targetGrade;  // 대상 학년 
-    private java.sql.Date startDate; // 시작일
-    private java.sql.Date endDate;   // 종료일
+    private String startDate; // 시작일
+    private String endDate;   // 종료일
     private String status;     //모집 상태  
     private boolean isPublic;    // 공개 여부 
     private LocalDateTime createdAt; // 생성일시
@@ -72,17 +72,21 @@ public class ProjectVO {
     public void setTargetGrade(String targetGrade) {
         this.targetGrade = targetGrade;
     }
-    public java.sql.Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
-    public void setStartDate(java.sql.Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
-    public java.sql.Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
-    public void setEndDate(java.sql.Date endDate) {
-        this.endDate = endDate;
+    public void setEndDate(String endDate) {
+        if (endDate == null || endDate.trim().isEmpty()) {
+            this.endDate = null; // 빈 값이면 null로 세팅하여 DB 에러 방지
+        } else {
+            this.endDate = endDate;
+        }
     }
     public String getStatus() {
         return status;

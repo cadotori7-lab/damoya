@@ -1,31 +1,19 @@
-//프로젝트 모집 등록 양식 보내기
-    function submitProject(status) {
-        // 1. 필수 입력값 검사 (제목)
-        const title = document.getElementById("title").value.trim();
-        if(!title) {
-            alert("프로젝트 제목을 입력해주세요.");
-            document.getElementById("title").focus();
-            return;
-        }
-
-        // 2. 화면에 있는 태그(span)들의 글자만 뽑아서 쉼표(,)로 연결
-        const tagElements = document.querySelectorAll('.tag-input .tg');
-        const tagsArray = Array.from(tagElements).map(tg => tg.textContent.replace(' ×', '').trim());
-        document.getElementById("hiddenTags").value = tagsArray.join(',');
-
-        //  임시저장인지 등록인지 상태값 설정
-        document.getElementById("projectStatus").value = status;
-
-        // 서버로 폼 전송
-        document.getElementById("projectForm").submit();
-    }
-
-    // 태그 데이터를 관리할 배열
+// 태그 데이터를 관리할 배열
 let tagsArray = [];
 
+// 페이지가 로드될 때 (수정 모드 등) 기존 태그가 숨겨진 input에 있다면 배열로 복원
+window.addEventListener('DOMContentLoaded', () => {
+    const hiddenTags = document.getElementById('hiddenTags');
+    if (hiddenTags && hiddenTags.value.trim() !== '') {
+        tagsArray = hiddenTags.value.split(',').map(t => t.trim());
+        updateTagUI();
+    }
+});
+
+// 엔터 키로 태그 추가
 function handleTagInput(event) {
     if (event.key === 'Enter') {
-        event.preventDefault(); // 폼이 자동으로 제출되는 것을 막음
+        event.preventDefault(); // 폼 자동 제출 방지
         
         const input = document.getElementById('tagInput');
         const tagValue = input.value.trim();
@@ -39,7 +27,7 @@ function handleTagInput(event) {
     }
 }
 
-// 화면에 뱃지를 다시 그려주고 hidden input에 값(쉼표 구분)을 세팅하는 함수
+// 화면에 태그 뱃지를 다시 그려주고 hidden input에 쉼표로 묶어 세팅하는 함수
 function updateTagUI() {
     const tagBox = document.getElementById('tagBox');
     const input = document.getElementById('tagInput');
@@ -53,16 +41,54 @@ function updateTagUI() {
     tagsArray.forEach((tag, index) => {
         const span = document.createElement('span');
         span.className = 'tg';
-        span.innerHTML = `${tag} <b onclick="removeTag(${index})">×</b>`;
+        span.style.cssText = "background:var(--surface-alt); padding:2px 8px; border-radius:4px; font-size:13px; display:inline-flex; align-items:center; gap:4px;";
+        span.innerHTML = `${tag} <b onclick="removeTag(${index})" style="cursor:pointer; color:var(--ink-soft);">×</b>`;
         tagBox.insertBefore(span, input);
     });
     
-    // 백엔드로 넘어갈 hidden 필드에 쉼표로 연결된 문자열 대입 (예: "Spring,React,MySQL")
-    hiddenTags.value = tagsArray.join(',');
+    // 백엔드로 넘어갈 hidden 필드에 쉼표로 연결된 문자열 대입
+    if (hiddenTags) {
+        hiddenTags.value = tagsArray.join(',');
+    }
 }
 
 // 태그 뱃지 안의 X 버튼을 눌렀을 때 삭제하는 함수
 function removeTag(index) {
     tagsArray.splice(index, 1);
     updateTagUI();
+}
+
+// 대상 학년 버튼 선택 함수 
+function selectGrade(gradeValue, buttonElement) {
+    // hidden input에 선택된 학년 값 세팅
+    document.getElementById('targetGrade').value = gradeValue;
+    
+    // 모든 학년 버튼에서 active 클래스 제거
+    const buttons = document.querySelectorAll('.btn-grade');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // 클릭한 버튼에만 active 클래스 추가
+    buttonElement.classList.add('active');
+}
+
+// 프로젝트 모집 등록/수정 양식 전송
+function submitProject(status) {
+    const titleInput = document.getElementById("title");
+    const title = titleInput ? titleInput.value.trim() : "";
+    
+    if (!title) {
+        alert("프로젝트 제목을 입력해주세요.");
+        if (titleInput) titleInput.focus();
+        return;
+    }
+
+    const projectStatusInput = document.getElementById("projectStatus");
+    if (projectStatusInput) {
+        projectStatusInput.value = status;
+    }
+
+    const projectForm = document.getElementById("projectForm");
+    if (projectForm) {
+        projectForm.submit();
+    }
 }

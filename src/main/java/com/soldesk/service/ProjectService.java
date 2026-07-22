@@ -17,6 +17,7 @@ public class ProjectService {
     private ProjectMapper projectmapper;
 
 
+    //프로젝트 등록
     @Transactional
     public void registerProject(ProjectVO project){
         
@@ -28,10 +29,22 @@ public class ProjectService {
         return projectmapper.getAllProjects();
     }
 
+    //등록된 프로젝트 가져오기
     @Transactional
     public ProjectVO getProjectById(Long projectId){
         return projectmapper.getProjectById(projectId);
     }
 
+    //프로젝트 모집글 수정
+    @Transactional
+    public void updateProject(ProjectVO projectVO){
+        projectmapper.updateProject(projectVO);
+    }
+
+    //프로젝트 모집글 삭제
+    @Transactional 
+    public void deleteProject(Long projectId){
+        projectmapper.deleteProject(projectId);
+    }
     
 }

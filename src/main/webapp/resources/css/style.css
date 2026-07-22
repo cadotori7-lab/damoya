@@ -129,6 +129,31 @@
   .stepline{display:flex;gap:6px;margin:16px 0 4px}
   .stepline div{flex:1;text-align:center;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-soft);padding:7px 2px;border-radius:7px;background:var(--paper)}
   .stepline div.act{background:var(--accent-soft);color:var(--accent)}
+  .btn-grade {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--ink-soft, #555);
+}
+
+.btn-grade:hover {
+    border-color: var(--primary, #2b46c8);
+    color: var(--primary, #2b46c8);
+}
+
+/* 버튼이 선택(Active)되었을 때의 디자인 */
+.btn-grade.active {
+    background-color: var(--primary, #2b46c8);
+    color: #fff;
+    border-color: var(--primary, #2b46c8);
+    font-weight: 600;
+}
 
   /* comments */
   .cmt{display:flex;gap:11px;padding:14px 0;border-top:1px solid var(--line)}
