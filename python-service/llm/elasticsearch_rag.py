@@ -20,8 +20,8 @@ if ELASTICSEARCH_USERNAME:
 client = Elasticsearch(ELASTICSEARCH_URL, **client_options)
 embedding_model = SentenceTransformer(EMBEDDING_MODEL)
 
+# 사이트 안내 CSV를 Elasticsearch 문서 형태로 읽기
 def load_pages() -> list[dict]:
-    """사이트 안내 CSV를 Elasticsearch 문서 형태로 읽는다."""
     with CSV_PATH.open(encoding="utf-8-sig", newline="") as file:
         return [
             {
@@ -38,7 +38,7 @@ def load_pages() -> list[dict]:
             for row in csv.DictReader(file)
         ]
 
-
+# 페이지 내용 생성
 def page_content(page: dict) -> str:
     return (
         f"페이지 ID: {page['id']}\n"
@@ -48,6 +48,7 @@ def page_content(page: dict) -> str:
         f"검색어: {', '.join(page['keywords'])}"
     )
 
+# 인덱스 준비
 def prepare_index() -> int:
     """인덱스가 없거나 비어 있을 때만 사이트 페이지를 저장한다."""
     if not client.ping():

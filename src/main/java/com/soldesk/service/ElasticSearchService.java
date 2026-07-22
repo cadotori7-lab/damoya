@@ -1,9 +1,7 @@
 package com.soldesk.service;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.soldesk.mapper.MemberMapper;
-import com.soldesk.vo.AdminDashboardStats;
 import com.soldesk.vo.MemberDocument;
 import com.soldesk.vo.MemberVO;
 
@@ -29,7 +26,6 @@ public class ElasticSearchService implements InitializingBean {
     @Autowired
     private ElasticsearchClient elasticsearchClient;
 
-    /* MyBatis 설정이 완료되기 전에도 관리자 화면이 구동되도록 선택 주입합니다. */
     @Autowired(required = false)
     private MemberMapper memberMapper;
 
@@ -54,6 +50,7 @@ public class ElasticSearchService implements InitializingBean {
         }
     }
 
+    // 회원 인덱싱
     public void indexMember(MemberVO member) {
         try {
             createIndexIfNotExists();
@@ -68,6 +65,7 @@ public class ElasticSearchService implements InitializingBean {
         }
     }
 
+    // 회원 인덱스 삭제
     public void deleteMember(int memberId) {
         try {
             if (!indexExists(membersIndex)) {
@@ -84,31 +82,8 @@ public class ElasticSearchService implements InitializingBean {
         }
     }
 
-    public AdminDashboardStats getDashboardStats() {
-        try {
-            ensureIndicesReady();
-
-            String clusterStatus = elasticsearchClient.cluster()
-                .health()
-                .status()
-                .jsonValue();
-
-            Map<String, Long> indexDocumentCounts = new LinkedHashMap<>();
-            indexDocumentCounts.put(membersIndex, countDocuments(membersIndex));
-            indexDocumentCounts.put(projectsIndex, countDocuments(projectsIndex));
-            indexDocumentCounts.put(reportsIndex, countDocuments(reportsIndex));
-
-            return AdminDashboardStats.connected(clusterStatus, indexDocumentCounts);
-        } catch (Exception e) {
-            log.warn("Elasticsearch 대시보드 집계 실패: {}", e.getMessage());
-            return AdminDashboardStats.disconnected(
-                "Elasticsearch에 연결할 수 없습니다. 서버와 연결 설정을 확인하세요.",
-                configuredIndices()
-            );
-        }
-    }
-
-    private void ensureIndicesReady() throws IOException {
+    // 인덱스 준비 (회원 인덱스 없으면 생성 + 재색인, 부가 인덱스도 확인)
+    public void ensureIndicesReady() throws IOException {
         if (!indexExists(membersIndex)) {
             createIndexIfNotExists();
             reindexAll();
@@ -117,12 +92,44 @@ public class ElasticSearchService implements InitializingBean {
         createSimpleIndexIfNotExists(reportsIndex);
     }
 
-    private boolean indexExists(String indexName) throws IOException {
+    // ===== 아래부터는 인덱스 이름을 파라미터로 받는 범용 기능 (다른 서비스에서도 재사용 가능) =====
+
+    // 인덱스 존재 여부 확인
+    public boolean indexExists(String indexName) throws IOException {
         return elasticsearchClient.indices()
             .exists(ExistsRequest.of(request -> request.index(indexName)))
             .value();
     }
 
+    // 매핑 없는 단순 인덱스 생성 (없을 때만)
+    public void createSimpleIndexIfNotExists(String indexName) throws IOException {
+        if (indexExists(indexName)) {
+            return;
+        }
+
+        elasticsearchClient.indices().create(CreateIndexRequest.of(create -> create.index(indexName)));
+        log.info("Elasticsearch 인덱스 생성 완료: {}", indexName);
+    }
+
+    // 인덱스 문서 수 조회
+    public long countDocuments(String indexName) throws IOException {
+        if (!indexExists(indexName)) {
+            return 0L;
+        }
+        return elasticsearchClient.count(count -> count.index(indexName)).count();
+    }
+
+    // 클러스터 상태 조회
+    public String getClusterStatus() throws IOException {
+        return elasticsearchClient.cluster()
+            .health()
+            .status()
+            .jsonValue();
+    }
+
+    // ===== 회원 인덱스 전용 내부 로직 =====
+
+    // 회원 인덱스 생성
     private void createIndexIfNotExists() throws IOException {
         if (indexExists(membersIndex)) {
             putMemberMapping();
@@ -149,6 +156,7 @@ public class ElasticSearchService implements InitializingBean {
         log.info("Elasticsearch 회원 인덱스 생성 완료: {}", membersIndex);
     }
 
+    // 회원 인덱스 매핑
     private void putMemberMapping() throws IOException {
         elasticsearchClient.indices().putMapping(mapping -> mapping
             .index(membersIndex)
@@ -167,15 +175,6 @@ public class ElasticSearchService implements InitializingBean {
             .properties("profile_public", property -> property.boolean_(bool -> bool)));
     }
 
-    private void createSimpleIndexIfNotExists(String indexName) throws IOException {
-        if (indexExists(indexName)) {
-            return;
-        }
-
-        elasticsearchClient.indices().create(CreateIndexRequest.of(create -> create.index(indexName)));
-        log.info("Elasticsearch 인덱스 생성 완료: {}", indexName);
-    }
-
     private void reindexAll() throws IOException {
         if (memberMapper == null) {
             log.warn("MemberMapper가 등록되지 않아 회원 전체 재색인을 건너뜁니다.");
@@ -192,20 +191,5 @@ public class ElasticSearchService implements InitializingBean {
         elasticsearchClient.indices().refresh(refresh -> refresh.index(membersIndex));
 
         log.info("Elasticsearch 회원 reindex 완료: {}건", members.size());
-    }
-
-    private long countDocuments(String indexName) throws IOException {
-        if (!indexExists(indexName)) {
-            return 0L;
-        }
-        return elasticsearchClient.count(count -> count.index(indexName)).count();
-    }
-
-    private Map<String, Long> configuredIndices() {
-        Map<String, Long> indices = new LinkedHashMap<>();
-        indices.put(membersIndex, 0L);
-        indices.put(projectsIndex, 0L);
-        indices.put(reportsIndex, 0L);
-        return indices;
     }
 }

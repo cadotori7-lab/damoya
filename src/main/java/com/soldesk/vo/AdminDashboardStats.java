@@ -1,39 +1,40 @@
 package com.soldesk.vo;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class AdminDashboardStats {
 
     private final boolean connected;
     private final String clusterStatus;
     private final String errorMessage;
-    private final Map<String, Long> indexDocumentCounts;
+    private final long memberCount;
+    private final long projectCount;
+    private final long reportCount;
 
     private AdminDashboardStats(
             boolean connected,
             String clusterStatus,
             String errorMessage,
-            Map<String, Long> indexDocumentCounts) {
+            long memberCount,
+            long projectCount,
+            long reportCount) {
         this.connected = connected;
         this.clusterStatus = clusterStatus;
         this.errorMessage = errorMessage;
-        this.indexDocumentCounts = Collections.unmodifiableMap(
-            new LinkedHashMap<>(indexDocumentCounts)
-        );
+        this.memberCount = memberCount;
+        this.projectCount = projectCount;
+        this.reportCount = reportCount;
     }
 
     public static AdminDashboardStats connected(
             String clusterStatus,
-            Map<String, Long> indexDocumentCounts) {
-        return new AdminDashboardStats(true, clusterStatus, null, indexDocumentCounts);
+            long memberCount,
+            long projectCount,
+            long reportCount) {
+        return new AdminDashboardStats(
+                true, clusterStatus, null, memberCount, projectCount, reportCount);
     }
 
-    public static AdminDashboardStats disconnected(
-            String errorMessage,
-            Map<String, Long> indexDocumentCounts) {
-        return new AdminDashboardStats(false, "unavailable", errorMessage, indexDocumentCounts);
+    public static AdminDashboardStats disconnected(String errorMessage) {
+        return new AdminDashboardStats(false, "unavailable", errorMessage, 0L, 0L, 0L);
     }
 
     public boolean isConnected() {
@@ -48,30 +49,19 @@ public class AdminDashboardStats {
         return errorMessage;
     }
 
-    public Map<String, Long> getIndexDocumentCounts() {
-        return indexDocumentCounts;
-    }
-
     public long getMemberCount() {
-        return countAt(0);
+        return memberCount;
     }
 
     public long getProjectCount() {
-        return countAt(1);
+        return projectCount;
     }
 
     public long getReportCount() {
-        return countAt(2);
+        return reportCount;
     }
 
     public long getTotalDocumentCount() {
-        return indexDocumentCounts.values().stream().mapToLong(Long::longValue).sum();
-    }
-
-    private long countAt(int position) {
-        return indexDocumentCounts.values().stream()
-            .skip(position)
-            .findFirst()
-            .orElse(0L);
+        return memberCount + projectCount + reportCount;
     }
 }

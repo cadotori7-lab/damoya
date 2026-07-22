@@ -13,6 +13,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\AdminDashboardService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\CertVerifyService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\ElasticSearchService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\MemberService.java
