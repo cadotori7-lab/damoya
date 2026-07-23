@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="isInternal" value="${not empty signupMentor.dept_id}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -74,15 +75,43 @@
               <form:input path="name" placeholder="실명"/>
               <form:errors path="name" element="div" cssClass="hint" cssStyle="color:var(--reject)"/>
             </div>
+          </div>
+
+          <div class="fld one">
+            <label>소속 구분<span class="req">*</span></label>
+            <div class="role-toggle" id="affiliationToggle" style="margin-bottom:0">
+              <label class="opt ${isInternal ? 'on' : ''}" data-v="internal">
+                <input type="radio" name="affiliationType" value="internal" style="display:none" ${isInternal ? 'checked' : ''}>
+                <div class="rt">🏫 교내</div>
+                <div class="rd">우리 학교 소속 교수·조교</div>
+              </label>
+              <label class="opt ${isInternal ? '' : 'on'}" data-v="external">
+                <input type="radio" name="affiliationType" value="external" style="display:none" ${isInternal ? '' : 'checked'}>
+                <div class="rt">🌐 외부</div>
+                <div class="rd">소속 없는 외부 전문가</div>
+              </label>
+            </div>
+          </div>
+
+          <div class="frow" id="deptFields" style="display:none">
             <div class="fld">
-              <label>소속 학과 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
-              <form:select path="dept_id">
-                <form:option value="" label="외부 전문가 (소속 없음)"/>
-                <c:forEach var="d" items="${depts}">
-                  <form:option value="${d.deptId}">${d.univName} · ${d.deptName}</form:option>
+              <label>학교<span class="req">*</span></label>
+              <select name="univ_name" id="univSelect" required>
+                <option value="">학교를 선택하세요</option>
+                <c:forEach var="u" items="${univList}">
+                  <option value="${u.univ_name}">${u.univ_name}</option>
                 </c:forEach>
-              </form:select>
-              <div class="hint">교내 교수님이면 학과를 선택해주세요.</div>
+              </select>
+            </div>
+            <div class="fld">
+              <label>학과<span class="req">*</span></label>
+              <select name="dept_id" id="deptSelect" required>
+                <option value="" <c:if test="${empty signupMentor.dept_id}">selected</c:if>>학과를 선택하세요</option>
+                <c:forEach var="dept" items="${univList}">
+                  <option value="${dept.dept_id}" data-univ-name="${dept.univ_name}" <c:if test="${dept.dept_id == signupMentor.dept_id}">selected</c:if>>${dept.dept_name}</option>
+                </c:forEach>
+              </select>
+              <form:errors path="dept_id" element="div" cssClass="hint" cssStyle="color:var(--reject)"/>
             </div>
           </div>
 
@@ -125,5 +154,36 @@
 
 <jsp:include page="/WEB-INF/views/includes/footer.jsp" />
 <script src="${ctx}/resources/js/common.js"></script>
+<script src="${ctx}/resources/js/login.js"></script>
+<script>
+(function () {
+  var toggle = document.getElementById('affiliationToggle');
+  var deptFields = document.getElementById('deptFields');
+  var univSelect = document.getElementById('univSelect');
+  var deptSelect = document.getElementById('deptSelect');
+  if (!toggle || !deptFields || !univSelect || !deptSelect) return;
+
+  function applyMode(mode) {
+    var isInternal = mode === 'internal';
+    toggle.querySelectorAll('.opt').forEach(function (opt) {
+      opt.classList.toggle('on', opt.dataset.v === mode);
+    });
+    deptFields.style.display = isInternal ? '' : 'none';
+    univSelect.disabled = !isInternal;
+    deptSelect.disabled = !isInternal;
+    if (!isInternal) {
+      univSelect.value = '';
+      deptSelect.value = '';
+    }
+  }
+
+  toggle.querySelectorAll('input[name="affiliationType"]').forEach(function (radio) {
+    radio.addEventListener('change', function () { applyMode(this.value); });
+  });
+
+  var checked = toggle.querySelector('input[name="affiliationType"]:checked');
+  applyMode(checked ? checked.value : 'external');
+})();
+</script>
 </body>
 </html>

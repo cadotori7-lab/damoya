@@ -26,7 +26,8 @@
       <div class="big"><c:out value="${member.name.substring(0, 1)}" /></div>
       <div class="info">
         <h2><c:out value="${member.name}" />(<c:out value="${member.login_id}" />)</h2>
-        <div class="line"><c:out value="${univ.univ_name}" /> · <c:out value="${univ.dept_name}" /> · <c:out value="${member.grade}" />학년</div>
+        <div class="line"><c:out value="${univ.univ_name}" /> · <c:out value="${univ.dept_name}" />
+           ·<c:if test="${member.grade ne null && member.grade ne ''}"><c:out value="${member.grade}" />학년</c:if></div>
         <div class="badges">
           <c:if test="${member.approved}">
             <span class="b">✓ 학교 인증됨</span>
@@ -97,15 +98,17 @@
           </div>
         </div>
         <div class="frow">
+          <c:if test="${member.grade ne null && member.grade ne ''}">
           <div class="fld"><label>학년</label>
-            <select id="pfYear" name="grade">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
+              <select id="pfYear" name="grade">
+                <option value="1" <c:if test="${member.grade == 1}">selected</c:if>>1</option>
+                <option value="2" <c:if test="${member.grade == 2}">selected</c:if>>2</option>
+                <option value="3" <c:if test="${member.grade == 3}">selected</c:if>>3</option>
+                <option value="4" <c:if test="${member.grade == 4}">selected</c:if>>4</option>
+                <option value="5" <c:if test="${member.grade == 5}">selected</c:if>>5</option>
+              </select>
           </div>
+          </c:if>
         </div>
         <div class="frow">
           <div class="fld"><label>주전공</label><form:input path="major" type="text" id="pfMajor" name="major" value="${member.major}" /></div>

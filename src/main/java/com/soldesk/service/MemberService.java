@@ -92,4 +92,33 @@ public class MemberService {
         memberMapper.updatePassword(member_id, password);
     }
 
+    /**
+     * 비밀번호 변경. 규칙 위반 시 PasswordChangeException을 던지며,
+     * 메시지를 그대로 화면에 보여줄 수 있다.
+     */
+    @Transactional
+    public void changePassword(String loginId, String currentPassword,
+                                String newPassword, String newPasswordConfirm) {
+        MemberVO member = memberMapper.findByLoginId(loginId);
+
+        // 소셜 로그인 계정은 비밀번호 변경 대상이 아님 (provider 기본값이 'LOCAL')
+        if (member == null || !"LOCAL".equals(member.getProvider())) {
+            throw new PasswordChangeException("소셜 로그인 계정은 비밀번호를 변경할 수 없어요.");
+        }
+        if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
+            throw new PasswordChangeException("현재 비밀번호가 일치하지 않아요.");
+        }
+        if (!newPassword.equals(newPasswordConfirm)) {
+            throw new PasswordChangeException("새 비밀번호가 서로 일치하지 않아요.");
+        }
+        if (passwordEncoder.matches(newPassword, member.getPassword())) {
+            throw new PasswordChangeException("현재와 다른 비밀번호를 입력해주세요.");
+        }
+        if (newPassword.length() < 8) {
+            throw new PasswordChangeException("비밀번호는 8자 이상이어야 해요.");
+        }
+
+        updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
+    }
+
 }

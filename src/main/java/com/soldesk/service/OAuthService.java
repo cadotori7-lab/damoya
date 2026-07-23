@@ -133,6 +133,8 @@ public class OAuthService {
             member.setLogin_id(provider.toLowerCase() + "_" + providerId);
             member.setEmail(email);
             member.setName(name);
+            member.setDept_id(0); // OAuth 회원은 학과 선택이 없으므로 0으로 설정
+            member.setGrade(0); // OAuth 회원은 학년 선택이 없으므로 0으로 설정
             member.setProvider(provider);
             member.setProvider_id(providerId);
             member.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));

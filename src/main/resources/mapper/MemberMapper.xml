@@ -88,9 +88,9 @@
         SELECT * FROM member WHERE email = #{email}
     </select>
     <insert id="insertOAuthMember" useGeneratedKeys="true" keyProperty="member_id" parameterType="com.soldesk.vo.MemberVO">
-        INSERT INTO member (login_id, email, name, provider, provider_id, password,
+        INSERT INTO member (login_id, email, name, dept_id, grade, provider, provider_id, password,
                         role, account_status, approved)
-        VALUES (#{login_id}, #{email}, #{name}, #{provider}, #{provider_id}, #{password},
+        VALUES (#{login_id}, #{email}, #{name}, #{dept_id}, #{grade}, #{provider}, #{provider_id}, #{password},
             'USER', 'ACTIVE', FALSE)
     </insert>
     <!-- 비밀번호 업데이트 -->

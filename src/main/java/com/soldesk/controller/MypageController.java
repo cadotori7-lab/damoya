@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.soldesk.service.MemberService;
+import com.soldesk.service.PasswordChangeException;
 import com.soldesk.service.UnivService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.UnivVO;
@@ -89,29 +89,14 @@ public class MypageController {
     public String changePassword(@RequestParam("currentPassword")    String currentPassword,
                                  @RequestParam("newPassword")        String newPassword,
                                  @RequestParam("newPasswordConfirm") String newPasswordConfirm,
-                                 RedirectAttributes ra,
-                                 Model model) {
- 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = auth.getName();
-        MemberVO member = memberService.findByLoginId(loginId);
-        // 소셜 회원 차단
-        if (member == null || !"LOCAL".equals(member.getProvider())) {
-            return backWithError(ra, "소셜 로그인 계정은 비밀번호를 변경할 수 없어요.");
+                                 RedirectAttributes ra) {
+
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            memberService.changePassword(loginId, currentPassword, newPassword, newPasswordConfirm);
+        } catch (PasswordChangeException e) {
+            return backWithError(ra, e.getMessage());
         }
-        if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
-            return backWithError(ra, "현재 비밀번호가 일치하지 않아요.");
-        }
-        if (!newPassword.equals(newPasswordConfirm)) {
-            return backWithError(ra, "새 비밀번호가 서로 일치하지 않아요.");
-        }
-        if (passwordEncoder.matches(newPassword, member.getPassword())) {
-            return backWithError(ra, "현재와 다른 비밀번호를 입력해주세요.");
-        }
-        if (newPassword.length() < 8) {
-            return backWithError(ra, "비밀번호는 8자 이상이어야 해요.");
-        }
-        memberService.updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
         ra.addFlashAttribute("passwordSuccess", "비밀번호가 변경됐어요.");
         return "redirect:/mypage/index";
     }
