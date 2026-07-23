@@ -23,6 +23,10 @@
         <result column="provider_id" property="provider_id"/>
     </resultMap>
 
+    <!-- 모든 회원 조회 (Elasticsearch reindex 용) -->
+    <select id="findAllMembers" resultMap="memberResultMap">
+        SELECT * FROM member
+    </select>
     <!-- 회원가입 -->
     <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
         INSERT INTO member (login_id, email, password, name, grade, major, double_major, intro, approved, dept_id, role, account_status, profile_public)
