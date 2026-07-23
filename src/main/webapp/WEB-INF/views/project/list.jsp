@@ -76,10 +76,10 @@
           <!-- 정렬 메뉴(좌)와 '내 스크랩' + '글쓰기' 버튼 그룹(우) -->
           <div class="list-sort-header">
             <div class="list-sort">
+                            <button type="button" class="sort-btn ${currentSort eq 'recommend' ? 'active' : ''}" onclick="sortList('recommend')">추천순</button>
               <button type="button" class="sort-btn ${currentSort eq 'latest' or empty currentSort ? 'active' : ''}" onclick="sortList('latest')">최신순</button>
               <button type="button" class="sort-btn ${currentSort eq 'deadline' ? 'active' : ''}" onclick="sortList('deadline')">마감임박순</button>
               <button type="button" class="sort-btn ${currentSort eq 'likes' ? 'active' : ''}" onclick="sortList('likes')">좋아요순</button>
-              <button type="button" class="sort-btn ${currentSort eq 'recommend' ? 'active' : ''}" onclick="sortList('recommend')">추천순</button>
             </div>
             
             <!-- 우측 버튼 그룹 (내 스크랩 + 글쓰기) -->
