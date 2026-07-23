@@ -99,24 +99,19 @@ public class MypageController {
         if (member == null || !"LOCAL".equals(member.getProvider())) {
             return backWithError(ra, "소셜 로그인 계정은 비밀번호를 변경할 수 없어요.");
         }
- 
         if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
             return backWithError(ra, "현재 비밀번호가 일치하지 않아요.");
         }
-
         if (!newPassword.equals(newPasswordConfirm)) {
             return backWithError(ra, "새 비밀번호가 서로 일치하지 않아요.");
         }
-
         if (passwordEncoder.matches(newPassword, member.getPassword())) {
             return backWithError(ra, "현재와 다른 비밀번호를 입력해주세요.");
         }
-
         if (newPassword.length() < 8) {
             return backWithError(ra, "비밀번호는 8자 이상이어야 해요.");
         }
         memberService.updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
-        
         ra.addFlashAttribute("passwordSuccess", "비밀번호가 변경됐어요.");
         return "redirect:/mypage/index";
     }
