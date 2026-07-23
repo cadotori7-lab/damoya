@@ -64,42 +64,186 @@
 
   .tag{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
 
-  /* ===== Matching list ===== */
-  .board{display:grid;grid-template-columns:236px 1fr;gap:26px;align-items:start}
-  .filters{position:sticky;top:86px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
-  .filters h3{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:16px 0 9px}
-  .filters h3:first-child{margin-top:0}
-  .scope{display:flex;background:var(--paper);border-radius:10px;padding:4px;gap:4px}
-  .scope button{flex:1;padding:7px;border-radius:7px;font-size:13px;font-weight:700;color:var(--ink-soft)}
-  .scope button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(20,35,63,.1)}
-  .flt{display:flex;flex-wrap:wrap;gap:7px}
-  .flt label{font-size:13px;font-weight:600;color:var(--ink-soft);border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;transition:.15s}
-  .flt input{display:none}
-  .flt input:checked + label,.flt label:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
-  .searchbar{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .searchbar input{flex:1;height:44px;border:1px solid var(--line-strong);border-radius:11px;padding:0 16px;font-size:15px;font-family:inherit;background:var(--surface)}
-  .searchbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-  .btn{height:44px;padding:0 20px;border-radius:11px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:7px;transition:.15s}
-  .btn.pri{background:var(--accent);color:#fff}
-  .btn.pri:hover{background:#2138a8}
-  .btn.ghost{border:1px solid var(--line-strong);color:var(--ink);background:var(--surface)}
-  .btn.ghost:hover{border-color:var(--ink-soft)}
-  .btn.sm{height:36px;padding:0 14px;font-size:13.5px;border-radius:9px}
+/* ===== Matching List Layout (Refined) ===== */
 
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px 21px;position:relative;overflow:hidden;transition:.18s;cursor:pointer}
-  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,var(--accent))}
-  .card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -12px rgba(20,35,63,.28);border-color:var(--line-strong)}
-  .card .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
-  .card .cat{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--c,var(--accent))}
-  .card h4{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px;line-height:1.35}
-  .card p{font-size:13.5px;color:var(--ink-soft);margin-bottom:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
-  .meta{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-bottom:11px}
-  .meta b{color:var(--ink);font-weight:700}
-  .card .tags{display:flex;gap:6px;flex-wrap:wrap}
-  .card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
-  .dday{font-family:var(--mono);font-weight:700;font-size:12.5px;color:var(--reject)}
-  .team-need{font-size:12.5px;color:var(--ink-soft)}
+/* 전체 레이아웃 구조 (사이드바 + 콘텐츠 영역) */
+.board{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start;max-width:1200px;margin:0 auto;padding:24px 16px}
+
+/* 상단 탭 및 컨트롤 영역 */
+.board-header{grid-column:1 / -1;display:flex;flex-direction:column;gap:16px;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:16px}
+.board-tabs{display:flex;justify-content:space-between;align-items:center}
+.tab-group{display:flex;gap:24px}
+.tab-item{font-size:16px;font-weight:700;color:var(--ink-soft);background:none;border:none;padding-bottom:8px;cursor:pointer;position:relative}
+.tab-item.active{color:var(--ink)}
+.tab-item.active::after{content:"";position:absolute;bottom:-17px;left:0;right:0;height:3px;background:var(--ink);border-radius:3px 3px 0 0}
+.board-top-actions{display:flex;gap:12px;align-items:center}
+.searchbar{display:flex;align-items:center;gap:10px;flex:1}
+.searchbar input{flex:1;height:44px;border:1px solid var(--line-strong);border-radius:11px;padding:0 16px;font-size:15px;font-family:inherit;background:var(--surface)}
+.searchbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* 좌측 필터 박스 디자인 (스크롤 시 고정되도록 sticky 적용) */
+.filters{position:sticky;top:86px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.filters h3{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:20px 0 10px}
+.filters h3:first-child{margin-top:0}
+.scope{display:flex;background:var(--paper);border-radius:10px;padding:4px;gap:4px}
+.scope button{flex:1;padding:7px;border-radius:7px;font-size:13px;font-weight:700;color:var(--ink-soft);background:transparent;border:none;cursor:pointer;transition:.15s}
+.scope button.on{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgba(20,35,63,.1)}
+.flt{display:flex;flex-wrap:wrap;gap:7px}
+.flt label{font-size:13px;font-weight:600;color:var(--ink-soft);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;transition:.15s;background:var(--surface)}
+.flt input{display:none}
+.flt input:checked + label,.flt label:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+/* 버튼 스타일 모음 */
+.btn{height:44px;padding:0 20px;border-radius:11px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:7px;transition:.15s;cursor:pointer;border:none}
+.btn.pri{background:var(--accent);color:#fff}
+.btn.pri:hover{background:#2138a8}
+.btn.ghost{border:1px solid var(--line-strong);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--ink-soft)}
+.btn.sm{height:38px;padding:0 14px;font-size:13.5px;border-radius:9px}
+
+
+/* =========================================
+   정렬 메뉴 & 글쓰기 버튼 레이아웃 (추가됨)
+   ========================================= */
+/* 우측 리스트 영역 전체 래퍼 */
+.list-section { display: flex; flex-direction: column; }
+
+/* 정렬 메뉴(좌)와 글쓰기 버튼(우)을 양 끝으로 배치 */
+.list-sort-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 30px; }
+
+/* 정렬 버튼들 사이의 간격 (20px로 넓힘) */
+.list-sort { display: flex; align-items: center; gap: 28px; }
+
+/* 개별 정렬 버튼 스타일 */
+.sort-btn { font-size: 15px; font-weight: 600; color: #8b95a1; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0; }
+
+/* 텍스트 앞의 회색 점(•) */
+.sort-btn::before { content: "•"; color: #d1d6db; font-size: 20px; line-height: 1; margin-top: -2px; }
+
+/* 활성화된(선택된) 정렬 버튼 텍스트 강조 */
+.sort-btn.active { color: var(--ink); font-weight: 700; }
+
+/* 활성화된 버튼 앞의 점을 초록색으로 변경 */
+.sort-btn.active::before { color: #0b9e43; }
+
+/* 레퍼런스 스타일의 다크 버튼 (글쓰기 버튼용) */
+.btn.dark { background: #333333; color: #ffffff; border: none; border-radius: 6px; }
+.btn.dark:hover { background: #222222; }
+
+
+/* =========================================
+   새로운 세로 리스트형 및 상태 뱃지 스타일
+   ========================================= */
+.project-list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.card-item{padding:22px 24px;border-bottom:1px solid var(--line);transition:background .15s;cursor:pointer;position:relative}
+.card-item:last-child{border-bottom:none}
+.card-item:hover{background:var(--paper)}
+.card-item .card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.status-badge{display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 10px;border-radius:13px;font-size:12px;font-weight:800;letter-spacing:-0.02em}
+.status-badge.recruiting{background-color:#e4f4ec;color:#0b9e43}
+.status-badge.closed{background-color:#f0f1f4;color:#8b95a1}
+.card-item .card-cat{font-size:13.5px;font-weight:700}
+.cat-contest{color:#2b46c8}
+.cat-major{color:#e07a45}
+.cat-liberal{color:#0f9d8c}
+.cat-club{color:#d94879}
+.card-item h4{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;margin-bottom:8px;line-height:1.4}
+.card-item p{font-size:14px;color:var(--ink-soft);margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+.card-item .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.card-item-foot{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-soft)}
+.card-item-foot .author-info{display:flex;gap:8px;align-items:center}
+.card-item-foot .stats{display:flex;gap:12px;font-family:var(--mono);font-size:12.5px}
+
+/* =========================================
+   D-Day 뱃지 스타일
+   ========================================= */
+.d-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: var(--mono);
+  background-color: #fff0f0; 
+  color: #e53e3e; 
+}
+/*구글 아이콘*/
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20
+}
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20
+}
+/*==프로젝트 Form*/
+/* 에디터 스타일 추가 */
+.editor-container {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        overflow: hidden;
+      }
+      .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        align-items: center;
+      }
+      .editor-toolbar button, .editor-toolbar label {
+        background: transparent;
+        border: none;
+        padding: 6px 10px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 0;
+      }
+      .editor-toolbar button:hover, .editor-toolbar label:hover {
+        background: #e9ecef;
+      }
+      .editor-toolbar .divider {
+        width: 1px;
+        height: 16px;
+        background: #ced4da;
+        margin: 0 6px;
+      }
+      .editor-textarea {
+        width: 100%;
+        min-height: 420px; 
+        padding: 16px;
+        border: none;
+        outline: none;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 14.5px;
+        line-height: 1.6;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+      }
 
   /* ===== Detail ===== */
   .back{font-size:14px;color:var(--ink-soft);font-weight:600;margin-bottom:18px;display:inline-flex;gap:6px;align-items:center}
@@ -153,6 +297,9 @@
     color: #fff;
     border-color: var(--primary, #2b46c8);
     font-weight: 600;
+}
+.project-content {
+  white-space: pre-wrap; /* 엔터와 공백을 그대로 유지하면서 줄바꿈 처리 */
 }
 
   /* comments */

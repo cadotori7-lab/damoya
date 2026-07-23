@@ -25,7 +25,7 @@
           <div class="cat">${project.category} · ${project.matchScope}</div>
           <h2><c:out value="${project.title}" /></h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '임시저장'}</span>
+            <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
             <c:if test="${not empty project.tags}">
               <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
                 <span class="tag"><c:out value="${tag}" /></span>
@@ -39,7 +39,8 @@
             <div><div class="k">모집 마감일</div><div class="v mono"> ${project.endDate}</div></div>
             <div><div class="k">대학 / 학과</div><div class="v">대진대 · 컴퓨터공학</div></div>
           </div>
-          <div class="prose">
+          
+          <div class="prose" style="white-space: pre-wrap; line-height: 1.6;">
             <p><c:out value="${project.summary}" /></p>
           </div>
         </div>
