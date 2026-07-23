@@ -17,13 +17,15 @@
         <result column="created_at" property="createdAt"/>
         <result column="match_scope" property="matchScope"/>
         <result column="tags" property="tags"/>
+        <result column="favorit_count" property="favoriteCount"/>
+        <result column="view_count" property="viewCount"/>
     </resultMap>
 
     <!-- 프로젝트 등록-->
     <insert id="insertProject" parameterType="com.soldesk.vo.ProjectVO" 
             useGeneratedKeys="true" keyProperty="projectId">
-        insert into project (owner_id, title, category, summary, capacity, target_grade, status, is_public, match_scope, tags, end_date)
-        values (#{ownerId}, #{title}, #{category}, #{summary}, #{capacity}, #{targetGrade}, #{status}, #{isPublic}, #{matchScope}, #{tags}, #{endDate})
+        insert into project (owner_id, title, category, summary, capacity, target_grade, status,  match_scope, tags, end_date)
+        values (#{ownerId}, #{title}, #{category}, #{summary}, #{capacity}, #{targetGrade}, #{status}, #{matchScope}, #{tags}, #{endDate})
     </insert>
 
     <!-- 프로젝트 전체 목록 조회-->
@@ -48,7 +50,6 @@
             capacity = #{capacity},
             target_grade = #{targetGrade},
             status = #{status},
-            is_public = #{isPublic},
             tags = #{tags},
             end_date = #{endDate}
 

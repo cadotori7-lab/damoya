@@ -13,11 +13,25 @@ public class ProjectVO {
     private String startDate; // 시작일
     private String endDate;   // 종료일
     private String status;     //모집 상태  
-    private boolean isPublic;    // 공개 여부 
     private LocalDateTime createdAt; // 생성일시
     private String matchScope; //매칭범위
     private String tags; //태그
+    private int viewCount; // 게시물 조회 수
+    private int favoriteCount; // 관심 등록 수 
 
+
+    public int getView_count() {
+        return viewCount;
+    }
+    public void setView_count(int view_count) {
+        this.viewCount = view_count;
+    }
+    public int getFavorite_count() {
+        return favoriteCount;
+    }
+    public void setFavorite_count(int favorite_count) {
+        this.favoriteCount = favorite_count;
+    }
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -93,12 +107,6 @@ public class ProjectVO {
     }
     public void setStatus(String status) {
         this.status = status;
-    }
-    public boolean isPublic() {
-        return isPublic;
-    }
-    public void setPublic(boolean isPublic) {
-        this.isPublic = isPublic;
     }
     public LocalDateTime getReatedAt() {
         return createdAt;
