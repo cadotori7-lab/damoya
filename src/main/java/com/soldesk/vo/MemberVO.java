@@ -18,6 +18,10 @@ public class MemberVO {
 
    private String passwordConfirm; // 비밀번호 확인
 
+   //test!!
+   private String provider;
+   private String providerId;
+
    public int getMember_id() {
     return member_id;
    }
@@ -107,6 +111,24 @@ public class MemberVO {
    }
    public void setPasswordConfirm(String passwordConfirm) {
     this.passwordConfirm = passwordConfirm;
+   }
+
+
+   //test!!
+   public String getProvider() {
+      return provider;
+   }
+
+   public void setProvider(String provider) {
+       this.provider = provider;
+   }
+
+   public String getProviderId() {
+       return providerId;
+   }
+
+   public void setProviderId(String providerId) {
+       this.providerId = providerId;
    }
 
 }
