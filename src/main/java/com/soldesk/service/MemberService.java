@@ -87,4 +87,9 @@ public class MemberService {
         // (4) 계정 상태를 탈퇴로
         memberMapper.updateAccountStatus(memberId, "WITHDRAWN");
     }
+    @Transactional
+    public void updatePassword(int member_id, String password) {
+        memberMapper.updatePassword(member_id, password);
+    }
+
 }

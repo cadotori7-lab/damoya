@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<%-- 마이페이지 맨 아래 '위험 구역' --%>
 <div class="danger-zone">
   <div class="dz-text">
     <b>회원 탈퇴</b>
@@ -11,7 +10,6 @@
   <button type="button" class="btn ghost danger" onclick="openModal('withdrawModal')">회원 탈퇴</button>
 </div>
 
-<%-- 확인 모달 --%>
 <div class="modal-overlay" id="withdrawModal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wdTitle" style="max-width:440px">
     <div class="modal-head">

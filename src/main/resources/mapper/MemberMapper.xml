@@ -89,4 +89,8 @@
         VALUES (#{login_id}, #{email}, #{name}, #{provider}, #{provider_id}, #{password},
             'USER', 'ACTIVE', FALSE)
     </insert>
+    <!-- 비밀번호 업데이트 -->
+    <update id="updatePassword" parameterType="map">
+        UPDATE member SET password = #{password} WHERE member_id = #{member_id}
+    </update>
 </mapper>

@@ -870,3 +870,8 @@ nav.main a.on {                 /* 현재 페이지 강조 */
 .btn.danger-solid:hover{background:#c0392b}
 .wd-notice{margin:0 0 18px;padding:14px 16px 14px 32px;background:var(--paper);border-radius:11px;font-size:13.5px;color:var(--ink-soft);line-height:1.7}
 .wd-notice li{margin-bottom:4px}
+
+.account-zone{margin-top:24px;padding:20px 22px;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:16px;background:var(--surface)}
+.account-zone .az-text{flex:1;min-width:0}
+.account-zone .az-text b{display:block;font-size:15px;font-weight:800;color:var(--ink)}
+.account-zone .az-text span{font-size:13px;color:var(--ink-soft)}

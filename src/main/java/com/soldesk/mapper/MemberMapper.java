@@ -23,6 +23,7 @@ public interface MemberMapper {
     void updateMember(MemberVO member); // 회원 정보 업데이트
     void updateAccountStatus(@Param("memberId") int memberId, @Param("status") String status); // 회원 계정 상태 업데이트
     void anonymize(int memberId); // 회원 정보 익명화
+    void updatePassword(@Param("member_id") int member_id, @Param("password") String password); // 회원 비밀번호 업데이트
 
     // 구글 OAuth2 로그인 관련 메서드
     MemberVO findByProviderAndProviderId(@Param("provider") String provider, @Param("providerId") String providerId);

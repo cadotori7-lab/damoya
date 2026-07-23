@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.soldesk.service.MemberService;
 import com.soldesk.service.UnivService;
@@ -40,6 +42,7 @@ public class MypageController {
         model.addAttribute("member", member);
         model.addAttribute("univList", univService.getAllUniv());
         model.addAttribute("univ", univ);
+
         return "mypage/index";
     }
 
@@ -80,5 +83,47 @@ public class MypageController {
         if (session != null) session.invalidate();
         SecurityContextHolder.clearContext();
         return "redirect:/";
+    }
+
+    @PostMapping("/password")
+    public String changePassword(@RequestParam("currentPassword")    String currentPassword,
+                                 @RequestParam("newPassword")        String newPassword,
+                                 @RequestParam("newPasswordConfirm") String newPasswordConfirm,
+                                 RedirectAttributes ra,
+                                 Model model) {
+ 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = auth.getName();
+        MemberVO member = memberService.findByLoginId(loginId);
+        // 소셜 회원 차단
+        if (member == null || !"LOCAL".equals(member.getProvider())) {
+            return backWithError(ra, "소셜 로그인 계정은 비밀번호를 변경할 수 없어요.");
+        }
+ 
+        if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
+            return backWithError(ra, "현재 비밀번호가 일치하지 않아요.");
+        }
+
+        if (!newPassword.equals(newPasswordConfirm)) {
+            return backWithError(ra, "새 비밀번호가 서로 일치하지 않아요.");
+        }
+
+        if (passwordEncoder.matches(newPassword, member.getPassword())) {
+            return backWithError(ra, "현재와 다른 비밀번호를 입력해주세요.");
+        }
+
+        if (newPassword.length() < 8) {
+            return backWithError(ra, "비밀번호는 8자 이상이어야 해요.");
+        }
+        memberService.updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
+        
+        ra.addFlashAttribute("passwordSuccess", "비밀번호가 변경됐어요.");
+        return "redirect:/mypage/index";
+    }
+
+    private String backWithError(RedirectAttributes ra, String message) {
+        ra.addFlashAttribute("passwordError", message);
+        ra.addFlashAttribute("openPassword", true);
+        return "redirect:/mypage/index";
     }
 }

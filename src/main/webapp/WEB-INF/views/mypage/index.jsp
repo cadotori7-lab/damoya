@@ -25,14 +25,19 @@
     <div class="mp-head">
       <div class="big"><c:out value="${member.name.substring(0, 1)}" /></div>
       <div class="info">
-        <h2><c:out value="${member.name}" /></h2>
+        <h2><c:out value="${member.name}" />(<c:out value="${member.login_id}" />)</h2>
         <div class="line"><c:out value="${univ.univ_name}" /> · <c:out value="${univ.dept_name}" /> · <c:out value="${member.grade}" />학년</div>
         <div class="badges">
           <c:if test="${member.approved}">
             <span class="b">✓ 학교 인증됨</span>
           </c:if>
         </div>
-        <div class="bio">"${member.intro}"</div>
+        <c:if test="${member.intro != null && !member.intro.isEmpty()}">
+          <div class="bio">"${member.intro}"</div>
+        </c:if>
+        <c:if test="${member.intro == null || member.intro.isEmpty()}">
+          <div class="bio" style="color:var(--ink-soft);font-weight:500">한 줄 소개를 작성해보세요</div>
+        </c:if>
       </div>
       <button class="btn ghost edit" onclick="openModal('profileModal')">프로필 수정</button>
     </div>
@@ -53,6 +58,8 @@
     <div class="mp-list" id="mpList"></div>
 
     <jsp:include page="withdraw-modal.jsp" />
+    <jsp:include page="password-modal.jsp" />
+    
   </section>
   </main>
   <!-- 프로필 수정 모달 -->
@@ -117,6 +124,13 @@
   <script src="${ctx}/resources/js/common.js"></script>
   <script src="${ctx}/resources/js/login.js"></script>
   <script src="${ctx}/resources/js/myPage.js"></script>
+  <c:if test="${openPassword}">
+    <script>openModal('passwordModal');</script>
+  </c:if>
+  <c:if test="${openWithdraw}">
+    <script>openModal('withdrawModal');</script>
+  </c:if>
+  
 </body>
 </html>
 

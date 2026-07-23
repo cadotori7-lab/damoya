@@ -54,23 +54,20 @@ public class OAuthService {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     OAuthService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-    
     //구글 로그인 URL
     public String getGooleAuthUrl(){
         return "https://accounts.google.com/o/oauth2/v2/auth"
             + "?client_id=" + googleClientId
             + "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8)
-            + "&response_type=code" 
+            + "&response_type=code"
             + "&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8)
             + "&access_type=online";
     }
-
     //인증 처리
     public void processGoolge(String code, 
         HttpServletRequest request, HttpServletResponse response)
