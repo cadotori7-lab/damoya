@@ -10,6 +10,16 @@
     </resultMap>
  
   <select id="selectMonthEvents" resultMap="scheduleResultMap">
+    <!-- 업무 일정 -->
+    SELECT 'task'        AS type,
+           t.task_name   AS title,
+           t.due_date    AS evDate,
+           t.task_id     AS refId
+      FROM task t
+     WHERE t.project_id = #{projectId}
+       AND t.due_date BETWEEN DATE(#{start}) AND DATE(#{end})
+ 
+    UNION ALL
     <!-- 회의 -->
     SELECT 'meet'        AS type,
            m.title       AS title,
@@ -18,6 +28,8 @@
       FROM meeting m
      WHERE m.project_id = #{projectId}
        AND m.meet_date BETWEEN #{start} AND #{end}
+    
+    
   </select>
  
 </mapper>
