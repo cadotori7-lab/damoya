@@ -1,26 +1,18 @@
 package com.soldesk.controller;
 
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.soldesk.service.TaskService;
-import com.soldesk.vo.TaskVO;
 
 @Controller
 @RequestMapping("/workspace/{project_id}")
 public class WorkspaceController {
-
-    @Autowired
-    private TaskService taskService;
-
 
     @ModelAttribute
     public void addProjectId(
@@ -30,20 +22,7 @@ public class WorkspaceController {
         model.addAttribute("project_id", project_id);
     }
 
-    @GetMapping("/board") //업무
-    public String board(
-            @PathVariable("project_id") long project_id,
-            Model model) {
-
-        model.addAttribute(
-            "taskList",
-            taskService.selectTaskList(project_id)
-        );
-
-        return "workspace/board";
-    }
-
-    @GetMapping("/overview")
+    @GetMapping("/overview") //개요
     public String overview() {
         return "workspace/overview";
     }
@@ -73,22 +52,5 @@ public class WorkspaceController {
         return "workspace/results";
     }
 
-@GetMapping("/taskform")
-    public String taskForm() {
-        return "workspace/taskform";
-    }
-
-    @PostMapping("/tasks") //업무 등록
-    public String insertTask(
-            @PathVariable("project_id") long project_id,
-            @ModelAttribute TaskVO task) {
-
-        task.setProject_id(project_id);
-        taskService.insertTask(task);
-
-        return "redirect:/workspace/"
-                + project_id
-                + "/board";
-    }
 
 }

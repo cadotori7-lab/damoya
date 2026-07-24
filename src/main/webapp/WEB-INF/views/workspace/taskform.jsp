@@ -18,7 +18,7 @@
      <!-- ========== 업무 등록 ========== -->
   <section id="v-taskform">
     <div class="form-wrap">
-      <a class="back" href="${ctx}/workspace/board">← 업무 보드</a>
+      <a class="back" href="${ctx}/workspace/{project_id}/board">← 업무 보드</a>
       <div class="eyebrow">New task</div>
       <h1 class="page"><em>업무 등록</em></h1>
       <p class="sub">AI 헬스케어 웹서비스 · 팀장이 업무를 등록하고 담당자를 배정해요.</p>
@@ -30,10 +30,6 @@
         <input type="hidden"
            name="${_csrf.parameterName}"
            value="${_csrf.token}">
-        
-        <input type="hidden"
-          name="project_id"
-          value="${project_id}">
 
         <div class="fld one">
           <label>

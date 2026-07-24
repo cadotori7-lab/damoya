@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-
-
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.soldesk.mapper.TaskMapper">
 
@@ -31,9 +30,7 @@
 
         <result property="task_name" column="task_name"/>
         <result property="description" column="description"/>
-
         <result property="status" column="status"/>
-
         <result property="due_date" column="due_date"/>
 
         <result property="submit_title" column="submit_title"/>
@@ -41,14 +38,13 @@
         <result property="submit_file" column="submit_file"/>
 
         <result property="reject_reason" column="reject_reason"/>
-
         <result property="submitted_at" column="submitted_at"/>
 
     </resultMap>
 
-    <!--삽입-->
+    <!-- 업무 등록 -->
     <insert id="insertTask"
-        parameterType="com.soldesk.vo.TaskVO">
+            parameterType="com.soldesk.vo.TaskVO">
 
         INSERT INTO task
         (
@@ -59,69 +55,63 @@
             status,
             due_date
         )
-
         VALUES
         (
             #{project_id},
             #{assignee_id},
             #{task_name},
             #{description},
-            'REGISTERED',
+            'ONGOING',
             #{due_date}
         )
 
     </insert>
 
-    <!--프로젝트id로 검색-->
+    <!-- 프로젝트별 업무 목록 -->
     <select id="selectTaskList"
-        resultMap="taskResultMap">
-
-        SELECT 
-        <include refid="taskColumns"/>
-
-        FROM task
-
-        WHERE project_id = #{project_id}
-
-        ORDER BY due_date ASC
-
-    </select>
-
-    <!--과제 id로 검색(업무 상세)-->
-    <select id="selectTaskById"
-        resultMap="taskResultMap">
+            resultMap="taskResultMap">
 
         SELECT
-        <include refid="taskColumns"/>
-
+            <include refid="taskColumns"/>
         FROM task
-
-        WHERE task_id = #{task_id}
+        WHERE project_id = #{project_id}
+        ORDER BY due_date ASC, task_id DESC
 
     </select>
 
-    <!--업데이트(담당자,업무이름,설명,마감일)-->
+    <!-- 업무 상세 -->
+    <select id="selectTaskById"
+            resultMap="taskResultMap">
+
+        SELECT
+            <include refid="taskColumns"/>
+        FROM task
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
+
+    </select>
+
+    <!-- 업무 기본 정보 수정 -->
     <update id="updateTask"
-        parameterType="com.soldesk.vo.TaskVO">
+            parameterType="com.soldesk.vo.TaskVO">
 
         UPDATE task
-
         SET
             assignee_id = #{assignee_id},
             task_name = #{task_name},
             description = #{description},
             due_date = #{due_date}
-
-        WHERE task_id = #{task_id}
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
 
     </update>
 
-    <!--삭제-->
+    <!-- 업무 삭제 -->
     <delete id="deleteTask">
 
         DELETE FROM task
-
-        WHERE task_id = #{task_id}
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
 
     </delete>
 
