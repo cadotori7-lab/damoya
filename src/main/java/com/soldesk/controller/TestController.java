@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -36,8 +37,9 @@ public class TestController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     // FastAPI OCR 검증 서비스 주소
-    private static final String FASTAPI_VERIFY_URL = "http://localhost:8000/verify";
-    private static final String FASTAPI_CHAT_URL = "http://localhost:8000/chat";
+    private static final String FASTAPI_VERIFY_URL = "http://localhost:8001/verify";
+    private static final String FASTAPI_CHAT_URL = "http://localhost:8001/chat";
+    private static final String FASTAPI_MENTOR_MATCH_URL = "http://localhost:8001/mentor-match";
 
     @GetMapping("/")
     public String mentorHome() {
@@ -120,7 +122,7 @@ public class TestController {
         } catch (ResourceAccessException e) {
             logger.warning("FastAPI 챗봇 연결 실패: " + e.getMessage());
             return ResponseEntity.status(503).body(
-                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8000 서버를 확인하세요.")
+                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요.")
             );
         }
     }
@@ -173,5 +175,77 @@ public class TestController {
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
         return restTemplate.postForObject(FASTAPI_VERIFY_URL, request, Map.class);
+    }
+    // 프로젝트 등록(임의)
+    @GetMapping("/project/register")
+    public String projectRegister(Model model) {
+        logger.info("프로젝트 등록 페이지 접근");
+        model.addAttribute("reference", UUID.randomUUID().toString());
+        return "test/project/register";
+    }
+
+    // MCP 멘토 매칭용 더미 프로젝트 정보 수신 및 FastAPI 호출
+    @PostMapping(
+        value = "/project/register",
+        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    public String projectRegisterSubmit(
+            @RequestParam("reference") String reference,
+            @RequestParam("projectName") String projectName,
+            @RequestParam("projectDescription") String projectDescription,
+            Model model) {
+        String normalizedReference = reference == null || reference.isBlank()
+            ? UUID.randomUUID().toString()
+            : reference.trim();
+        String normalizedName = projectName == null ? "" : projectName.trim();
+        String normalizedDescription = projectDescription == null
+            ? ""
+            : projectDescription.trim();
+
+        model.addAttribute("submitted", true);
+        model.addAttribute("reference", normalizedReference);
+        model.addAttribute("projectName", normalizedName);
+        model.addAttribute("projectDescription", normalizedDescription);
+
+        logger.info(
+            "더미 프로젝트 멘토 매칭 요청 reference="
+                + normalizedReference
+                + ", projectName="
+                + normalizedName
+        );
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, String> body = new java.util.HashMap<>();
+            body.put("reference", normalizedReference);
+            body.put("projectName", normalizedName);
+            body.put("projectDescription", normalizedDescription);
+
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = restTemplate.postForObject(
+                FASTAPI_MENTOR_MATCH_URL,
+                request,
+                Map.class
+            );
+            model.addAttribute("matchResult", result);
+        } catch (HttpStatusCodeException e) {
+            logger.warning("FastAPI 멘토 추천 오류: " + e.getResponseBodyAsString());
+            model.addAttribute(
+                "error",
+                "멘토 추천 요청이 실패했습니다: " + e.getResponseBodyAsString()
+            );
+        } catch (ResourceAccessException e) {
+            logger.warning("FastAPI 멘토 추천 연결 실패: " + e.getMessage());
+            model.addAttribute(
+                "error",
+                "Python 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요."
+            );
+        }
+
+        return "test/project/register";
     }
 }

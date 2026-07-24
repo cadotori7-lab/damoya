@@ -2,6 +2,7 @@ package com.soldesk.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.soldesk.mapper.MemberMapper;
 import com.soldesk.vo.MemberDocument;
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.MentorDocument;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
@@ -29,24 +31,38 @@ public class ElasticSearchService implements InitializingBean {
     @Autowired(required = false)
     private MemberMapper memberMapper;
 
+    // 회원 인덱스
     @Value("${elasticsearch.index.members:${ELASTICSEARCH_MEMBERS_INDEX:damoya-members}}")
     private String membersIndex;
 
-    @Value("${elasticsearch.index.projects:${ELASTICSEARCH_PROJECTS_INDEX:damoya-projects}}")
-    private String projectsIndex;
+    // 멘토 인덱스
+    @Value("${elasticsearch.index.mentors:${ELASTICSEARCH_MENTORS_INDEX:damoya-mentors}}")
+    private String mentorsIndex;
 
-    @Value("${elasticsearch.index.reports:${ELASTICSEARCH_REPORTS_INDEX:damoya-reports}}")
-    private String reportsIndex;
-
+    // 인덱스 초기화
     @Override
     public void afterPropertiesSet() {
+        initializeMemberIndex();
+        initializeMentorIndex();
+    }
+
+    // 회원 인덱스 초기화
+    private void initializeMemberIndex() {
         try {
             createIndexIfNotExists();
-            createSimpleIndexIfNotExists(projectsIndex);
-            createSimpleIndexIfNotExists(reportsIndex);
             reindexAll();
         } catch (Exception e) {
-            log.warn("Elasticsearch 초기화 실패 - 관리자 통계가 제한될 수 있습니다.", e);
+            log.warn("Elasticsearch 회원 인덱스 초기화 실패", e);
+        }
+    }
+
+    // 멘토 인덱스 초기화
+    private void initializeMentorIndex() {
+        try {
+            createMentorIndexIfNotExists();
+            reindexMentors();
+        } catch (Exception e) {
+            log.warn("Elasticsearch 멘토 인덱스 초기화 실패", e);
         }
     }
 
@@ -88,27 +104,17 @@ public class ElasticSearchService implements InitializingBean {
             createIndexIfNotExists();
             reindexAll();
         }
-        createSimpleIndexIfNotExists(projectsIndex);
-        createSimpleIndexIfNotExists(reportsIndex);
+        if (!indexExists(mentorsIndex)) {
+            createMentorIndexIfNotExists();
+            reindexMentors();
+        }
     }
-
-    // ===== 아래부터는 인덱스 이름을 파라미터로 받는 범용 기능 (다른 서비스에서도 재사용 가능) =====
 
     // 인덱스 존재 여부 확인
     public boolean indexExists(String indexName) throws IOException {
         return elasticsearchClient.indices()
             .exists(ExistsRequest.of(request -> request.index(indexName)))
             .value();
-    }
-
-    // 매핑 없는 단순 인덱스 생성 (없을 때만)
-    public void createSimpleIndexIfNotExists(String indexName) throws IOException {
-        if (indexExists(indexName)) {
-            return;
-        }
-
-        elasticsearchClient.indices().create(CreateIndexRequest.of(create -> create.index(indexName)));
-        log.info("Elasticsearch 인덱스 생성 완료: {}", indexName);
     }
 
     // 인덱스 문서 수 조회
@@ -126,8 +132,6 @@ public class ElasticSearchService implements InitializingBean {
             .status()
             .jsonValue();
     }
-
-    // ===== 회원 인덱스 전용 내부 로직 =====
 
     // 회원 인덱스 생성
     private void createIndexIfNotExists() throws IOException {
@@ -175,6 +179,67 @@ public class ElasticSearchService implements InitializingBean {
             .properties("profile_public", property -> property.boolean_(bool -> bool)));
     }
 
+    // 멘토 인덱스 생성
+    private void createMentorIndexIfNotExists() throws IOException {
+        if (indexExists(mentorsIndex)) {
+            putMentorMapping();
+            return;
+        }
+
+        elasticsearchClient.indices().create(CreateIndexRequest.of(create -> create
+            .index(mentorsIndex)
+            .mappings(mappings -> mappings
+                .properties("member_id", property -> property.integer(integer -> integer))
+                .properties("login_id", property -> property.keyword(keyword -> keyword))
+                .properties("name", property -> property.text(text -> text))
+                .properties("dept_id", property -> property.long_(longNumber -> longNumber))
+                .properties("intro", property -> property.text(text -> text))
+                .properties("account_status", property -> property.keyword(keyword -> keyword))
+                .properties("approved", property -> property.boolean_(bool -> bool))
+                .properties("profile_public", property -> property.boolean_(bool -> bool))
+                .properties("field", property -> property.text(text -> text))
+                .properties("career", property -> property.text(text -> text))
+                .properties("cert", property -> property.text(text -> text))
+                .properties("search_text", property -> property.text(text -> text))
+                .properties("mentor_reference", property -> property.text(text -> text))
+                .properties("embedding_source_hash", property -> property.keyword(keyword -> keyword))
+                .properties("embedding_model", property -> property.keyword(keyword -> keyword))
+                .properties("sync_batch_id", property -> property.keyword(keyword -> keyword))
+                .properties("embedding", property -> property.denseVector(vector -> vector
+                    .dims(384)
+                    .index(true)
+                    .similarity("cosine"))))));
+
+        log.info("Elasticsearch 멘토 인덱스 생성 완료: {}", mentorsIndex);
+    }
+
+    // 멘토 인덱스 매핑
+    private void putMentorMapping() throws IOException {
+        elasticsearchClient.indices().putMapping(mapping -> mapping
+            .index(mentorsIndex)
+            .properties("member_id", property -> property.integer(integer -> integer))
+            .properties("login_id", property -> property.keyword(keyword -> keyword))
+            .properties("name", property -> property.text(text -> text))
+            .properties("dept_id", property -> property.long_(longNumber -> longNumber))
+            .properties("intro", property -> property.text(text -> text))
+            .properties("account_status", property -> property.keyword(keyword -> keyword))
+            .properties("approved", property -> property.boolean_(bool -> bool))
+            .properties("profile_public", property -> property.boolean_(bool -> bool))
+            .properties("field", property -> property.text(text -> text))
+            .properties("career", property -> property.text(text -> text))
+            .properties("cert", property -> property.text(text -> text))
+            .properties("search_text", property -> property.text(text -> text))
+            .properties("mentor_reference", property -> property.text(text -> text))
+            .properties("embedding_source_hash", property -> property.keyword(keyword -> keyword))
+            .properties("embedding_model", property -> property.keyword(keyword -> keyword))
+            .properties("sync_batch_id", property -> property.keyword(keyword -> keyword))
+            .properties("embedding", property -> property.denseVector(vector -> vector
+                .dims(384)
+                .index(true)
+                .similarity("cosine"))));
+    }
+
+    // 회원 전체 재색인
     private void reindexAll() throws IOException {
         if (memberMapper == null) {
             log.warn("MemberMapper가 등록되지 않아 회원 전체 재색인을 건너뜁니다.");
@@ -191,5 +256,41 @@ public class ElasticSearchService implements InitializingBean {
         elasticsearchClient.indices().refresh(refresh -> refresh.index(membersIndex));
 
         log.info("Elasticsearch 회원 reindex 완료: {}건", members.size());
+    }
+
+    // 멘토 전체 재색인
+    public void reindexMentors() throws IOException {
+        if (memberMapper == null) {
+            log.warn("MemberMapper가 등록되지 않아 멘토 전체 재색인을 건너뜁니다.");
+            return;
+        }
+        // 멘토 인덱스 생성
+        createMentorIndexIfNotExists();
+        // 멘토 목록 조회
+        List<MentorDocument> mentors = memberMapper.findAllMentors();
+        String syncBatchId = UUID.randomUUID().toString();
+
+        // 멘토 인덱스 업데이트
+        for (MentorDocument mentor : mentors) {
+            mentor.rebuildSearchText();
+            mentor.setSync_batch_id(syncBatchId);
+            elasticsearchClient.update(update -> update
+                .index(mentorsIndex)
+                .id(String.valueOf(mentor.getMember_id()))
+                .doc(mentor)
+                .docAsUpsert(true),
+                MentorDocument.class);
+        }
+        // 기존 멘토 인덱스 삭제
+        elasticsearchClient.deleteByQuery(delete -> delete
+            .index(mentorsIndex)
+            .query(query -> query.bool(bool -> bool
+                .mustNot(not -> not.term(term -> term
+                    .field("sync_batch_id")
+                    .value(syncBatchId)))))
+            .refresh(true));
+        elasticsearchClient.indices().refresh(refresh -> refresh.index(mentorsIndex));
+
+        log.info("Elasticsearch 멘토 reindex 완료: {}건", mentors.size());
     }
 }

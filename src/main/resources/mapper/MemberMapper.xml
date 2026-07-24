@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="com.soldesk.mapper.MemberMapper">
     <!-- 회원 정보 resultMap: vo 객체와 DB 컬럼 매핑 -->
     <resultMap id="memberResultMap" type="com.soldesk.vo.MemberVO">
@@ -21,6 +20,20 @@
         <!--  OAuth 칼럼 매핑  -->
         <result column="provider" property="provider"/>
         <result column="provider_id" property="providerId"/>
+    </resultMap>
+
+    <resultMap id="mentorDocumentResultMap" type="com.soldesk.vo.MentorDocument">
+        <id property="member_id" column="member_id" />
+        <result property="login_id" column="login_id" />
+        <result property="name" column="name" />
+        <result property="dept_id" column="dept_id" />
+        <result property="intro" column="intro" />
+        <result property="account_status" column="account_status" />
+        <result property="approved" column="approved" />
+        <result property="profile_public" column="profile_public" />
+        <result property="field" column="mentor_field" />
+        <result property="career" column="career" />
+        <result property="cert" column="cert" />
     </resultMap>
 
     <!-- 회원가입 -->
@@ -57,5 +70,24 @@
     <!-- 멘토인지 확인 -->
     <select id="selectMentorById" parameterType="int" resultType="int">
         SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
+    </select>
+
+    <!-- Elasticsearch 멘토 인덱싱용 전체 멘토 조회 -->
+    <select id="findAllMentors" resultMap="mentorDocumentResultMap">
+        SELECT
+            member.member_id,
+            member.login_id,
+            member.name,
+            member.dept_id,
+            member.intro,
+            member.account_status,
+            member.approved,
+            member.profile_public,
+            mentor.field AS mentor_field,
+            mentor.career,
+            mentor.cert
+        FROM member
+        INNER JOIN mentor ON mentor.member_id = member.member_id
+        ORDER BY member.member_id
     </select>
 </mapper>

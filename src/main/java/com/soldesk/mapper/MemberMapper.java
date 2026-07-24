@@ -3,6 +3,7 @@ package com.soldesk.mapper;
 import java.util.List;
 
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.MentorDocument;
 import com.soldesk.vo.MentorSignupVO;
 
 public interface MemberMapper {
@@ -17,4 +18,5 @@ public interface MemberMapper {
     int selectMentorById(int member_id); // 멘토인지 확인
 
     List<MemberVO> findAllMembers(); // 모든 회원 조회
+    List<MentorDocument> findAllMentors(); // 멘토 인덱싱용 회원 + 멘토 정보 조회
 }

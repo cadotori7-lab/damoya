@@ -5,6 +5,7 @@ python-multipart
 python-dotenv
 langchain-core>=0.3
 langchain-openai>=1.0,<2.0
+mcp[cli]>=1.27,<2
 elasticsearch>=8.13,<9.0
 sentence-transformers>=3.0,<6.0
 easyocr

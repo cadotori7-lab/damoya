@@ -8,6 +8,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\controller\MypageController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\ProjectController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TalentController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestRestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
@@ -22,6 +23,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\AdminDashboardStats.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberDocument.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorDocument.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorSignupVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\TestVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\UnivVO.java
