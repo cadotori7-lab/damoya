@@ -54,6 +54,7 @@ public class MeetingController {
                             @PathVariable(value = "meeting_id", required = false) Long meeting_id,
                             Model model) {
         if (meeting_id == null) {
+            meeting.setProject_id(project_id);
             meetingService.insertMeeting(meeting);
         } else {
             meeting.setMeeting_id(meeting_id);
