@@ -63,11 +63,6 @@ public class WorkspaceController {
         return "workspace/meeting-form";
     }
 
-    @GetMapping("/meetings") //회의
-    public String meetings() {
-        return "workspace/meetings";
-    }
-
     @GetMapping("/members") //팀원관리
     public String members() {
         return "workspace/members";
@@ -78,22 +73,8 @@ public class WorkspaceController {
         return "workspace/results";
     }
 
-    @GetMapping("/schedule") //일정
-    public String schedule() {
-        return "workspace/schedule";
-    }
-
-    @GetMapping("/taskform") //업무 등록 폼
-    public String taskForm(
-            @PathVariable("project_id") long project_id,
-            Model model) {
-
-        TaskVO task = new TaskVO();
-        task.setProject_id(project_id);
-
-        model.addAttribute("project_id", project_id);
-        model.addAttribute("task", task);
-
+@GetMapping("/taskform")
+    public String taskForm() {
         return "workspace/taskform";
     }
 

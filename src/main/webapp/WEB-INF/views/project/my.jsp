@@ -19,7 +19,7 @@
     <p class="sub">참여 중인 프로젝트예요. 눌러서 들어가면 개요·업무·회의를 관리할 수 있어요.</p>
 
     <div class="psel-list">
-      <a class="psel-card" style="--c:var(--cat-contest)" href="${ctx}/workspace/overview">
+      <a class="psel-card" style="--c:var(--cat-contest)" href="${ctx}/workspace/8/overview">
         <div class="psel-main">
           <div class="psel-top"><span class="psel-cat">공모전 · 교내</span><span class="psel-role lead">팀장</span><span class="chip ing">진행중</span></div>
           <h3>AI 헬스케어 웹서비스</h3>
