@@ -58,11 +58,6 @@ public class WorkspaceController {
         return "workspace/meeting-form";
     }
 
-    @GetMapping("/meetings")
-    public String meetings() {
-        return "workspace/meetings";
-    }
-
     @GetMapping("/members")
     public String members() {
         return "workspace/members";
@@ -73,12 +68,7 @@ public class WorkspaceController {
         return "workspace/results";
     }
 
-    @GetMapping("/schedule")
-    public String schedule() {
-        return "workspace/schedule";
-    }
-
-    @GetMapping("/taskform")
+@GetMapping("/taskform")
     public String taskForm() {
         return "workspace/taskform";
     }

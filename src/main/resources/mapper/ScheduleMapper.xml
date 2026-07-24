@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.ScheduleMapper">
+    <resultMap id="scheduleResultMap" type="com.soldesk.vo.CalendarEvent">
+        <result property="type" column="type" />
+        <result property="title" column="title" />
+        <result property="evDate" column="evDate" />
+        <result property="refId" column="refId" />
+    </resultMap>
+ 
+  <select id="selectMonthEvents" resultMap="scheduleResultMap">
+    <!-- 회의 -->
+    SELECT 'meet'        AS type,
+           m.title       AS title,
+           m.meet_date   AS evDate,
+           m.meeting_id  AS refId
+      FROM meeting m
+     WHERE m.project_id = #{projectId}
+       AND m.meet_date BETWEEN #{start} AND #{end}
+  </select>
+ 
+</mapper>
