@@ -25,18 +25,14 @@ public class HomeController {
         if (principal != null) {
             return "redirect:/home";
         }
-        return "landing"; // -> /WEB-INF/views/landing.jsp
+        return "landing";
     }
 
-    /**
-     * 로그인 회원의 개인 대시보드.
-     * (Security 적용 후 이 URL은 인증 필요로 보호한다)
-     */
     @GetMapping("/home")
     public String home(Model model) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.findByLoginId(member_id);
         model.addAttribute("member", member);
-        return "home"; // -> /WEB-INF/views/home.jsp
+        return "home"; 
     }
 }

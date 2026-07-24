@@ -8,21 +8,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
+    <title>다모여 - 회원가입</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../resources/css/style.css">
 </head>
 <body>
-  <header class="lp-top">
-    <div class="in">
-      <a class="logo" href="${ctx}/">다<b>모여</b></a>
-      <div class="r">
-        <a class="btn ghost sm" href="${ctx}/auth/login">로그인</a>
-      </div>
-    </div>
-  </header>
+  <jsp:include page="../includes/header.jsp" />
 
   <!-- ========== 회원가입 ========== -->
   <main>
@@ -68,8 +61,8 @@
               </div>
               <div class="fld">
                 <label>비밀번호 확인<span class="req">*</span></label>
-                <form:password path="passwordConfirm" placeholder="다시 입력" />
-                <form:errors path="passwordConfirm" element="span" cssClass="error" />
+                <form:password path="password_confirm" placeholder="다시 입력" />
+                <form:errors path="password_confirm" element="span" cssClass="error" />
               </div>
             </div>
           </div>

@@ -1,15 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>프로젝트 찾기</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../resources/css/style.css">
+    <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
   <jsp:include page="../includes/header.jsp" />
@@ -54,12 +56,56 @@
         </div>
       </aside>
 
-      <div class="grid" id="cards"></div>
+      <div class="grid" id="cards">
+        <c:forEach var="project" items="${projectList}">
+          <c:choose>
+            <c:when test="${project.category == 'CONTEST'}"><c:set var="cardColor" value="var(--cat-contest)" /></c:when>
+            <c:when test="${project.category == 'DEPARTMENT'}"><c:set var="cardColor" value="var(--cat-major)" /></c:when>
+            <c:when test="${project.category == 'LIBERAL'}"><c:set var="cardColor" value="var(--cat-liberal)" /></c:when>
+            <c:otherwise><c:set var="cardColor" value="var(--cat-club)" /></c:otherwise>
+          </c:choose>
+
+          <!-- 개별 프로젝트 카드 렌더링 -->
+          <article class="card" style="--c:${cardColor}" onclick="location.href='${ctx}/project/detail?id=${project.projectId}'" tabindex="0">
+            <div class="row1">
+              <span class="cat">${project.category}</span>
+              <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '임시저장'}</span>
+            </div>
+            <h4><c:out value="${project.title}" /></h4>
+            <p><c:out value="${project.summary}" /></p>
+            
+            <div class="meta">
+              <span>대진대학교</span>
+              <span>학년 무관</span>
+            </div>
+            
+            <%-- 쉼표(,)로 저장된 태그들을 쪼개서 뱃지로 각각 출력 --%>
+            <c:if test="${not empty project.tags}">
+              <div class="tags">
+                <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
+                  <span class="tag"><c:out value="${tag}" /></span>
+                </c:forEach>
+              </div>
+            </c:if>
+            
+            <div class="card-foot">
+              <span class="team-need">모집 <b class="mono" style="color:var(--ink)">0/${project.capacity}</b>명</span>
+              <span class="dday">D-Day</span>
+            </div>
+          </article>
+        </c:forEach>
+        
+        <!-- 만약 등록된 프로젝트가 한개도 없을 때 예외 화면 -->
+        <c:if test="${empty projectList}">
+          <div style="grid-column: 1 / -1; text-align: center; padding: 80px 0; color: var(--ink-soft);">
+            <p style="font-size: 16px; font-weight: 600;">등록된 프로젝트 모집글이 없습니다.</p>
+            <p style="font-size: 13.5px; margin-top: 6px;">첫 번째 프로젝트 모집글의 주인공이 되어보세요!</p>
+          </div>
+        </c:if>
+      </div>
     </div>
   </section>
-    </main>
+  </main>
   <jsp:include page="../includes/footer.jsp" />
 </body>
 </html>
-
-<script src="${ctx}/resources/js/projectList.js"></script>

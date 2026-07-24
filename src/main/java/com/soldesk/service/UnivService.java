@@ -17,4 +17,8 @@ public class UnivService {
     public List<UnivVO> getAllUniv() {
         return univMapper.getAllUniv();
     }
+
+    public UnivVO getUnivByDeptId(int dept_id) {
+        return univMapper.getUnivByDeptId(dept_id);
+    }
 }
