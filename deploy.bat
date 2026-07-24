@@ -1,6 +1,7 @@
 @echo off
-set CATALINA_HOME=C:\Program Files\Apache Software Foundation\Tomcat 9.0
-set JAVA_HOME=C:\Program Files\Java\jdk-17
+set "CATALINA_HOME=C:\myProgram\apache-tomcat-9.0.119"
+set "CATALINA_BASE=C:\myProgram\apache-tomcat-9.0.119"
+set "JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot"
 
 echo Building WAR...
 call mvn clean package -q
@@ -23,9 +24,16 @@ timeout /t 2 /nobreak >nul
 echo Deploying...
 del "%CATALINA_HOME%\webapps\ROOT.war" 2>nul
 rd /s /q "%CATALINA_HOME%\webapps\ROOT" 2>nul
-copy "target\spring-board.war" "%CATALINA_HOME%\webapps\ROOT.war"
+rd /s /q "%CATALINA_HOME%\work\Catalina\localhost\ROOT" 2>nul
+
+copy /Y "target\spring-board.war" "%CATALINA_HOME%\webapps\ROOT.war"
+
+if errorlevel 1 (
+    echo DEPLOY FAILED - WAR copy failed.
+    exit /b 1
+)
 
 echo Starting Tomcat...
 start "" "%CATALINA_HOME%\bin\startup.bat"
 
-echo Done! localhost:8080
+echo Done! http://localhost:8080/
