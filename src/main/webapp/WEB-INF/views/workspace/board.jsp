@@ -31,7 +31,11 @@
 
     <div class="proj-switch" id="boardTools" style="gap:10px">
       <input type="text" id="taskSearch" class="board-search" placeholder="업무 검색 (제목·담당자)" oninput="onTaskSearch(this.value)">
-      <button class="btn pri sm" style="margin-left:auto" onclick="go('taskform')">+ 업무 등록</button>
+      <a class="btn pri sm"
+        style="margin-left:auto"
+        href="${ctx}/workspace/${project_id}/taskform">
+        + 업무 등록
+      </a>
     </div>
 
     <div id="boardPanel">

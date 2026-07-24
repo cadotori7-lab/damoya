@@ -23,31 +23,74 @@
       <h1 class="page"><em>업무 등록</em></h1>
       <p class="sub">AI 헬스케어 웹서비스 · 팀장이 업무를 등록하고 담당자를 배정해요.</p>
 
-      <div class="form-card">
-        <div class="fld one"><label>업무명<span class="req">*</span></label><input type="text" placeholder="예: 프로젝트 지원·승인 API 구현"></div>
+      <form class="form-card"
+          method="post"
+          action="${ctx}/workspace/${project_id}/tasks">
+
+        <input type="hidden"
+           name="${_csrf.parameterName}"
+           value="${_csrf.token}">
+        
+        <input type="hidden"
+          name="project_id"
+          value="${project_id}">
+
+        <div class="fld one">
+          <label>
+              업무명<span class="req">*</span>
+          </label>
+
+          <input type="text"
+              name="task_name"
+              placeholder="예: 프로젝트 지원·승인 API 구현"
+              required>
+        </div>
+
         <div class="fld one">
           <label>설명</label>
-          <textarea placeholder="업무 내용, 완료 기준, 참고 사항을 적어주세요." style="min-height:90px"></textarea>
+
+          <textarea name="description"
+                placeholder="업무 내용, 완료 기준, 참고 사항을 적어주세요."
+                style="min-height:90px"></textarea>
         </div>
+
         <div class="frow">
-          <div class="fld"><label>담당자<span class="req">*</span></label>
-            <select><option>이도현 (백엔드)</option><option selected>김민재 (백엔드)</option><option>서지우 (기획/디자인)</option><option>최윤서 (팀장)</option></select>
+          <div class="fld">
+            <label>
+                담당자<span class="req">*</span>
+            </label>
+
+            <select name="assignee_id" required>
+                <option value="">담당자 선택</option>
+
+                <!-- 현재는 임시 ID -->
+                <option value="7">김해든</option>
+                <option value="16">김해든2</option>
+            </select>
           </div>
-          <div class="fld"><label>마감일<span class="req">*</span></label><input type="date" value="2026-08-20"></div>
-        </div>
-        <div class="fld one">
-          <label>초기 상태</label>
-          <div class="picker">
-            <input type="radio" name="tst" id="ts1" checked><label for="ts1">등록</label>
-            <input type="radio" name="tst" id="ts2"><label for="ts2">진행중</label>
+
+          <div class="fld">
+            <label>
+                마감일<span class="req">*</span>
+            </label>
+
+            <input type="date"
+                   name="due_date"
+                   required>
           </div>
-          <div class="hint">담당자가 결과물을 제출하면 검수 대기로, 팀장이 검수하면 승인/반려로 넘어가요.</div>
         </div>
+
         <div class="form-foot">
-          <a class="btn ghost" href="${ctx}/workspace/board">취소</a>
-          <a class="btn pri" href="${ctx}/workspace/board">업무 등록</a>
+          <a class="btn ghost"
+            href="${ctx}/workspace/${project_id}/board">
+            취소
+          </a>
+
+          <button class="btn pri" type="submit">
+            업무 등록
+          </button>
         </div>
-      </div>
+      </form>
     </div>
   </section>
   </main>

@@ -2,6 +2,7 @@ package com.soldesk.vo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class TaskVO {
     private Long task_id; //업무pk
@@ -12,6 +13,7 @@ public class TaskVO {
     private String description; //설명
     private String status; //상태(등록/진행/검수/승인/반려)
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate due_date; //마감일
 
     private String submit_title; //제출제목
