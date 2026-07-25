@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.mapper.ProjectMapper;
+import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 
 @Service
@@ -16,12 +18,22 @@ public class ProjectService {
     @Autowired  
     private ProjectMapper projectmapper;
 
+    @Autowired
+    private ParticipationMapper participationMapper;
+
 
     //프로젝트 등록
     @Transactional
-    public void registerProject(ProjectVO project){
+    public void registerProject(ProjectVO project, Long memberId){
         
         projectmapper.insertProject(project);
+
+        ParticipationVO leaderVO = new ParticipationVO();
+        leaderVO.setProjectId(project.getProjectId());
+        leaderVO.setMemberId(memberId);
+
+        // 3. 참여 테이블에 리더로 INSERT
+        participationMapper.insertProjectLeader(leaderVO);
     }
 
     @Transactional

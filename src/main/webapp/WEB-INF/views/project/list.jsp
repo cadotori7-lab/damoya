@@ -37,13 +37,13 @@
 
           <div class="board-top-actions">
             <div class="searchbar" style="margin-bottom: 0;">
-              <input type="text" placeholder="제목, 소개, 태그로 검색 (예: 캡스톤, Spring, 데이터 분석)">
+              <input type="text" id="searchInput" placeholder="제목, 소개, 태그로 검색 (예: 캡스톤, Spring, 데이터 분석)">
             </div>
-            <button type="button" class="btn pri">검색</button>
+            <button type="button" class="btn pri" onclick="filterProjects()">검색</button>
           </div>
         </div>
 
-        <!-- 2. 좌측 필터 사이드바 -->
+ <!-- 2. 좌측 필터 사이드바 -->
         <aside class="filters">
           <h3>매칭 범위</h3>
           <div class="scope">
@@ -54,10 +54,10 @@
           <h3>카테고리</h3>
           <div class="flt" id="categoryContainer">
             <!-- 기본값(교내 선택 시): 공모전, 학과, 교양, 교내활동 -->
-            <input type="checkbox" id="c1" value="CONTEST" checked><label for="c1">공모전</label>
-            <input type="checkbox" id="c2" value="DEPARTMENT"><label for="c2">학과</label>
-            <input type="checkbox" id="c3" value="LIBERAL"><label for="c3">교양</label>
-            <input type="checkbox" id="c4" value="ACTIVITIES"><label for="c4">교내활동</label>
+            <input type="checkbox" id="c1" value="공모전" checked><label for="c1">공모전</label>
+            <input type="checkbox" id="c2" value="학과"><label for="c2">학과</label>
+            <input type="checkbox" id="c3" value="교양"><label for="c3">교양</label>
+            <input type="checkbox" id="c4" value="교내활동"><label for="c4">교내활동</label>
           </div>
 
           <h3>대상 학년</h3>
@@ -73,16 +73,14 @@
         <!-- 3. 우측 리스트 영역 -->
         <div class="list-section">
           
-          <!-- 정렬 메뉴(좌)와 '내 스크랩' + '글쓰기' 버튼 그룹(우) -->
           <div class="list-sort-header">
             <div class="list-sort">
-                            <button type="button" class="sort-btn ${currentSort eq 'recommend' ? 'active' : ''}" onclick="sortList('recommend')">추천순</button>
+              <button type="button" class="sort-btn ${currentSort eq 'recommend' ? 'active' : ''}" onclick="sortList('recommend')">추천순</button>
               <button type="button" class="sort-btn ${currentSort eq 'latest' or empty currentSort ? 'active' : ''}" onclick="sortList('latest')">최신순</button>
               <button type="button" class="sort-btn ${currentSort eq 'deadline' ? 'active' : ''}" onclick="sortList('deadline')">마감임박순</button>
               <button type="button" class="sort-btn ${currentSort eq 'likes' ? 'active' : ''}" onclick="sortList('likes')">좋아요순</button>
             </div>
             
-            <!-- 우측 버튼 그룹 (내 스크랩 + 글쓰기) -->
             <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
               <button type="button" class="btn ghost sm" onclick="toggleScrapView()">⭐ 내 스크랩</button>
               <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
@@ -93,19 +91,19 @@
             <c:forEach var="project" items="${projectList}">
               
               <c:choose>
-                <c:when test="${project.category eq 'CONTEST'}">
+                <c:when test="${project.category eq '공모전' or project.category eq 'CONTEST'}">
                   <c:set var="catClass" value="cat-contest" />
                   <c:set var="catName" value="공모전" />
                 </c:when>
-                <c:when test="${project.category eq 'DEPARTMENT'}">
+                <c:when test="${project.category eq '학과' or project.category eq 'DEPARTMENT'}">
                   <c:set var="catClass" value="cat-major" />
                   <c:set var="catName" value="학과" />
                 </c:when>
-                <c:when test="${project.category eq 'LIBERAL'}">
+                <c:when test="${project.category eq '교양' or project.category eq 'LIBERAL'}">
                   <c:set var="catClass" value="cat-liberal" />
                   <c:set var="catName" value="교양" />
                 </c:when>
-                <c:when test="${project.category eq 'SIDE_PROJECT'}">
+                <c:when test="${project.category eq '사이드 프로젝트' or project.category eq 'SIDE_PROJECT'}">
                   <c:set var="catClass" value="cat-side" />
                   <c:set var="catName" value="사이드 프로젝트" />
                 </c:when>
@@ -115,46 +113,57 @@
                 </c:otherwise>
               </c:choose>
 
-              <div class="card-item" onclick="location.href='${ctx}/project/detail?id=${project.projectId}'">
+              <div class="card-item" 
+              data-match="${project.matchScope}"
+              data-category="${catName}"
+              data-grade="${project.targetGrade}"
+              data-status="${project.status}"
+              data-end-date="${project.endDate}"
+              onclick="location.href='${ctx}/project/detail?id=${project.projectId}'" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
                 
-                <div class="card-top">
-                  <c:choose>
-                    <c:when test="${project.status eq 'RECRUITING'}">
-                      <span class="status-badge recruiting">모집중</span>
-                      <span class="d-day">D-7</span>
-                    </c:when>
-                    <c:otherwise>
-                      <span class="status-badge closed">모집마감</span>
-                    </c:otherwise>
-                  </c:choose>
-                  <span class="card-cat ${catClass}" style="margin-left: auto;">${catName}</span>
+              <!-- 카드 상단: 상태 배지 및 D-Day 영역 -->
+                  <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
+                      <c:choose>
+                        <c:when test="${project.status eq 'RECRUITING'}">
+                          <span class="status-badge recruiting">모집중</span>
+                          <span class="d-day-badge"></span> <!-- D-Day가 동적으로 들어갈 자리 -->
+                        </c:when>
+                        <c:otherwise>
+                          <span class="status-badge closed">모집마감</span>
+                        </c:otherwise>
+                      </c:choose>
+                    </div>
+                    <span class="card-cat ${catClass}">${catName}</span>
+                  </div>
+                
+                <div class="card-body">
+                  <h4 style="margin: 0 0 8px 0; font-size: 18px; color: var(--ink);"><c:out value="${project.title}" /></h4>
+                  <p style="margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><c:out value="${project.summary}" /></p>
                 </div>
                 
-                <h4><c:out value="${project.title}" /></h4>
-                <p><c:out value="${project.summary}" /></p>
-                
                 <c:if test="${not empty project.tags}">
-                  <div class="tags" style="margin-bottom: 12px;">
+                  <div class="tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
                     <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
-                      <span class="tag"><c:out value="${tag}" /></span>
+                      <span class="tag" style="background: var(--surface-alt); padding: 4px 8px; border-radius: 4px; font-size: 12px;"><c:out value="${tag}" /></span>
                     </c:forEach>
                   </div>
                 </c:if>
 
-                <div class="card-item-foot">
+                <div class="card-item-foot" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 13px; color: var(--ink-soft);">
                   <div class="author-info">
                     <span>대진대학교 · 컴퓨터공학</span>
-                    <span>·</span>
+                    <span style="margin: 0 4px;">·</span>
                     <span>모집인원 <b>${project.capacity}명</b></span>
                   </div>
-                  <div class="stats" style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-flex; align-items: center; gap: 3px;"><span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 0</span>
-                    <span style="display: inline-flex; align-items: center; gap: 3px;"><span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> 0</span>
-                    <span style="display: inline-flex; align-items: center; gap: 3px;"><span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 0</span>
+                  <div class="stats" style="display: flex; align-items: center; gap: 12px;">
+                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 0</span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> 0</span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 0</span>
                   </div>
                 </div>
+
               </div>
-              
             </c:forEach>
             
             <c:if test="${empty projectList}">
@@ -172,6 +181,13 @@
   </main>
 
   <jsp:include page="../includes/footer.jsp" />
+  
   <script src="${ctx}/resources/js/projectList.js"></script>
+  <script>
+    const ctx = '${pageContext.request.contextPath}';
+    <c:if test="${not empty msg}">
+        alert("${msg}");
+    </c:if>
+  </script>
 </body>
 </html>

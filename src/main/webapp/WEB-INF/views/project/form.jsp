@@ -91,8 +91,7 @@
           <!-- 모집 마감일 -->
           <div class="fld">
             <label>모집 마감일</label>
-            <input type="date" name="endDate" value="${project.endDate}" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
-          </div>
+<input type="date" name="endDate" id="endDate" value="${project.endDate}" required>          </div>
 
           <!-- 프로젝트 소개 영역 -->
           <div class="fld">
