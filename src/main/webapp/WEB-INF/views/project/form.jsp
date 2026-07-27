@@ -33,7 +33,7 @@
 
         <div class="panel" style="display: flex; flex-direction: column; gap: 20px;">
           
-      <c:if test="${mode == 'update'}">
+          <c:if test="${mode == 'update'}">
             <div class="fld" style="background: #f8f9fa; padding: 14px 16px; border-radius: 8px; border: 1px solid #e9ecef;">
               <label style="font-weight: 700; font-size: 14px; margin-bottom: 8px; display: block; color: var(--ink);">모집 상태 설정</label>
               <div style="display: flex; gap: 24px; align-items: center;">
@@ -49,13 +49,13 @@
 
           <!-- 제목 -->
           <div class="fld">
-            <label>프로젝트 제목</label>
-            <input type="text" id="title" name="title" value="${project.title}" placeholder="예: 2026 캡스톤 경진대회 팀원 모집" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+            <label>프로젝트 제목 <span style="color:#e07a45">*</span></label>
+            <input type="text" id="title" name="title" value="${project.title}" placeholder="예: 캡스톤 경진대회 팀원 모집" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
           </div>
 
           <!-- 매칭 범위 -->
           <div class="fld">
-            <label>매칭 범위</label>
+            <label>매칭 범위 <span style="color:#e07a45">*</span></label>
             <select name="matchScope" id="matchScope" onchange="changeCategoryOptions()" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
               <option value="교내" ${project.matchScope == '교내' or empty project.matchScope ? 'selected' : ''}>교내</option>
               <option value="전국" ${project.matchScope == '전국' ? 'selected' : ''}>전국</option>
@@ -64,38 +64,40 @@
 
           <!-- 카테고리 -->
           <div class="fld">
-            <label>카테고리</label>
-            <select name="category" id="categorySelect" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+            <label>카테고리 <span style="color:#e07a45">*</span></label>
+            <select name="category" id="categorySelect" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
             </select>
           </div>
 
           <!-- 모집 인원 -->
           <div class="fld">
-            <label>모집 인원 (명)</label>
-            <input type="number" name="capacity" value="${project.capacity}" placeholder="예: 4" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+            <label>모집 인원 (명) <span style="color:#e07a45">*</span></label>
+            <input type="number" id="capacity" name="capacity" value="${project.capacity}" placeholder="예: 4" min="1" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
           </div>
 
           <!-- 대상 학년 선택 -->
           <div class="fld">
-            <label>대상 학년</label>
-            <input type="hidden" name="targetGrade" id="targetGrade" value="${not empty project.targetGrade ? project.targetGrade : '1'}">
-            <div class="grade-group" style="display: flex; gap: 8px;">
-              <button type="button" class="btn-grade ${project.targetGrade == '1' ? 'active' : ''}" onclick="selectGrade('1', this)">1학년</button>
-              <button type="button" class="btn-grade ${project.targetGrade == '2' ? 'active' : ''}" onclick="selectGrade('2', this)">2학년</button>
-              <button type="button" class="btn-grade ${project.targetGrade == '3' ? 'active' : ''}" onclick="selectGrade('3', this)">3학년</button>
-              <button type="button" class="btn-grade ${project.targetGrade == '4' ? 'active' : ''}" onclick="selectGrade('4', this)">4학년</button>
-              <button type="button" class="btn-grade ${project.targetGrade == '무관' ? 'active' : ''}" onclick="selectGrade('무관', this)">학년 무관</button>
+            <label>대상 학년 <span style="color:#e07a45">*</span></label>
+            <input type="hidden" name="targetGrade" id="targetGrade" value="${not empty project.targetGrade ? project.targetGrade : '무관'}">
+            
+            <div class="grade-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-grade grade-spec" data-grade="1" onclick="toggleGrade('1', this)">1학년</button>
+              <button type="button" class="btn-grade grade-spec" data-grade="2" onclick="toggleGrade('2', this)">2학년</button>
+              <button type="button" class="btn-grade grade-spec" data-grade="3" onclick="toggleGrade('3', this)">3학년</button>
+              <button type="button" class="btn-grade grade-spec" data-grade="4" onclick="toggleGrade('4', this)">4학년</button>
+              <button type="button" class="btn-grade grade-any" data-grade="무관" onclick="toggleGrade('무관', this)">학년 무관</button>
             </div>
           </div>
 
           <!-- 모집 마감일 -->
           <div class="fld">
-            <label>모집 마감일</label>
-<input type="date" name="endDate" id="endDate" value="${project.endDate}" required>          </div>
+            <label>모집 마감일 <span style="color:#e07a45">*</span></label>
+            <input type="date" name="endDate" id="endDate" value="${project.endDate}" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+          </div>
 
           <!-- 프로젝트 소개 영역 -->
           <div class="fld">
-            <label>프로젝트 소개</label>
+            <label>프로젝트 소개 <span style="color:#e07a45">*</span></label>
             <div class="editor-container">
               <div class="editor-toolbar">
                 <button type="button" title="굵게"><i class="fa-solid fa-bold"></i></button>
@@ -114,7 +116,7 @@
                 <button type="button" title="글머리 기호"><i class="fa-solid fa-list-ul"></i></button>
                 <button type="button" title="번호 매기기"><i class="fa-solid fa-list-ol"></i></button>
               </div>
-              <textarea name="summary" id="summaryArea" class="editor-textarea" placeholder="프로젝트에 대해 자유롭게 소개해주세요."><c:choose><c:when test="${not empty project.summary}"><c:out value="${project.summary}"/></c:when><c:otherwise>[개발 프로젝트 모집 내용 예시]
+              <textarea name="summary" id="summaryArea" class="editor-textarea" required placeholder="프로젝트에 대해 자유롭게 소개해주세요."><c:choose><c:when test="${not empty project.summary}"><c:out value="${project.summary}"/></c:when><c:otherwise>[개발 프로젝트 모집 내용 예시]
 
 • 프로젝트 주제 : 
 • 프로젝트 목표 : 

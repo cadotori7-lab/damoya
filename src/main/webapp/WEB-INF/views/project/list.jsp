@@ -13,6 +13,14 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/resources/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        .d-day-badge {
+            color: #e53e3e;
+            font-weight: 700;
+            font-size: 13.5px;
+            font-family: 'Pretendard', sans-serif;
+        }
+    </style>
 </head>
 <body>
   <jsp:include page="../includes/header.jsp" />
@@ -43,21 +51,21 @@
           </div>
         </div>
 
- <!-- 2. 좌측 필터 사이드바 -->
+        <!-- 2. 좌측 필터 사이드바 -->
         <aside class="filters">
           <h3>매칭 범위</h3>
           <div class="scope">
-            <button type="button" class="on" onclick="setScope('CAMPUS')">교내</button>
-            <button type="button" onclick="setScope('NATION')">전국</button>
+            <button type="button" class="on" onclick="setScope('교내', this)">교내</button>
+            <button type="button" onclick="setScope('전국', this)">전국</button>
           </div>
 
           <h3>카테고리</h3>
           <div class="flt" id="categoryContainer">
-            <!-- 기본값(교내 선택 시): 공모전, 학과, 교양, 교내활동 -->
+            <!-- 디폴트(교내 선택 시): 공모전, 학과, 교양, 교내활동 모두 체크 -->
             <input type="checkbox" id="c1" value="공모전" checked><label for="c1">공모전</label>
-            <input type="checkbox" id="c2" value="학과"><label for="c2">학과</label>
-            <input type="checkbox" id="c3" value="교양"><label for="c3">교양</label>
-            <input type="checkbox" id="c4" value="교내활동"><label for="c4">교내활동</label>
+            <input type="checkbox" id="c2" value="학과" checked><label for="c2">학과</label>
+            <input type="checkbox" id="c3" value="교양" checked><label for="c3">교양</label>
+            <input type="checkbox" id="c4" value="교내활동" checked><label for="c4">교내활동</label>
           </div>
 
           <h3>대상 학년</h3>
@@ -121,21 +129,20 @@
               data-end-date="${project.endDate}"
               onclick="location.href='${ctx}/project/detail?id=${project.projectId}'" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
                 
-              <!-- 카드 상단: 상태 배지 및 D-Day 영역 -->
-                  <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
-                      <c:choose>
-                        <c:when test="${project.status eq 'RECRUITING'}">
-                          <span class="status-badge recruiting">모집중</span>
-                          <span class="d-day-badge"></span> <!-- D-Day가 동적으로 들어갈 자리 -->
-                        </c:when>
-                        <c:otherwise>
-                          <span class="status-badge closed">모집마감</span>
-                        </c:otherwise>
-                      </c:choose>
-                    </div>
-                    <span class="card-cat ${catClass}">${catName}</span>
+                <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
+                    <c:choose>
+                      <c:when test="${project.status eq 'RECRUITING'}">
+                        <span class="status-badge recruiting">모집중</span>
+                        <span class="d-day-badge"></span>
+                      </c:when>
+                      <c:otherwise>
+                        <span class="status-badge closed">모집마감</span>
+                      </c:otherwise>
+                    </c:choose>
                   </div>
+                  <span class="card-cat ${catClass}">${catName}</span>
+                </div>
                 
                 <div class="card-body">
                   <h4 style="margin: 0 0 8px 0; font-size: 18px; color: var(--ink);"><c:out value="${project.title}" /></h4>

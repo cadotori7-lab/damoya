@@ -20,10 +20,13 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // 툴바 버튼들에 텍스트 서식 기능(굵기, 기울임 등) 연결
     initEditorToolbar();
+
+    // 등록/수정 모드 진입 시 기존 targetGrade 값 기반으로 대상 학년 버튼 활성화 상태 복원
+    initGradeButtons();
 });
 
 
-//  매칭 범위에 따른 카테고리 동적 변경 함수 (DB 저장용 한글 value 매핑)
+// 매칭 범위에 따른 카테고리 동적 변경 함수 (DB 저장용 한글 value 매핑)
 function changeCategoryOptions() {
     const matchScope = document.getElementById('matchScope').value; // '교내' 또는 '전국'
     const categorySelect = document.getElementById('categorySelect'); // 카테고리 select 박스
@@ -61,19 +64,18 @@ function changeCategoryOptions() {
 }
 
 
-// 2. 사진 첨부(이미지 업로드) 안내 함수
+// 사진 첨부(이미지 업로드) 안내 함수
 function handleImageUpload(input) {
     if (input.files && input.files[0]) {
         const fileName = input.files[0].name;
         const textarea = document.getElementById('summaryArea');
         
-        // 텍스트area 하단에 선택된 이미지 파일명이 포함된 안내 문구를 자동으로 덧붙임
         textarea.value += `\n[첨부된 이미지: ${fileName}]\n`;
     }
 }
 
 
-//  태그 입력 및 관리 함수들
+// 태그 입력 및 관리 함수들
 function handleTagInput(event) {
     if (event.key === 'Enter') {
         event.preventDefault(); // 엔터 입력 시 폼 제출 방지
@@ -116,30 +118,94 @@ function removeTag(index) {
 }
 
 
-//  대상 학년 버튼 선택 함수
-function selectGrade(gradeValue, buttonElement) {
-    document.getElementById('targetGrade').value = gradeValue;
+//대상 학년 다중 선택
+function toggleGrade(gradeVal, btnElement) {
+    const anyBtn = document.querySelector('.btn-grade.grade-any');
+    const specBtns = document.querySelectorAll('.btn-grade.grade-spec');
+
+    if (gradeVal === '무관' || gradeVal === 'ALL') {
+        specBtns.forEach(btn => btn.classList.remove('active'));
+        if (anyBtn) anyBtn.classList.add('active');
+    } else {
+        if (anyBtn) anyBtn.classList.remove('active');
+        btnElement.classList.toggle('active');
+
+        const activeSpecBtns = document.querySelectorAll('.btn-grade.grade-spec.active');
+
+        if (activeSpecBtns.length === 4) {
+            specBtns.forEach(btn => btn.classList.remove('active'));
+            if (anyBtn) anyBtn.classList.add('active');
+        } 
+        else if (activeSpecBtns.length === 0) {
+            if (anyBtn) anyBtn.classList.add('active');
+        }
+    }
+
+    updateTargetGradeHiddenInput();
+}
+
+function updateTargetGradeHiddenInput() {
+    const anyBtn = document.querySelector('.btn-grade.grade-any');
+    const activeSpecBtns = document.querySelectorAll('.btn-grade.grade-spec.active');
+    const hiddenInput = document.getElementById('targetGrade');
+
+    if (!hiddenInput) return;
+
+    if (anyBtn && anyBtn.classList.contains('active')) {
+        hiddenInput.value = '무관';
+    } else {
+        const selectedGrades = Array.from(activeSpecBtns)
+                                    .map(btn => btn.getAttribute('data-grade'))
+                                    .sort();
+        hiddenInput.value = selectedGrades.join(',');
+    }
+}
+
+// 초기 로드 시 DB의 targetGrade 값 복원 함수
+function initGradeButtons() {
+    const hiddenInput = document.getElementById('targetGrade');
+    if (!hiddenInput) return;
+
+    const savedVal = hiddenInput.value.trim();
+    const anyBtn = document.querySelector('.btn-grade.grade-any');
+    const specBtns = document.querySelectorAll('.btn-grade.grade-spec');
+
+    if (anyBtn) anyBtn.classList.remove('active');
+    specBtns.forEach(btn => btn.classList.remove('active'));
+
+    if (!savedVal || savedVal === '무관' || savedVal === 'ALL' || savedVal === '0') {
+        if (anyBtn) anyBtn.classList.add('active');
+    } else {
+        const savedArr = savedVal.split(',');
+        specBtns.forEach(btn => {
+            const g = btn.getAttribute('data-grade');
+            if (savedArr.includes(g)) {
+                btn.classList.add('active');
+            }
+        });
+
+        const activeCount = document.querySelectorAll('.btn-grade.grade-spec.active').length;
+        if (activeCount === 4 || activeCount === 0) {
+            specBtns.forEach(btn => btn.classList.remove('active'));
+            if (anyBtn) anyBtn.classList.add('active');
+        }
+    }
     
-    const buttons = document.querySelectorAll('.btn-grade');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    
-    buttonElement.classList.add('active');
+    updateTargetGradeHiddenInput();
 }
 
 
-//  툴바 기능 및 에디터 서식(굵기, 크기 등) 제어 함수
+// 툴바 기능 및 에디터 서식(굵기, 크기 등) 제어 함수
 function initEditorToolbar() {
     const toolbarButtons = document.querySelectorAll('.editor-toolbar button');
     
     if (toolbarButtons.length > 0) {
-        // JSP 내 툴바 버튼 순서에 맞춰 클릭 이벤트 매핑
-        // 0: 굵게, 1: 기울임, 2: 취소선, 3: 링크, 5: 코드블록, 6: 인용구, 7: 글머리 기호, 8: 번호 매기기
         const actions = [
             () => wrapText('**', '**'),          // 굵게
             () => wrapText('*', '*'),            // 기울임
             () => wrapText('~~', '~~'),          // 취소선
             () => wrapText('[', '](url)'),       // 링크
-            null, // 이미지 (input[type=file]이 처리)
+            null,                                // 이미지
             () => wrapText('```\n', '\n```'),    // 코드 블록
             () => wrapText('> ', ''),            // 인용구
             () => wrapText('- ', ''),            // 글머리 기호
@@ -167,7 +233,7 @@ function initEditorToolbar() {
         `;
         select.onchange = function() {
             changeFontSize(this.value);
-            this.value = ""; // 선택 후 초기화
+            this.value = ""; 
         };
         toolbar.appendChild(select);
     }
@@ -207,31 +273,68 @@ function changeFontSize(size) {
 }
 
 
+
 // 프로젝트 등록 및 수정 폼 제출 
 function submitProject(status) {
+    //  프로젝트 제목 검증
     const titleInput = document.getElementById("title");
-    const title = titleInput ? titleInput.value.trim() : "";
-    
-    if (!title) {
-        alert("프로젝트 제목을 입력해주세요.");
+    if (!titleInput || !titleInput.value.trim()) {
+        alert("프로젝트 제목을 입력해 주세요.");
         if (titleInput) titleInput.focus();
         return;
     }
 
+    //  카테고리 선택 검증
+    const categorySelect = document.getElementById("categorySelect");
+    if (!categorySelect || !categorySelect.value.trim()) {
+        alert("카테고리를 선택해 주세요.");
+        if (categorySelect) categorySelect.focus();
+        return;
+    }
+
+    //  모집 인원 검증
+    const capacityInput = document.getElementById("capacity") || document.querySelector("input[name='capacity']");
+    if (!capacityInput || !capacityInput.value.trim() || parseInt(capacityInput.value, 10) <= 0) {
+        alert("모집 인원을 1명 이상 입력해 주세요.");
+        if (capacityInput) capacityInput.focus();
+        return;
+    }
+
+    //  대상 학년 검증
+    const targetGradeInput = document.getElementById("targetGrade");
+    if (!targetGradeInput || !targetGradeInput.value.trim()) {
+        alert("대상 학년을 선택해 주세요.");
+        return;
+    }
+
+    //  모집 마감일 검증
+    const endDateInput = document.getElementById("endDate");
+    if (!endDateInput || !endDateInput.value.trim()) {
+        alert("모집 마감일을 선택해 주세요.");
+        if (endDateInput) endDateInput.focus();
+        return;
+    }
+
+    // 프로젝트 소개 내용 검증
+    const summaryArea = document.getElementById("summaryArea");
+    if (!summaryArea || !summaryArea.value.trim()) {
+        alert("프로젝트 소개 내용을 입력해 주세요.");
+        if (summaryArea) summaryArea.focus();
+        return;
+    }
+
+    // 모든 필터링 및 유효성 검사 통과 시 제출 진행
     const projectForm = document.getElementById("projectForm");
     if (projectForm) {
         projectForm.submit();
     }
 }
 
-//현재 일 기준으로 지난 날짜는 선택 못하게끔
+// 현재 일 기준으로 지난 날짜 선택 차단
 document.addEventListener("DOMContentLoaded", function() {
-        // 오늘 날짜를 YYYY-MM-DD 포맷으로 구하기
-        const today = new Date().toISOString().split('T')[0];
-        
-        // id가 endDate인 input 요소의 min 속성에 오늘 날짜 대입
-        const endDateInput = document.getElementById("endDate");
-        if (endDateInput) {
-            endDateInput.min = today;
-        }
-    });
+    const today = new Date().toISOString().split('T')[0];
+    const endDateInput = document.getElementById("endDate");
+    if (endDateInput) {
+        endDateInput.min = today;
+    }
+});
