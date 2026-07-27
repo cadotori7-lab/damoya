@@ -1,6 +1,6 @@
 @echo off
-set CATALINA_HOME=C:\Program Files\Apache Software Foundation\Tomcat 9.0
-set JAVA_HOME=C:\Program Files\Java\jdk-17
+set CATALINA_HOME=C:\apache-tomcat-9.0.118
+set JAVA_HOME=C:\Program Files\Java\jdk-21
 
 echo Building WAR...
 call mvn clean package -q

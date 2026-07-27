@@ -1,28 +1,26 @@
 package com.soldesk.controller;
 
-import com.soldesk.mapper.ParticipationMapper;
-import com.soldesk.service.MemberService;
-import com.soldesk.service.ProjectService;
-
-import java.lang.reflect.Member;
 import java.security.Principal;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.soldesk.mapper.ParticipationMapper;
+import com.soldesk.service.CommentService;
+import com.soldesk.service.MemberService;
+import com.soldesk.service.ProjectService;
+import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ProjectVO;
-
-import org.springframework.web.bind.annotation.PostMapping;
 
 
 
@@ -38,6 +36,9 @@ public class ProjectController {
 
     @Autowired
     private ParticipationMapper participationMapper;
+
+    @Autowired
+    private CommentService commentService;
 
 
     ProjectController(ProjectService projectService) {
@@ -58,8 +59,9 @@ public class ProjectController {
     @GetMapping("/detail")
     public String detail(@RequestParam("id") Long projectId, Model model, Principal principal) {
         ProjectVO project = projectService.getProjectById(projectId);
-        model.addAttribute("project", project);
 
+        List<CommentVO> commentList = commentService.getCommentsByProjectId(projectId);
+        
         // 1. 이미 지원했는지 체크 (기존 코드)
         boolean hashApplied = false;
         
@@ -69,6 +71,7 @@ public class ProjectController {
         if (principal != null) {
             String loginId = principal.getName();
             MemberVO loginUser = memberService.findByLoginId(loginId);
+            model.addAttribute("member",loginUser);
             if (loginUser != null) {
                 Long loginMemberId = (long) loginUser.getMember_id();
                 
@@ -85,6 +88,8 @@ public class ProjectController {
         
         model.addAttribute("hashApplied", hashApplied);
         model.addAttribute("isOwner", isOwner); // ★ 뷰로 전달
+        model.addAttribute("commentList", commentList);
+        model.addAttribute("project", project);
 
         return "project/detail";
     }
@@ -170,5 +175,36 @@ public class ProjectController {
     @GetMapping("/my")
     public String my() {
         return "project/my";
+    }
+
+    @PostMapping("/comment/add")
+    public String addComment(@ModelAttribute CommentVO commentVO, RedirectAttributes rttr, Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+        commentVO.setMember_id(loginUser.getMember_id());
+        commentService.addComment(commentVO);
+        rttr.addFlashAttribute("msg", "댓글이 성공적으로 등록되었습니다.");
+        return "redirect:/project/detail?id=" + commentVO.getProject_id();
+    }
+    @PostMapping("/comment/delete")
+    public String deleteComment(@RequestParam("commentId") Long commentId,
+                                @RequestParam("projectId") Long projectId,
+                                RedirectAttributes rttr,
+                                Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+        commentService.deleteComment(commentId);
+        rttr.addFlashAttribute("msg", "댓글이 성공적으로 삭제되었습니다.");
+        return "redirect:/project/detail?id=" + projectId;
     }
 }

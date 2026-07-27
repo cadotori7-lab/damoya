@@ -58,14 +58,44 @@
           </div>
 
           <div class="panel">
-            <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">3</span></h5>
-            <div class="cmt-form">
-              <div class="pic">민</div>
-              <div class="cf-input">
-                <textarea id="cmtInput" placeholder="궁금한 점이나 지원 관련 문의를 남겨보세요."></textarea>
-                <div class="cf-foot"><button class="btn pri sm" onclick="addComment()">댓글 등록</button></div>
+            <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">${fn:length(commentList)}</span></h5>
+            <c:forEach var="comment" items="${commentList}">
+              <div class="cmt">
+                <div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">${comment.memberName.substring(0, 1)}</div>
+                <div class="body">
+                  <div class="nm">${comment.memberName} <span>${comment.created_at}</span></div>
+                  <p><c:out value="${comment.content}" /></p>
+                </div>
+                <c:if test="${isOwner || (not empty member and member.member_id == comment.member_id)}">
+                  <form method="post" action="${ctx}/project/comment/delete" style="margin-left: auto;">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <input type="hidden" name="commentId" value="${comment.commentId}" />
+                    <input type="hidden" name="projectId" value="${project.projectId}" />
+                    <button type="submit" class="btn ghost sm" style="color: #e07a45; border-color: #e07a45;">삭제</button>
+                  </form>
+                </c:if>
               </div>
-            </div>
+            </c:forEach>
+            <c:choose>
+              <c:when test="${not empty member}">
+                <div class="cmt-form">
+                  <div class="pic">${member.name.substring(0, 1)}</div>
+                  <form id="commentform" method="post" action="${ctx}/project/comment/add">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <input type="hidden" name="project_id" value="${project.projectId}" />
+                    <div class="cf-input">
+                      <textarea id="cmtInput" name="content" placeholder="궁금한 점이나 지원 관련 문의를 남겨보세요."></textarea>
+                      <div class="cf-foot"><button class="btn pri sm" type="submit">댓글 등록</button></div>
+                    </div>
+                  </form>
+                </div>
+              </c:when>
+              <c:otherwise>
+                <div class="cmt-form">
+                  <a href="${ctx}/auth/login">로그인 후 댓글을 작성할 수 있습니다.</a>
+                </div>
+              </c:otherwise>
+            </c:choose>
           </div>
         </div>
 

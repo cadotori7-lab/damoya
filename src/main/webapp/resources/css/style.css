@@ -846,6 +846,7 @@
   /* 댓글 입력창 */
   .cmt-form{display:flex;gap:11px;align-items:flex-start;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
   .cmt-form .pic{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#2b46c8,#5b45c8)}
+  .cmt-form form{flex:1;min-width:0}
   .cmt-form .cf-input{flex:1}
   .cmt-form textarea{width:100%;border:1px solid var(--line-strong);border-radius:11px;padding:11px 14px;font-size:14px;font-family:inherit;min-height:44px;resize:vertical;line-height:1.5}
   .cmt-form textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
