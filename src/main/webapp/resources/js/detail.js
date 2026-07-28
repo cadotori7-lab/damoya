@@ -24,9 +24,6 @@ function addComment(){
 window.addComment=addComment;
 
 
-/* ==========================================
-   여기서부터 아래 코드를 추가해 주세요! 
-   ========================================== */
 
 // 모달(팝업창) 열기 함수
 function openModal(modalId) {
@@ -70,3 +67,51 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 });
+function toggleFavorite(projectId, buttonElement, event) {
+    // 목록 카드나 부모 컨테이너에 걸린 onclick 이벤트(예: 상세페이지 이동)가 실행되는 것을 막습니다.
+    if (event) {
+        event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === 'function') {
+            event.stopImmediatePropagation();
+        }
+    }
+    
+    fetch(`${ctx}/project/favorite/toggle?projectId=${projectId}`, {
+        method: 'POST'
+    })
+    .then(response => {
+        // 서버에서 응답한 데이터가 JSON 형태가 아닐 경우를 대비한 예외 처리
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            return response.json();
+        } else {
+            throw new Error("서버 응답이 JSON 형식이 아닙니다. 로그인이 풀렸거나 세션이 만료되었을 수 있습니다.");
+        }
+    })
+    .then(data => {
+        // 서버 처리 결과 상태 검사
+        if (data.status === 'FAIL') {
+            alert(data.message);
+            // 로그인이 필요한 경우 로그인 페이지로 자동 이동
+            if (data.message && data.message.includes('로그인')) {
+                location.href = `${ctx}/auth/login`;
+            }
+            return;
+        }
+        
+        const countSpan = buttonElement.querySelector('.fav-count');
+        if (countSpan) {
+            countSpan.innerText = data.favoriteCount;
+        }
+
+        // 하트 아이콘 활성화/비활성화 클래스 토글 
+        if (data.isLiked) {
+            buttonElement.classList.add('active'); // 좋아요 추가
+        } else {
+            buttonElement.classList.remove('active'); // 좋아요 취소
+        }
+    })
+    .catch(error => {
+        console.error('관심 등록 처리 중 오류 발생:', error);
+    });
+}

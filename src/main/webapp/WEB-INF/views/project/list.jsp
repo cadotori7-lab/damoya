@@ -13,14 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/resources/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <style>
-        .d-day-badge {
-            color: #e53e3e;
-            font-weight: 700;
-            font-size: 13.5px;
-            font-family: 'Pretendard', sans-serif;
-        }
-    </style>
 </head>
 <body>
   <jsp:include page="../includes/header.jsp" />
@@ -89,9 +81,23 @@
               <button type="button" class="sort-btn ${currentSort eq 'likes' ? 'active' : ''}" onclick="sortList('likes')">좋아요순</button>
             </div>
             
+            <!-- 내 관심등록 버튼 (토글 및 색상 상태 반영) -->
             <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
-              <button type="button" class="btn ghost sm" onclick="toggleScrapView()">⭐ 내 스크랩</button>
-              <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
+                <c:choose>
+                    <c:when test="${isFavoriteView}">
+                        <a class="btn ghost sm active" 
+                           style="background-color: var(--ink); color: #fff; border-color: var(--ink);"
+                           href="${ctx}/project/list">
+                            ⭐ 내 관심등록 보기 중
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a class="btn ghost sm" href="${ctx}/project/list?view=favorite">
+                            ⭐ 내 관심등록
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+                <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
             </div>
           </div>
 
@@ -164,9 +170,23 @@
                     <span>모집인원 <b>${project.capacity}명</b></span>
                   </div>
                   <div class="stats" style="display: flex; align-items: center; gap: 12px;">
-                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 0</span>
-                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> 0</span>
-                    <span style="display: inline-flex; align-items: center; gap: 4px;"><span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 0</span>
+                      
+                      <!-- 1. 관심(하트) 버튼 -->
+                      <button type="button" class="btn-favorite ${project.liked ? 'active' : ''}" style="font-size: 13px; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleFavorite(${project.projectId}, this, event)">
+                          <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 
+                          <span class="fav-count">${project.favoriteCount}</span>
+                      </button>
+                      
+                      <!-- 2. 조회수 -->
+                      <span style="display: inline-flex; align-items: center; gap: 4px;">
+                          <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${project.viewCount}
+                      </span>
+                      
+                      <!-- 3. 댓글 수 -->
+                      <span style="display: inline-flex; align-items: center; gap: 4px;">
+                          <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 
+                      </span>
+                      
                   </div>
                 </div>
 
@@ -180,6 +200,40 @@
               </div>
             </c:if>
           </div>
+          
+          <!-- 페이징 처리 영역 -->
+          <nav aria-label="page" style="margin-top: 32px;">
+            <ul class="pagination" style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;">
+                
+                <!-- 이전 버튼 -->
+                <c:if test="${pageBean.min > 1}">
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="submitSearch(${pageBean.prevPage}); return false;" 
+                           style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; text-decoration: none; color: var(--ink-soft);">이전</a>
+                    </li>
+                </c:if>
+            
+                <!-- 페이지 번호 1, 2, 3... -->
+                <c:forEach begin="${pageBean.min}" end="${pageBean.max}" var="pageNum">
+                    <li class="page-item ${pageNum == pageBean.currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="submitSearch(${pageNum}); return false;" 
+                           style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; text-decoration: none; 
+                           ${pageNum == pageBean.currentPage ? 'background-color: var(--ink); color: #fff; border-color: var(--ink);' : 'color: var(--ink-soft);'}">
+                            ${pageNum}
+                        </a>
+                    </li>
+                </c:forEach> 
+               
+                <!-- 다음 버튼 -->
+                <c:if test="${pageBean.max < pageBean.pageCnt}">
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="submitSearch(${pageBean.nextPage}); return false;" 
+                           style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; text-decoration: none; color: var(--ink-soft);">다음</a>
+                    </li>
+                </c:if>
+                
+            </ul>
+          </nav>
           
         </div>
 

@@ -17,7 +17,7 @@
         <result column="created_at" property="createdAt"/>
         <result column="match_scope" property="matchScope"/>
         <result column="tags" property="tags"/>
-        <result column="favorit_count" property="favoriteCount"/>
+        <result column="favorite_count" property="favoriteCount"/>
         <result column="view_count" property="viewCount"/>
     </resultMap>
 
@@ -62,6 +62,173 @@
         where project_id = #{projectId}
      </delete>
 
+    <!-- 필터 조건에 맞는 전체 게시글 개수 구하기 -->
+    <select id="getTotalCount" resultType="int" parameterType="com.soldesk.vo.ProjectVO">
+        SELECT COUNT(*) 
+        FROM project
+        <where>
+            <!-- 매칭 범위 (교내/전국) -->
+            <if test="matchScope != null and matchScope != ''">
+                AND match_scope = #{matchScope}
+            </if>
+            <!--  탭 상태 -->
+            <if test="tab != null and tab != 'all'">
+                AND status = #{tab}
+            </if>
+            <!-- 키워드 검색 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    title LIKE CONCAT('%', #{keyword}, '%')
+                    OR summary LIKE CONCAT('%', #{keyword}, '%')
+                    OR tags LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <!-- 카테고리 다중 선택 -->
+            <if test="categoryList != null and categoryList.size() > 0">
+                AND category IN
+                <foreach collection="categoryList" item="category" open="(" separator="," close=")">
+                    #{category}
+                </foreach>
+            </if>
+            <!-- 대상 학년 다중 선택 -->
+            <if test="gradeList != null and gradeList.size() > 0">
+                <if test="!gradeList.contains('ALL') and !gradeList.contains('무관')">
+                    AND (
+                        target_grade = '무관' 
+                        OR target_grade = 'ALL' 
+                        OR target_grade IS NULL 
+                        OR target_grade = ''
+                        <foreach collection="gradeList" item="grade">
+                            OR target_grade LIKE CONCAT('%', #{grade}, '%')
+                        </foreach>
+                    )
+                </if>
+            </if>
+        </where>
+    </select>
 
+
+    <!-- 필터 조건에 맞는 게시글 리스트 조회 -->
+    <select id="getProjectList" resultMap="projectResultMap" parameterType="com.soldesk.vo.ProjectVO">
+        SELECT *
+        FROM project
+        <where>
+            <!--  매칭 범위 (교내/전국) -->
+            <if test="matchScope != null and matchScope != ''">
+                AND match_scope = #{matchScope}
+            </if>
+            <!--  탭 상태 -->
+            <if test="tab != null and tab != 'all'">
+                AND status = #{tab}
+            </if>
+            <!--  키워드 검색 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    title LIKE CONCAT('%', #{keyword}, '%')
+                    OR summary LIKE CONCAT('%', #{keyword}, '%')
+                    OR tags LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <!--  카테고리 다중 선택 -->
+            <if test="categoryList != null and categoryList.size() > 0">
+                AND category IN
+                <foreach collection="categoryList" item="category" open="(" separator="," close=")">
+                    #{category}
+                </foreach>
+            </if>
+            <!--  대상 학년 다중 선택 -->
+            <if test="gradeList != null and gradeList.size() > 0">
+                <if test="!gradeList.contains('ALL') and !gradeList.contains('무관')">
+                    AND (
+                        target_grade = '무관' 
+                        OR target_grade = 'ALL' 
+                        OR target_grade IS NULL 
+                        OR target_grade = ''
+                        <foreach collection="gradeList" item="grade">
+                            OR target_grade LIKE CONCAT('%', #{grade}, '%')
+                        </foreach>
+                    )
+                </if>
+            </if>
+        </where>
+        
+        <!-- 정렬 조건 -->
+        <choose>
+            <when test="sort == 'deadline'">
+                ORDER BY end_date ASC, created_at DESC
+            </when>
+            <when test="sort == 'likes'">
+                ORDER BY favorit_count DESC, created_at DESC
+            </when>
+            <when test="sort == 'recommend'">
+                ORDER BY view_count DESC, created_at DESC
+            </when>
+            <otherwise>
+                ORDER BY created_at DESC
+            </otherwise>
+        </choose>
+
+        <!-- 페이징 컷 (6개씩) -->
+        LIMIT #{amount} OFFSET #{offset}
+    </select>
+
+    <!-- 관심 등록-->
+     <insert id="insertFavorite">
+        insert into favorite (member_id, project_id)
+        values(#{memberId}, #{projectId})
+     </insert>
+
+    <!-- 관심 취소-->
+    <delete id="deleteFavorite">
+        delete from favorite
+        where member_id = #{memberId} and project_id = #{projectId}
+    </delete>
+
+    <!-- favorite_count  증가-->
+     <update id="increaseFavoriteCount">
+        update project
+        set favorite_count = favorite_count +1
+        where project_id = #{projectId}
+     </update>
+
+    <!-- favorite_count  감소-->
+    <update id="decreaseFavoriteCount">
+        update project
+        set favorite_count = favorite_count -1
+        where project_id = #{projectId}
+    </update>
+
+    <!-- 로그인한 유저가 좋아요 눌렀는지 확인-->
+     <select id="checkFavorite">
+        select count(*)
+        from favorite
+        where member_id = #{memberId} and project_id = #{projectId}
+     </select>
+
+    <!-- 사용자가 관심 등록한 프로젝트 총 개수 -->
+    <select id="getFavoriteTotalCount" resultType="int" parameterType="long">
+        SELECT COUNT(*) 
+        FROM favorite f 
+        WHERE f.member_id = #{memberId}
+    </select>
+
+    <!-- 사용자가 관심 등록한 프로젝트 페이징 조회 -->
+    <select id="getFavoriteProjectsPaged" resultMap="projectResultMap">
+        SELECT p.* 
+        FROM project p 
+        INNER JOIN favorite f ON p.project_id = f.project_id 
+        WHERE f.member_id = #{memberId} 
+        ORDER BY f.project_id DESC 
+        LIMIT #{amount} OFFSET #{offset}
+    </select>
+
+    <!-- 내가 관심등록한 게시글 보기 -->
+    <select id="getFavoriteProjectsByMemberId" resultMap="projectResultMap" parameterType="long">
+        SELECT p.* 
+        FROM project p 
+        INNER JOIN favorite f ON p.project_id = f.project_id 
+        WHERE f.member_id = #{memberId} 
+        ORDER BY p.project_id DESC
+    </select>
 
 </mapper>

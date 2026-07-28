@@ -12,10 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/resources/css/style.css">
-    
-    <style>
-        .modal-overlay { display: none; }
-    </style>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
   <jsp:include page="../includes/header.jsp" />
@@ -30,14 +28,18 @@
           <div class="panel d-head">
             <div class="cat">${project.category} · ${project.matchScope}</div>
             <h2><c:out value="${project.title}" /></h2>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
+            
+            <!--  태그 영역 (모집중 뱃지 + 등록한 태그들) -->
+            <div style="display:flex;gap:8px;flex-wrap:wrap; margin-bottom: 20px;">
+              <span class="chip ${project.status == 'RECRUITING' ? 'recruit' : 'done'}">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
+              
               <c:if test="${not empty project.tags}">
                 <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
                   <span class="tag"><c:out value="${tag}" /></span>
                 </c:forEach>
               </c:if>
             </div>
+
             <div class="d-meta">
               <div><div class="k">카테고리</div><div class="v">${project.category}</div></div>
               <div><div class="k">대상 학년</div><div class="v">${project.targetGrade}</div></div>
@@ -49,12 +51,16 @@
             <div class="prose" style="white-space: pre-wrap; line-height: 1.6;">
               <p><c:out value="${project.summary}" /></p>
             </div>
-          </div>
 
-          <!-- 프로젝트 수정 및 삭제 버튼 영역 -->
-          <div class="d-actions" style="margin-bottom: 16px; display: flex; gap: 8px;">
-            <a class="btn ghost sm" href="${ctx}/project/edit?id=${project.projectId}">수정하기</a>
-            <button type="button" class="btn ghost sm" style="color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
+            <!-- 프로젝트 수정 및 삭제 버튼 영역 (가로 정렬 종결 코드) -->
+            <div style="display: flex; flex-direction: row; gap: 8px; margin-bottom: 20px; align-items: center;">
+                <c:if test="${isOwner}">
+                    <a class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center;" href="${ctx}/project/edit?id=${project.projectId}">수정하기</a>
+                    <button type="button" class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center; color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
+                </c:if>
+                <a class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center;" href="${ctx}/project/list">목록으로</a>
+            </div>
+
           </div>
 
           <div class="panel">
@@ -87,34 +93,44 @@
             <!-- 자바스크립트 마감일 체크용 숨김 데이터 -->
             <div id="projectEndDate" data-end="${project.endDate}" style="display:none;"></div>
             
-            <!-- 우측 사이드바 버튼 영역 -->
-            <c:choose>
-                <c:when test="${isOwner}">
-                    <div style="background:#f8f9fa;border-radius:12px;padding:14px;text-align:center;margin-top:18px;border:1px solid #e5e7eb;">
-                        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">내가 등록한 프로젝트입니다</div>
-                        <div style="font-size:11.5px;color:var(--ink-soft);">본문 하단의 수정/삭제 버튼을 이용해주세요.</div>
-                    </div>
-                </c:when>
+            <!--  우측 사이드바 버튼 영역 (지원하기 + 관심등록 가로 나란히 배치) -->
+            <div style="display: flex; gap: 8px; margin-top: 18px;">
+                
+                <c:choose>
+                    <c:when test="${isOwner}">
+                        <!-- 내 프로젝트일 경우 -->
+                        <div style="flex: 1.2; background:#f8f9fa; border-radius:8px; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center;">
+                            <span style="font-size:13px; font-weight:600; color:var(--ink-soft);">내 프로젝트</span>
+                        </div>
+                    </c:when>
 
-                <c:when test="${hashApplied}">
-                    <button type="button" class="btn ghost" style="width:100%;justify-content:center;margin-top:18px;background:#f3f4f6;color:#6b7280;cursor:not-allowed;" disabled>
-                        이미 지원한 프로젝트예요
-                    </button>
-                </c:when>
+                    <c:when test="${hashApplied}">
+                        <button type="button" class="btn ghost" style="flex: 1.2; justify-content:center; background:#f3f4f6; color:#6b7280; cursor:not-allowed; padding:0;" disabled>
+                            이미 지원함
+                        </button>
+                    </c:when>
 
-                <c:when test="${project.status eq 'CLOSED'}">
-                    <button type="button" class="btn ghost" style="width:100%;justify-content:center;margin-top:18px;background:#f3f4f6;color:#9ca3af;cursor:not-allowed;" disabled>
-                        모집이 마감된 프로젝트입니다
-                    </button>
-                </c:when>
+                    <c:when test="${project.status eq 'CLOSED'}">
+                        <button type="button" class="btn ghost" style="flex: 1.2; justify-content:center; background:#f3f4f6; color:#9ca3af; cursor:not-allowed; padding:0;" disabled>
+                            모집 마감
+                        </button>
+                    </c:when>
 
-                <c:otherwise>
-                    <button type="button" id="applyBtn" class="btn pri" style="width:100%;justify-content:center;margin-top:18px" onclick="openModal('applyModal')">
-                        지원하기
-                    </button>
-                    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:9px">♥ 관심 등록</button>
-                </c:otherwise>
-            </c:choose>
+                    <c:otherwise>
+                        <button type="button" id="applyBtn" class="btn pri" style="flex: 1.2; justify-content:center; padding:0;" onclick="openModal('applyModal')">
+                            지원하기
+                        </button>
+                    </c:otherwise>
+                </c:choose>
+
+                <!-- 관심 등록 버튼 -->
+                <button type="button" class="btn-favorite ${isLiked ? 'active' : ''}" 
+                    style="flex: 1; height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid #e5e7eb; border-radius: 8px; font-weight: 600; font-size: 14px; background: #fff; margin: 0;"
+                    onclick="toggleFavorite(${project.projectId}, this, event)">
+                    ♥ 관심 <span class="fav-count">${project.favoriteCount}</span>
+                </button> 
+
+            </div>
           </div>
         </div>
 

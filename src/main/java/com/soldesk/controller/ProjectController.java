@@ -6,7 +6,10 @@ import com.soldesk.service.ProjectService;
 
 import java.lang.reflect.Member;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,9 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.PageBean;
 import com.soldesk.vo.ProjectVO;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,26 +49,18 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    // 프로젝트 목록 페이지
-    @GetMapping("/list")
-    public String list(Model model) {
-        
-        List<ProjectVO> projectList = projectService.getAllProjects();
-
-        model.addAttribute("projectList", projectList);
-
-        return "project/list";
-    }
-
     @GetMapping("/detail")
     public String detail(@RequestParam("id") Long projectId, Model model, Principal principal) {
         ProjectVO project = projectService.getProjectById(projectId);
         model.addAttribute("project", project);
 
-        // 1. 이미 지원했는지 체크 (기존 코드)
+        // 이미 지원했는지 체크 
         boolean hashApplied = false;
         
-        // 2. 내가 쓴 글(작성자)인지 체크하는 변수 추가
+        // 이미 관심등록 했는지 체크
+        boolean isLiked = false;
+        
+        //. 내가 쓴 글인지 체크
         boolean isOwner = false; 
 
         if (principal != null) {
@@ -76,16 +73,24 @@ public class ProjectController {
                 int count = participationMapper.countByProjectAndMember(projectId, loginMemberId);
                 hashApplied = (count > 0);
 
-                // ★ 현재 로그인한 유저 ID와 프로젝트의 ownerId가 같은지 비교
+                //  현재 로그인한 유저 ID와 프로젝트의 ownerId가 같은지 비교
                 if (project.getOwnerId() != null && project.getOwnerId().equals(loginMemberId)) {
                     isOwner = true;
                 }
+
+                //  유저가 좋아요를 눌렀는지 확인하는 로직 추가
+                Map<String, Object> favParams = new HashMap<>();
+                favParams.put("memberId", loginMemberId);
+                favParams.put("projectId", projectId);
+                int favCheck = projectService.checkFavorite(favParams); 
+                isLiked = (favCheck > 0);
             }
         }
         
         model.addAttribute("hashApplied", hashApplied);
-        model.addAttribute("isOwner", isOwner); // ★ 뷰로 전달
-
+        model.addAttribute("isOwner", isOwner);
+        model.addAttribute("isLiked", isLiked);
+        
         return "project/detail";
     }
 
@@ -100,12 +105,12 @@ public class ProjectController {
     public String registerProject(@ModelAttribute ProjectVO projectVO, 
                                     RedirectAttributes rttr,
                                     Principal principal) { 
-        // 1. 로그인 정보가 없는 경우 예외 처리 또는 로그인 페이지로 리다이렉트
+        // 로그인 정보가 없는 경우 예외 처리 또는 로그인 페이지로 리다이렉트
         if (principal == null) {
             return "redirect:/auth/login";
         }
 
-        // 2. 현재 로그인한 유저의 정보 조회
+        // 현재 로그인한 유저의 정보 조회
         String loginId = principal.getName();
         MemberVO loginUser = memberService.findByLoginId(loginId);
         
@@ -113,7 +118,7 @@ public class ProjectController {
             return "redirect:/auth/login";
         }
 
-        // 3. 로그인한 유저의 PK(member_id)를 ownerId와 참여 리더로 세팅
+        //  로그인한 유저의 PK를 ownerId와 참여 리더로 세팅
         Long loginMemberId = (long) loginUser.getMember_id();
         projectVO.setOwnerId(loginMemberId); // ★ 이 부분이 빠져있어서 null이 들어갔던 것입니다!
 
@@ -127,8 +132,24 @@ public class ProjectController {
     //수정 페이지
     @GetMapping("/edit")
     public String editForm(@RequestParam("id") Long projectId,
-                            Model model){
+                            Model model,
+                            Principal principal, 
+                            RedirectAttributes rttr){
+        //  로그인 확인
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }                        
+
         ProjectVO project = projectService.getProjectById(projectId);
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        Long loginMemberId = (long) loginUser.getMember_id();
+
+        // 작성자 본인이 맞는지 확인
+        if(project.getOwnerId() == null || !project.getOwnerId().equals(loginMemberId)){
+            rttr.addFlashAttribute("msg","수정 권한이 없습니다.");
+            return "redirect:/project/detail?id=" + projectId;
+        }
+
         model.addAttribute("project", project);
         model.addAttribute("mode", "update");//수정 모드로
         return "project/form";
@@ -148,9 +169,22 @@ public class ProjectController {
     //삭제 처리 
     @GetMapping("/delete")
     public String deleteProject(@RequestParam("id") Long projectId,
-                                    RedirectAttributes rttr) {
+                                    RedirectAttributes rttr, Principal principal) {
+        if(principal == null){
+            return "redirect:/auth/login";
+        }
+
+        ProjectVO project = projectService.getProjectById(projectId);
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        Long loginMemberId = (long)loginUser.getMember_id();
+
+        //작성자 본인이 맞는지
+        if(project.getOwnerId() == null || !project.getOwnerId().equals(loginMemberId)){
+            rttr.addFlashAttribute("msg","삭제 권한이 없습니다.");
+            return "redirect:/project/detail?id=" + projectId;
+        }
+
         projectService.deleteProject(projectId);
-        
         rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 삭제되었습니다.");
         return "redirect:/project/list";
     }
@@ -162,13 +196,123 @@ public class ProjectController {
        return "project/apply_form";
     }
 
-    
-    
-    
-    
+    @GetMapping("/list")
+        public String getProjectList(
+            @RequestParam(value="page", defaultValue = "1") int page,
+            @RequestParam(value="scope", defaultValue = "교내") String scope,
+            @RequestParam(value="tab", defaultValue = "all") String tab,
+            @RequestParam(value="keyword", required = false) String keyword,
+            @RequestParam(value="categories", required = false) String categories,
+            @RequestParam(value="grades", required = false) String grades,
+            @RequestParam(value="sort", defaultValue = "latest") String sort,
+            @RequestParam(value = "view", required = false) String view,
+            Model model, Principal principal){
 
+                // 페이지가 1 미만으로 내려가서 음수 오프셋이 발생하지 않도록 차단
+                if (page < 1) {
+                    page = 1;
+                }
+
+                // 만약 view=favorite이면 찜 목록 조회
+                if ("favorite".equals(view)) {
+                    if (principal == null) {
+                        return "redirect:/auth/login";
+                    }
+                    MemberVO loginUser = memberService.findByLoginId(principal.getName());
+                    long memberId = (long) loginUser.getMember_id();
+                    
+                    List<ProjectVO> projectList = projectService.getFavoriteProjects(memberId);
+                    
+                    // 찜 목록일 때도 화면 아래에 0이 뜨거나 깨지지 않도록 pageBean 전달
+                    int totalFavoriteCnt = projectList.size();
+                    PageBean favoritePageBean = new PageBean(1, totalFavoriteCnt, 6); 
+                    
+                    model.addAttribute("projectList", projectList);
+                    model.addAttribute("pageBean", favoritePageBean);
+                    model.addAttribute("isFavoriteView", true); // 찜 모드 활성화 표시
+                    return "project/list";
+                }
+
+                ProjectVO vo = new ProjectVO();
+                vo.setPage(page);
+                vo.setMatchScope(scope);
+                vo.setTab(tab);
+                vo.setKeyword(keyword);
+                vo.setSort(sort);
+                vo.calcOffset();
+
+                // 카테고리와 학년 파라미터를 List로 변환
+                if(categories != null && !categories.trim().isEmpty()){
+                    vo.setCategoryList(Arrays.asList(categories.split(",")));
+                }
+                if (grades != null && !grades.trim().isEmpty()) {
+                    vo.setGradeList(Arrays.asList(grades.split(",")));
+                }
+
+                // DB에서 전체 프로젝트 가져오기
+                int totalCnt = projectService.getTotalCount(vo);
+                PageBean pageBean = new PageBean(page, totalCnt, 6);
+                List<ProjectVO> projectList = projectService.getProjectList(vo);
+
+                model.addAttribute("projectList", projectList);
+                model.addAttribute("pageBean", pageBean);
+
+                return "project/list";
+        }
+    // 관심 등록 및 취소
+    @PostMapping("/favorite/toggle")
+    @ResponseBody
+    public Map<String, Object> toggleFavorite(@RequestParam("projectId") long projectId, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        
+        if(principal == null){
+            response.put("status", "FAIL");
+            response.put("message", "로그인이 필요합니다.");
+            return response;
+        }
+
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+        long memberId = (long) loginUser.getMember_id();
+
+        boolean isLiked = projectService.toggleFavorite(memberId, projectId);
+        int updateCount = projectService.getProjectById(projectId).getFavoriteCount();
+
+        response.put("status", "SUCCESS");
+        response.put("isLiked", isLiked);
+        response.put("favoriteCount", updateCount);
+
+        return response;
+    }
+
+    //관심 등록한 프로젝트 페이지
+    @GetMapping("/favorites")
+    public String myFavorites(Model model, Principal principal){
+        //로그인 안한 경우 로그인 페이지로
+        if(principal == null){
+            return "redirect:/auth/login";
+        }
+
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+
+        long memberId = (long)loginUser.getMember_id();
+
+        //목록 조회
+        List<ProjectVO> projectList = projectService.getFavoriteProjects(memberId);
+
+        model.addAttribute("projectList", projectList);
+        model.addAttribute("isFavoriteView", true);
+
+        return "project/list";
+    }
+    
     @GetMapping("/my")
     public String my() {
         return "project/my";
     }
+
 }
