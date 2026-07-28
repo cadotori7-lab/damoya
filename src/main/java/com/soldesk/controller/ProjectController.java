@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -191,8 +190,23 @@ public class ProjectController {
         rttr.addFlashAttribute("msg", "댓글이 성공적으로 등록되었습니다.");
         return "redirect:/project/detail?id=" + commentVO.getProject_id();
     }
+    @PostMapping("/comment/update")
+    public String updateComment(@ModelAttribute CommentVO commentVO, RedirectAttributes rttr, Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+        commentVO.setMember_id(loginUser.getMember_id());
+        commentService.updateComment(commentVO);
+        rttr.addFlashAttribute("msg", "댓글이 수정되었습니다.");
+        return "redirect:/project/detail?id=" + commentVO.getProject_id();
+    }
+
     @PostMapping("/comment/delete")
-    public String deleteComment(@RequestParam("commentId") Long commentId,
+    public String deleteComment(@RequestParam("comment_id") Long comment_id,
                                 @RequestParam("projectId") Long projectId,
                                 RedirectAttributes rttr,
                                 Principal principal) {
@@ -203,7 +217,7 @@ public class ProjectController {
         if (loginUser == null) {
             return "redirect:/auth/login";
         }
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(comment_id);
         rttr.addFlashAttribute("msg", "댓글이 성공적으로 삭제되었습니다.");
         return "redirect:/project/detail?id=" + projectId;
     }

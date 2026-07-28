@@ -24,8 +24,16 @@ public class CommentService {
         return commentMapper.getCommentsByProjectId(projectId);
     }
     @Transactional
-    public void deleteComment(Long commentId) {
-        commentMapper.deleteComment(commentId);
+    public void updateComment(CommentVO comment) {
+        commentMapper.updateComment(comment);
+    }
+    @Transactional
+    public void deleteComment(Long comment_id) {
+        commentMapper.deleteComment(comment_id);
+    }
+    @Transactional
+    public void deleteCommentsByProjectId(Long projectId) {
+        commentMapper.deleteCommentsByProjectId(projectId);
     }
 
 }

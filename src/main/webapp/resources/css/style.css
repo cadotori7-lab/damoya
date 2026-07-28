@@ -325,6 +325,10 @@
   .cmt .body .nm{font-weight:700;font-size:13.5px}
   .cmt .body .nm span{font-family:var(--mono);font-size:11px;color:var(--ink-soft);font-weight:500;margin-left:7px}
   .cmt .body p{font-size:14px;color:#3a4767;margin-top:2px}
+  .cmt-edit-btn{margin-left:7px;font-size:11px;font-weight:600;color:var(--ink-soft);background:none;border:none;cursor:pointer;text-decoration:underline}
+  .cmt-edit-btn:hover{color:var(--accent)}
+  .cmt-delete-btn{color:#e07a45}
+  .cmt-delete-btn:hover{color:#c9622f}
 
   /* ===== Kanban (업무 보드) ===== */
   .proj-switch{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}

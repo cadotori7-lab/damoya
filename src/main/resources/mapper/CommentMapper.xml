@@ -26,7 +26,17 @@
         WHERE c.project_id = #{project_id}
         ORDER BY c.created_at DESC
     </select>
+    <!-- 댓글 수정 (본인 댓글만 수정 가능) -->
+    <update id="updateComment" parameterType="com.soldesk.vo.CommentVO">
+        UPDATE comment
+        SET content = #{content}
+        WHERE comment_id = #{comment_id} AND member_id = #{member_id}
+    </update>
+
     <delete id="deleteComment" parameterType="java.lang.Long">
         DELETE FROM comment WHERE comment_id = #{comment_id}
+    </delete>
+    <delete id="deleteCommentsByProjectId" parameterType="java.lang.Long">
+        DELETE FROM comment WHERE project_id = #{project_id}
     </delete>
 </mapper>

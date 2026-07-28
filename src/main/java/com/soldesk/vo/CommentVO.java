@@ -7,7 +7,6 @@ public class CommentVO {
     private String content;
     private String created_at;
     private String memberName;
-
     public int getComment_id() {
         return comment_id;
     }
@@ -55,5 +54,6 @@ public class CommentVO {
     public void setMemberName(String memberName) {
         this.memberName = memberName;
     }
+    
 
 }

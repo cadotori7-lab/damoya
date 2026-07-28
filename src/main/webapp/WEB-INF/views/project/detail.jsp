@@ -60,20 +60,23 @@
           <div class="panel">
             <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">${fn:length(commentList)}</span></h5>
             <c:forEach var="comment" items="${commentList}">
-              <div class="cmt">
+              <div class="cmt" data-comment-id="${comment.comment_id}">
                 <div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">${comment.memberName.substring(0, 1)}</div>
                 <div class="body">
-                  <div class="nm">${comment.memberName} <span>${comment.created_at}</span></div>
-                  <p><c:out value="${comment.content}" /></p>
+                  <div class="nm">
+                    ${comment.memberName} <span>${comment.created_at}</span>
+                    <c:if test="${not empty member and member.member_id == comment.member_id}">
+                      <button type="button" class="cmt-edit-btn" onclick="openCommentEditModal(this)">수정</button>
+                      <form method="post" action="${ctx}/project/comment/delete" style="display:inline" onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                        <input type="hidden" name="comment_id" value="${comment.comment_id}" />
+                        <input type="hidden" name="projectId" value="${project.projectId}" />
+                        <button type="submit" class="cmt-edit-btn cmt-delete-btn">삭제</button>
+                      </form>
+                    </c:if>
+                  </div>
+                  <p class="cmt-content"><c:out value="${comment.content}" /></p>
                 </div>
-                <c:if test="${isOwner || (not empty member and member.member_id == comment.member_id)}">
-                  <form method="post" action="${ctx}/project/comment/delete" style="margin-left: auto;">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                    <input type="hidden" name="commentId" value="${comment.commentId}" />
-                    <input type="hidden" name="projectId" value="${project.projectId}" />
-                    <button type="submit" class="btn ghost sm" style="color: #e07a45; border-color: #e07a45;">삭제</button>
-                  </form>
-                </c:if>
               </div>
             </c:forEach>
             <c:choose>
@@ -152,6 +155,32 @@
     </section>
   </main>
   
+  <!-- 댓글 수정 모달 -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="editCommentTitle">
+      <div class="modal-head">
+        <div class="mh-info">
+          <h3 id="editCommentTitle">댓글 수정</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('editModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="modal-body" method="post" action="${ctx}/project/comment/update">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        <input type="hidden" name="project_id" value="${project.projectId}" />
+        <input type="hidden" name="comment_id" id="editCommentId" value="" />
+        <div class="fld one">
+          <textarea name="content" id="editCommentContent" style="min-height:110px" required maxlength="1000"></textarea>
+        </div>
+        <div class="form-foot">
+          <button type="button" class="btn ghost" onclick="closeModal('editModal')">취소</button>
+          <button type="submit" class="btn pri">수정 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <jsp:include page="apply_form.jsp" />
   <jsp:include page="../includes/footer.jsp" />
   

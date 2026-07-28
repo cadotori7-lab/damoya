@@ -9,6 +9,7 @@ public interface CommentMapper {
 
     void addComment(CommentVO comment);
     List<CommentVO> getCommentsByProjectId(Long projectId);
-    void deleteComment(Long commentId);
-
+    void updateComment(CommentVO comment);
+    void deleteComment(Long comment_id);
+    void deleteCommentsByProjectId(Long projectId);
 }
