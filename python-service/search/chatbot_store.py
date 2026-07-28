@@ -30,7 +30,6 @@ class SearchPage(BaseModel):
     description: str
     content: str
 
-
 # 검색 결과 페이지 리스트 스키마
 class SearchPagesResult(BaseModel):
     pages: list[SearchPage] = Field(default_factory=list)
