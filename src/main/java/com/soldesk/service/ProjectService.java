@@ -23,6 +23,9 @@ public class ProjectService {
     @Autowired
     private ParticipationMapper participationMapper;
 
+    @Autowired
+    private CommentService commentService;
+
 
     //프로젝트 등록
     @Transactional
@@ -58,6 +61,8 @@ public class ProjectService {
     //프로젝트 모집글 삭제
     @Transactional 
     public void deleteProject(Long projectId){
+        // 1. 해당 프로젝트의 댓글 삭제
+        commentService.deleteCommentsByProjectId(projectId);
         projectmapper.deleteProject(projectId);
     }
 

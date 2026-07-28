@@ -5,25 +5,9 @@ function deleteProject(projectId) {
     }
 }
   
-// ----- 댓글 등록 -----
-function addComment(){
-    const ta=document.getElementById('cmtInput');
-    const txt=ta.value.trim(); if(!txt)return;
-    const form=ta.closest('.cmt-form');
-    const el=document.createElement('div');
-    el.className='cmt';
-    el.innerHTML=`<div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">민</div>
-        <div class="body"><div class="nm">김민재 <span>컴퓨터공학 · 4학년 · 방금</span></div><p></p></div>`;
-    el.querySelector('p').textContent=txt;
-    form.parentNode.insertBefore(el,form);
-    ta.value='';
-    // 댓글 수 +1
-    const cnt=document.querySelector('#v-detail .panel h5 .mono');
-    if(cnt) cnt.textContent=parseInt(cnt.textContent||'0',10)+1;
-}
-window.addComment=addComment;
-
-
+/* ==========================================
+   여기서부터 아래 코드를 추가해 주세요! 
+   ========================================== */
 
 // 모달(팝업창) 열기 함수
 function openModal(modalId) {
@@ -42,6 +26,16 @@ function closeModal(modalId) {
         modal.style.display = 'none'; // 화면에서 숨기기
     }
 }
+
+// 댓글 수정 모달 열기 (클릭한 수정 버튼 기준으로 해당 댓글의 id/내용을 채워넣음)
+function openCommentEditModal(btn) {
+    const cmt = btn.closest('.cmt');
+    if (!cmt) return;
+    document.getElementById('editCommentId').value = cmt.dataset.commentId;
+    document.getElementById('editCommentContent').value = cmt.querySelector('.cmt-content').textContent;
+    openModal('editModal');
+}
+window.openCommentEditModal = openCommentEditModal;
 document.addEventListener("DOMContentLoaded", function() {
     const endDateDiv = document.getElementById("projectEndDate");
     if (!endDateDiv) return;
