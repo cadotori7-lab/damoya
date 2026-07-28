@@ -2,8 +2,12 @@ package com.soldesk.controller;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +35,9 @@ public class TestController {
     private final Logger logger = Logger.getLogger(TestController.class.getName());
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // FastAPI OCR 검증 서비스 주소
-    private static final String FASTAPI_VERIFY_URL = "http://localhost:8000/verify";
-    private static final String FASTAPI_CHAT_URL = "http://localhost:8000/chat";
+    // FastAPI 서비스 주소 (app.properties 의 fastapi.base-url, 환경변수 FASTAPI_BASE_URL 로 오버라이드 가능)
+    @Value("${fastapi.base-url}")
+    private String fastApiBaseUrl;
 
     @GetMapping("/")
     public String mentorHome() {
@@ -43,6 +47,7 @@ public class TestController {
 
     @GetMapping("/chat")
     public String chat() {
+        // 대화 기록은 FastAPI 에이전트가 세션 ID 기준으로 관리한다.
         return "test/chat";
     }
 
@@ -53,12 +58,13 @@ public class TestController {
     )
     @ResponseBody
     public ResponseEntity<Map<String, Object>> chatApi(
-            @RequestBody Map<String, String> request) {
-        String message = request.getOrDefault("message", "").trim();
-
-        if (message.isEmpty()) {
+            @RequestBody Map<String, String> request,
+            HttpSession session) {
+        // 프론트는 message 키로 보내지만 question 키도 함께 허용한다.
+        String question = request.getOrDefault("question", request.getOrDefault("message", "")).trim();
+        if (question.isEmpty()) {
             return ResponseEntity.badRequest().body(
-                Map.of("detail", "메시지를 입력하세요.")
+                Map.of("detail", "질문을 입력해 주세요.")
             );
         }
 
@@ -66,14 +72,16 @@ public class TestController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<Map<String, String>> fastApiRequest = new HttpEntity<>(
-                Map.of("message", message),
-                headers
-            );
+            Map<String, Object> body = new java.util.HashMap<>();
+            body.put("question", question);
+            // 브라우저 세션 ID로 에이전트의 대화 기록을 구분한다.
+            body.put("sessionId", session.getId());
+
+            HttpEntity<Map<String, Object>> fastApiRequest = new HttpEntity<>(body, headers);
 
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.postForObject(
-                FASTAPI_CHAT_URL,
+                fastApiBaseUrl + "/chat",
                 fastApiRequest,
                 Map.class
             );
@@ -82,12 +90,12 @@ public class TestController {
         } catch (HttpStatusCodeException e) {
             logger.warning("FastAPI 챗봇 오류: " + e.getResponseBodyAsString());
             return ResponseEntity.status(e.getStatusCode()).body(
-                Map.of("detail", "GPT 요청이 실패했습니다: " + e.getResponseBodyAsString())
+                Map.of("detail", "챗봇 요청이 실패했습니다: " + e.getResponseBodyAsString())
             );
         } catch (ResourceAccessException e) {
             logger.warning("FastAPI 챗봇 연결 실패: " + e.getMessage());
             return ResponseEntity.status(503).body(
-                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8000 서버를 확인하세요.")
+                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요.")
             );
         }
     }
@@ -139,6 +147,78 @@ public class TestController {
         body.add("file", fileResource);
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-        return restTemplate.postForObject(FASTAPI_VERIFY_URL, request, Map.class);
+        return restTemplate.postForObject(fastApiBaseUrl + "/verify", request, Map.class);
+    }
+    // 프로젝트 등록(임의)
+    @GetMapping("/project/register")
+    public String projectRegister(Model model) {
+        logger.info("프로젝트 등록 페이지 접근");
+        model.addAttribute("reference", UUID.randomUUID().toString());
+        return "test/project/register";
+    }
+
+    // MCP 멘토 매칭용 더미 프로젝트 정보 수신 및 FastAPI 호출
+    @PostMapping(
+        value = "/project/register",
+        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    public String projectRegisterSubmit(
+            @RequestParam("reference") String reference,
+            @RequestParam("projectName") String projectName,
+            @RequestParam("projectDescription") String projectDescription,
+            Model model) {
+        String normalizedReference = reference == null || reference.isBlank()
+            ? UUID.randomUUID().toString()
+            : reference.trim();
+        String normalizedName = projectName == null ? "" : projectName.trim();
+        String normalizedDescription = projectDescription == null
+            ? ""
+            : projectDescription.trim();
+
+        model.addAttribute("submitted", true);
+        model.addAttribute("reference", normalizedReference);
+        model.addAttribute("projectName", normalizedName);
+        model.addAttribute("projectDescription", normalizedDescription);
+
+        logger.info(
+            "더미 프로젝트 멘토 매칭 요청 reference="
+                + normalizedReference
+                + ", projectName="
+                + normalizedName
+        );
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, String> body = new java.util.HashMap<>();
+            body.put("reference", normalizedReference);
+            body.put("projectName", normalizedName);
+            body.put("projectDescription", normalizedDescription);
+
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = restTemplate.postForObject(
+                fastApiBaseUrl + "/mentor-match",
+                request,
+                Map.class
+            );
+            model.addAttribute("matchResult", result);
+        } catch (HttpStatusCodeException e) {
+            logger.warning("FastAPI 멘토 추천 오류: " + e.getResponseBodyAsString());
+            model.addAttribute(
+                "error",
+                "멘토 추천 요청이 실패했습니다: " + e.getResponseBodyAsString()
+            );
+        } catch (ResourceAccessException e) {
+            logger.warning("FastAPI 멘토 추천 연결 실패: " + e.getMessage());
+            model.addAttribute(
+                "error",
+                "Python 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요."
+            );
+        }
+
+        return "test/project/register";
     }
 }

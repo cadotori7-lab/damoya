@@ -24,6 +24,6 @@
         </c:otherwise>
     </c:choose>
 
-    <p><a href="/test/mentor/register">다시 등록</a></p>
+    <p><a href="${pageContext.request.contextPath}/test/mentor/register">다시 등록</a></p>
 </body>
 </html>
