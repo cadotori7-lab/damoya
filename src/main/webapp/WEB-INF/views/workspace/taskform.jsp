@@ -18,7 +18,10 @@
      <!-- ========== 업무 등록 ========== -->
   <section id="v-taskform">
     <div class="form-wrap">
-      <a class="back" href="${ctx}/workspace/{project_id}/board">← 업무 보드</a>
+      <a class="back"
+        href="${ctx}/workspace/${project_id}/board">
+        ← 업무 보드
+      </a>
       <div class="eyebrow">New task</div>
       <h1 class="page"><em>업무 등록</em></h1>
       <p class="sub">AI 헬스케어 웹서비스 · 팀장이 업무를 등록하고 담당자를 배정해요.</p>
@@ -57,11 +60,27 @@
             </label>
 
             <select name="assignee_id" required>
-                <option value="">담당자 선택</option>
+              <option value="">
+                <c:choose>
+                  <c:when test="${empty projectMembers}">
+                    선택 가능한 참여자가 없습니다
+                  </c:when>
 
-                <!-- 현재는 임시 ID -->
-                <option value="7">김해든</option>
-                <option value="16">김해든2</option>
+                  <c:otherwise>
+                    담당자 선택
+                  </c:otherwise>
+                </c:choose>
+              </option>
+
+              <c:forEach var="member" items="${projectMembers}">
+                <option value="${member.member_id}">
+                  <c:out value="${member.member_name}"/>
+
+                  <c:if test="${member.project_role eq 'LEADER'}">
+                    (팀장)
+                  </c:if>
+                </option>
+              </c:forEach>
             </select>
           </div>
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.soldesk.service.TaskService;
+import com.soldesk.service.ParticipationService;
 import com.soldesk.vo.TaskVO;
 
 @Controller
@@ -18,6 +19,9 @@ public class TaskBoardController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private ParticipationService participationService;
 
     // 업무 보드
     @GetMapping("/board")
@@ -37,14 +41,19 @@ public class TaskBoardController {
     // 업무 등록 화면
     @GetMapping("/taskform")
     public String taskForm(
-            @PathVariable("project_id") long project_id,
-            Model model) {
+        @PathVariable("project_id") long project_id,
+        Model model) {
 
-        TaskVO task = new TaskVO();
-        task.setProject_id(project_id);
+    TaskVO task = new TaskVO();
+    task.setProject_id(project_id);
 
-        model.addAttribute("project_id", project_id);
-        model.addAttribute("task", task);
+    model.addAttribute("project_id", project_id);
+    model.addAttribute("task", task);
+
+    model.addAttribute(
+            "projectMembers",
+            participationService.selectTaskMembers(project_id)
+        );
 
         return "workspace/taskform";
     }
