@@ -19,6 +19,9 @@ public class ParticipationVO {
 
     private LocalDateTime applied_at; //지원&합류 시각
 
+    //join//
+    private String member_name; // member 테이블 JOIN 조회용
+
     //get/set
     public Long getPart_id() {
         return part_id;
@@ -84,4 +87,11 @@ public class ParticipationVO {
         this.applied_at = applied_at;
     }
 
+    public String getMember_name() {
+        return member_name;
+    }
+
+    public void setMember_name(String member_name) {
+        this.member_name = member_name;
+    }
 }

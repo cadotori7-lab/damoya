@@ -5,7 +5,9 @@
 <mapper namespace="com.soldesk.mapper.MemberMapper">
     <!-- 회원 정보 resultMap: vo 객체와 DB 컬럼 매핑 -->
     <resultMap id="memberResultMap" type="com.soldesk.vo.MemberVO">
-        <id property="login_id" column="login_id" />
+        <id property="member_id" column="member_id"/>
+        
+        <result property="login_id" column="login_id" />
         <result property="email" column="email" />
         <result property="password" column="password" />
         <result property="dept_id" column="dept_id" />

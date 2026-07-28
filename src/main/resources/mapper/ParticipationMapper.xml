@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.ParticipationMapper">
+
+    <resultMap id="participationResultMap"
+               type="com.soldesk.vo.ParticipationVO">
+
+        <id property="part_id"
+            column="part_id"/>
+
+        <result property="project_id"
+                column="project_id"/>
+
+        <result property="member_id"
+                column="member_id"/>
+
+        <result property="project_role"
+                column="project_role"/>
+
+        <result property="join_status"
+                column="join_status"/>
+
+        <result property="succession_order"
+                column="succession_order"/>
+
+        <result property="contribution"
+                column="contribution"/>
+
+        <result property="applied_at"
+                column="applied_at"/>
+
+        <!-- member 테이블 JOIN 결과 -->
+        <result property="member_name"
+                column="member_name"/>
+
+    </resultMap>
+
+    <!-- 업무 담당자로 선택 가능한 프로젝트 참여자 -->
+    <select id="selectTaskMembers"
+            resultMap="participationResultMap">
+
+        SELECT
+            p.part_id,
+            p.project_id,
+            p.member_id,
+            p.project_role,
+            p.join_status,
+            p.succession_order,
+            p.contribution,
+            p.applied_at,
+            m.name AS member_name
+
+        FROM participation p
+
+        INNER JOIN member m
+            ON m.member_id = p.member_id
+
+        WHERE p.project_id = #{project_id}
+          AND p.join_status = 'JOINED'
+          AND p.project_role IN ('LEADER', 'MEMBER')
+
+        ORDER BY
+            CASE
+                WHEN p.project_role = 'LEADER' THEN 0
+                ELSE 1
+            END,
+            m.name ASC
+
+    </select>
+
+    <!-- 로그인 사용자가 해당 프로젝트 팀장인지 검사 -->
+    <select id="countLeader"
+            resultType="int">
+
+        SELECT COUNT(*)
+
+        FROM participation
+
+        WHERE project_id = #{project_id}
+          AND member_id = #{member_id}
+          AND join_status = 'JOINED'
+          AND project_role = 'LEADER'
+
+    </select>
+
+    <!-- 선택한 담당자가 실제 프로젝트 참여자인지 검사 -->
+    <select id="countTaskMember"
+            resultType="int">
+
+        SELECT COUNT(*)
+
+        FROM participation
+
+        WHERE project_id = #{project_id}
+          AND member_id = #{member_id}
+          AND join_status = 'JOINED'
+          AND project_role IN ('LEADER', 'MEMBER')
+
+    </select>
+
+</mapper>
