@@ -28,7 +28,16 @@
         <!-- 좌측 상세 내용 영역 -->
         <div>
           <div class="panel d-head">
-            <div class="cat">${project.category} · ${project.matchScope}</div>
+            <div class="cat">${project.category} · ${project.matchScope}
+              <c:choose>
+                <c:when test="${not empty member and not isOwner}">
+                  <button type="button" style="color:var(--ink-soft);font-size:12px; float:right; background:none; border:none; cursor:pointer; padding:0;" onclick="openModal('reportModal')">신고</button>
+                </c:when>
+                <c:when test="${empty member}">
+                  <a href="${ctx}/auth/login" style="color:var(--ink-soft);font-size:12px; float:right;" onclick="alert('로그인이 필요한 서비스입니다.');">신고</a>
+                </c:when>
+              </c:choose>
+            </div>
             <h2><c:out value="${project.title}" /></h2>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <span class="chip recruit">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
@@ -176,6 +185,38 @@
         <div class="form-foot">
           <button type="button" class="btn ghost" onclick="closeModal('editModal')">취소</button>
           <button type="submit" class="btn pri">수정 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 프로젝트 신고 모달 -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="modal-head">
+        <div class="mh-info">
+          <h3 id="reportTitle">신고</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('reportModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="modal-body" method="post" action="${ctx}/project/report">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        <input type="hidden" name="targetId" value="${project.projectId}" />
+        <div class="fld one">
+          <select name="reason" required>
+            <option value="" disabled selected>신고 사유를 선택해주세요</option>
+            <option value="부적절한 내용">부적절한 내용</option>
+            <option value="욕설/비방">욕설/비방</option>
+            <option value="스팸/광고">스팸/광고</option>
+            <option value="저작권 침해">저작권 침해</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-foot">
+          <button type="button" class="btn ghost" onclick="closeModal('reportModal')">취소</button>
+          <button type="submit" class="btn pri">신고하기</button>
         </div>
       </form>
     </div>

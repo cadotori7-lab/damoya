@@ -17,9 +17,11 @@ import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.service.CommentService;
 import com.soldesk.service.MemberService;
 import com.soldesk.service.ProjectService;
+import com.soldesk.service.ReportService;
 import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ProjectVO;
+import com.soldesk.vo.ReportVO;
 
 
 
@@ -38,6 +40,9 @@ public class ProjectController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private ReportService reportService;
 
 
     ProjectController(ProjectService projectService) {
@@ -220,5 +225,31 @@ public class ProjectController {
         commentService.deleteComment(comment_id);
         rttr.addFlashAttribute("msg", "댓글이 성공적으로 삭제되었습니다.");
         return "redirect:/project/detail?id=" + projectId;
+    }
+
+    @PostMapping("/report")
+    public String reportProject(@RequestParam("targetId") Long targetId,
+                                @RequestParam("reason") String reason,
+                                RedirectAttributes rttr,
+                                Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+
+        // 신고 처리 로직 호출
+        ReportVO reportVO = new ReportVO();
+        reportVO.setTargetId(targetId);
+        reportVO.setReporterId(loginUser.getMember_id());
+        reportVO.setReason(reason);
+        reportVO.setTargetType("PROJECT");
+
+        reportService.addReport(reportVO);
+
+        rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 신고되었습니다.");
+        return "redirect:/project/detail?id=" + targetId;
     }
 }

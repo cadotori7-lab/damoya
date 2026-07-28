@@ -17,6 +17,7 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ParticipationMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ProjectMapper.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ReportMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\security\MemberDetailsService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\AdminService.java
@@ -25,6 +26,7 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\OAuthService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ParticipationService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ProjectService.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ReportService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\UnivService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\AdminDashboardStats.java
@@ -34,4 +36,5 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ParticipationVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ProjectVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ReportVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java
