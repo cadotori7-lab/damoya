@@ -25,9 +25,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip() # OpenAI API 키 설정
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini").strip() # OpenAI 모델 설정
 OPENAI_TIMEOUT_SECONDS = float(os.getenv("OPENAI_TIMEOUT_SECONDS", "30")) # OpenAI 요청 제한 시간
 
-# 챗봇 '사이트 안내'에서 돌려줄 프론트 기준 URL
-SITE_BASE_URL = os.getenv("SITE_BASE_URL", "http://localhost:8080/damoya").rstrip("/")
-
 # Elasticsearch 설정
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200").strip() # Elasticsearch URL 설정
 ELASTICSEARCH_USERNAME = os.getenv("ELASTICSEARCH_USERNAME", "").strip() # Elasticsearch 사용자 이름 설정
@@ -38,24 +35,3 @@ ELASTICSEARCH_MENTOR_INDEX = os.getenv(
     os.getenv("ELASTICSEARCH_MENTOR_SOURCE_INDEX", "damoya-mentors"),
 ).strip()
 
-# 기본값은 FastAPI 애플리케이션에 마운트된 사이트 검색 MCP 서버를 사용
-MCP_SITE_SEARCH_URL = os.getenv(
-    "MCP_SITE_SEARCH_URL",
-    f"http://127.0.0.1:{PORT}/mcp/site-search/mcp",
-).strip()
-MCP_MENTOR_RECOMMENDATION_URL = os.getenv(
-    "MCP_MENTOR_RECOMMENDATION_URL",
-    f"http://127.0.0.1:{PORT}/mcp/mentor-recommendation/mcp",
-).strip()
-MCP_CLIENT_TIMEOUT_SECONDS = float(os.getenv("MCP_CLIENT_TIMEOUT_SECONDS", "90"))
-
-# 사이트 검색 MCP 서버를 단독 실행할 때 사용하는 주소
-MCP_SITE_SEARCH_HOST = os.getenv("MCP_SITE_SEARCH_HOST", "127.0.0.1").strip()
-MCP_SITE_SEARCH_PORT = int(os.getenv("MCP_SITE_SEARCH_PORT", "8002"))
-MCP_MENTOR_RECOMMENDATION_HOST = os.getenv(
-    "MCP_MENTOR_RECOMMENDATION_HOST",
-    "127.0.0.1",
-).strip()
-MCP_MENTOR_RECOMMENDATION_PORT = int(
-    os.getenv("MCP_MENTOR_RECOMMENDATION_PORT", "8003")
-)

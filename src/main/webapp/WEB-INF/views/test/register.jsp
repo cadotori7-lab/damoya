@@ -8,7 +8,7 @@
   <title>테스트 - 멘토 등록</title>
 </head>
 <body>
-    <form action="/test/mentor/register" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/test/mentor/register" method="post" enctype="multipart/form-data">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="text" name="name" placeholder="이름" required>
         <input type="file" name="file" accept="image/*" required>

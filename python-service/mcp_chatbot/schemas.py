@@ -1,21 +1,22 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
+# 스프링에서 전달한 채팅 객체(사용자의 질문, 브라우저별 세션ID)
 class ChatRequest(BaseModel):
-    message: str = Field(default="", max_length=4000)
-    step: str | None = Field(default=None, max_length=64)
-    history: list[str] = Field(default_factory=list, max_length=12)
+    model_config = ConfigDict(populate_by_name=True)
+    question: str = Field(min_length=1, max_length=2000)
+    session_id: str | None = Field(
+        default=None,
+        alias="sessionId",
+        min_length=1,
+        max_length=100,
+    )
 
 
-class ChatLink(BaseModel):
-    title: str
-    path: str
-    url: str
-    description: str
-
-
+# Fast-API에서 전달할 채팅 객체(LLM 답변)
 class ChatResponse(BaseModel):
-    reply: str
-    model: str
-    step: str = "menu"
-    links: list[ChatLink] = Field(default_factory=list)
+    model_config = ConfigDict(populate_by_name=True)
+    answer: str
+    source: str
+    question: str
+    session_id: str = Field(alias="sessionId")

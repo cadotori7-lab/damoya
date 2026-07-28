@@ -29,7 +29,7 @@
     <div class="chat-wrap">
       <div class="eyebrow">AI Assistant</div>
       <h1 class="page"><em>다모여</em> 챗봇</h1>
-      <p class="sub">예: <code>1</code> → 사이트 안내 → <code>로그인 화면을 보고 싶어</code></p>
+      <p class="sub">예: <code>로그인 화면 어디야?</code> · <code>웹 프로젝트에 맞는 멘토 추천해줘</code></p>
 
       <div class="chat-card">
         <div id="log" class="chat-log" aria-live="polite"></div>
@@ -67,7 +67,7 @@
   const csrfToken = '${_csrf.token}';
   const csrfHeader = '${_csrf.headerName}';
 
-  let currentStep = 'menu';
+  const GREETING = '안녕하세요! 다모여 AI 도우미입니다. 사이트 안내나 프로젝트에 맞는 멘토 추천을 도와드려요.';
 
   function appendBubble(role, text, meta) {
     const div = document.createElement('div');
@@ -83,23 +83,7 @@
     log.scrollTop = log.scrollHeight;
   }
 
-  function renderLinks(links) {
-    linksBox.innerHTML = '';
-    if (!Array.isArray(links) || links.length === 0) return;
-    links.forEach((link) => {
-      const a = document.createElement('a');
-      a.href = link.url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = link.title + ' 바로가기';
-      const span = document.createElement('span');
-      span.textContent = link.url;
-      a.appendChild(span);
-      linksBox.appendChild(a);
-    });
-  }
-
-  async function sendChat(message) {
+  async function sendChat(question) {
     sendButton.disabled = true;
     try {
       const response = await fetch(contextPath + '/test/chat/api', {
@@ -108,15 +92,13 @@
           'Content-Type': 'application/json',
           [csrfHeader]: csrfToken
         },
-        body: JSON.stringify({ message, step: currentStep })
+        body: JSON.stringify({ question })
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.detail || '요청에 실패했습니다.');
       }
-      currentStep = data.step || currentStep;
-      appendBubble('bot', data.reply, 'step: ' + currentStep + ' / model: ' + data.model);
-      renderLinks(data.links || []);
+      appendBubble('bot', data.answer, 'source: ' + (data.source || 'mcp'));
     } catch (error) {
       appendBubble('bot', '오류: ' + error.message);
     } finally {
@@ -124,23 +106,21 @@
     }
   }
 
-  sendChat('');
+  appendBubble('bot', GREETING);
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const message = messageInput.value.trim();
-    if (!message) return;
-    appendBubble('user', message);
+    const question = messageInput.value.trim();
+    if (!question) return;
+    appendBubble('user', question);
     messageInput.value = '';
-    linksBox.innerHTML = '';
-    await sendChat(message);
+    await sendChat(question);
   });
 
-  resetButton.addEventListener('click', async () => {
+  resetButton.addEventListener('click', () => {
     log.innerHTML = '';
     linksBox.innerHTML = '';
-    currentStep = 'menu';
-    await sendChat('');
+    appendBubble('bot', GREETING);
   });
 </script>
 </body>

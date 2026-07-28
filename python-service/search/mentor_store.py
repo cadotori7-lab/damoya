@@ -1,19 +1,44 @@
+# mcp_mentor_recommend용 Elasticsearch 기능(멘토 색인/검색)
+
 import hashlib
 from typing import Any
 
 from elasticsearch import helpers
+from pydantic import BaseModel, Field
 
 from config import ELASTICSEARCH_MENTOR_INDEX
-from search.client import get_elasticsearch_client
-from search.embedding import EMBEDDING_MODEL, embed_documents
+from search.chatbot_store import (
+    EMBEDDING_MODEL,
+    embed_documents,
+    embed_query,
+    get_elasticsearch_client,
+)
+
+class MentorCandidate(BaseModel):
+    member_id: int
+    login_id: str = ""
+    name: str = ""
+    field: str = ""
+    intro: str = ""
+    career: str = ""
+    cert: str = ""
+    account_status: str = ""
+    approved: bool = False
+    profile_public: bool = False
+    mentor_reference: str
+    similarity_score: float = 0.0
+
+
+class MentorCandidatesResult(BaseModel):
+    candidates: list[MentorCandidate] = Field(default_factory=list)
+    indexed_count: int = 0
 
 
 def _text(value: Any) -> str:
     return str(value or "").strip()
 
-
+# 멘토 정보를 한 줄로 만들기
 def build_mentor_reference(source: dict[str, Any]) -> str:
-    """LLM과 임베딩 모델에 전달할 멘토 정보를 한 줄로 만든다."""
     parts = [
         ("이름", source.get("name")),
         ("전문 분야", source.get("field")),
@@ -27,7 +52,7 @@ def build_mentor_reference(source: dict[str, Any]) -> str:
         if _text(value)
     )
 
-
+# 멘토 정보를 해시값으로 만들기
 def _source_hash(source: dict[str, Any], mentor_reference: str) -> str:
     values = [
         EMBEDDING_MODEL,
@@ -68,7 +93,6 @@ def _load_source_mentors(client) -> list[dict[str, Any]]:
         source = dict(hit.get("_source") or {})
         if source.get("member_id") is None:
             continue
-        # 더미 데이터는 아직 승인 전이므로 공개 프로필 여부만 적용한다.
         if source.get("profile_public") is False:
             continue
         source["_id"] = str(hit.get("_id") or source["member_id"])
@@ -184,7 +208,7 @@ def prepare_mentor_index() -> int:
             }
             for (
                 document_id,
-                source,
+                _source,
                 mentor_reference,
                 source_hash,
             ), vector in zip(changed, vectors)
@@ -193,3 +217,45 @@ def prepare_mentor_index() -> int:
 
     client.indices.refresh(index=ELASTICSEARCH_MENTOR_INDEX)
     return len(prepared)
+
+
+# 프로젝트와 유사한 전문성·경력을 가진 멘토 후보를 검색
+def search_mentor_candidates(
+    project_name: str,
+    project_description: str,
+    count: int = 10,
+) -> tuple[list[MentorCandidate], int]:
+    description = project_description.strip()
+    if not description:
+        return [], 0
+
+    indexed_count = prepare_mentor_index()
+    result_count = min(max(count, 1), 20, indexed_count)
+    query_text = f"프로젝트명: {project_name.strip()}\n프로젝트 설명: {description}"
+    query_vector = embed_query(query_text)
+    client = get_elasticsearch_client()
+
+    response = client.search(
+        index=ELASTICSEARCH_MENTOR_INDEX,
+        size=result_count,
+        knn={
+            "field": "embedding",
+            "query_vector": query_vector,
+            "k": result_count,
+            "num_candidates": min(max(result_count * 5, 10), indexed_count),
+            "filter": {"term": {"profile_public": True}},
+        },
+        source_excludes=[
+            "embedding",
+            "embedding_source_hash",
+            "embedding_model",
+            "sync_batch_id",
+        ],
+    )
+
+    candidates = []
+    for hit in response["hits"]["hits"]:
+        source = dict(hit["_source"])
+        source["similarity_score"] = round(float(hit.get("_score") or 0.0), 6)
+        candidates.append(MentorCandidate.model_validate(source))
+    return candidates, indexed_count

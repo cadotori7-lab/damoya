@@ -1,14 +1,13 @@
 package com.soldesk.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,10 +35,9 @@ public class TestController {
     private final Logger logger = Logger.getLogger(TestController.class.getName());
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // FastAPI OCR 검증 서비스 주소
-    private static final String FASTAPI_VERIFY_URL = "http://localhost:8001/verify";
-    private static final String FASTAPI_CHAT_URL = "http://localhost:8001/chat";
-    private static final String FASTAPI_MENTOR_MATCH_URL = "http://localhost:8001/mentor-match";
+    // FastAPI 서비스 주소 (app.properties 의 fastapi.base-url, 환경변수 FASTAPI_BASE_URL 로 오버라이드 가능)
+    @Value("${fastapi.base-url}")
+    private String fastApiBaseUrl;
 
     @GetMapping("/")
     public String mentorHome() {
@@ -48,10 +46,8 @@ public class TestController {
     }
 
     @GetMapping("/chat")
-    public String chat(HttpSession session) {
-        // 채팅 페이지 진입 시 메뉴부터 시작
-        session.setAttribute("chatStep", "menu");
-        session.setAttribute("chatHistory", new ArrayList<String>());
+    public String chat() {
+        // 대화 기록은 FastAPI 에이전트가 세션 ID 기준으로 관리한다.
         return "test/chat";
     }
 
@@ -64,23 +60,12 @@ public class TestController {
     public ResponseEntity<Map<String, Object>> chatApi(
             @RequestBody Map<String, String> request,
             HttpSession session) {
-        String message = request.getOrDefault("message", "").trim();
-        String requestedStep = request.getOrDefault("step", "").trim();
-        Object sessionStep = session.getAttribute("chatStep");
-        String step = sessionStep == null ? "menu" : String.valueOf(sessionStep);
-
-        @SuppressWarnings("unchecked")
-        List<String> history = (List<String>) session.getAttribute("chatHistory");
-        if (history == null) {
-            history = new ArrayList<>();
-            session.setAttribute("chatHistory", history);
-        }
-
-        // 페이지의 '처음부터' 버튼은 빈 메시지와 menu 단계로 초기화를 요청한다.
-        if (message.isEmpty() && "menu".equals(requestedStep)) {
-            step = "menu";
-            history.clear();
-            session.setAttribute("chatStep", step);
+        // 프론트는 message 키로 보내지만 question 키도 함께 허용한다.
+        String question = request.getOrDefault("question", request.getOrDefault("message", "")).trim();
+        if (question.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("detail", "질문을 입력해 주세요.")
+            );
         }
 
         try {
@@ -88,30 +73,18 @@ public class TestController {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             Map<String, Object> body = new java.util.HashMap<>();
-            body.put("message", message);
-            body.put("step", step);
-            body.put("history", new ArrayList<>(history));
+            body.put("question", question);
+            // 브라우저 세션 ID로 에이전트의 대화 기록을 구분한다.
+            body.put("sessionId", session.getId());
 
             HttpEntity<Map<String, Object>> fastApiRequest = new HttpEntity<>(body, headers);
 
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.postForObject(
-                FASTAPI_CHAT_URL,
+                fastApiBaseUrl + "/chat",
                 fastApiRequest,
                 Map.class
             );
-
-            if (response != null && response.get("step") != null) {
-                session.setAttribute("chatStep", String.valueOf(response.get("step")));
-            }
-
-            if (!message.isEmpty() && response != null && response.get("reply") != null) {
-                history.add("사용자: " + message);
-                history.add("AI: " + String.valueOf(response.get("reply")));
-                while (history.size() > 12) {
-                    history.remove(0);
-                }
-            }
 
             return ResponseEntity.ok(response == null ? Map.of() : response);
         } catch (HttpStatusCodeException e) {
@@ -174,7 +147,7 @@ public class TestController {
         body.add("file", fileResource);
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-        return restTemplate.postForObject(FASTAPI_VERIFY_URL, request, Map.class);
+        return restTemplate.postForObject(fastApiBaseUrl + "/verify", request, Map.class);
     }
     // 프로젝트 등록(임의)
     @GetMapping("/project/register")
@@ -227,7 +200,7 @@ public class TestController {
 
             @SuppressWarnings("unchecked")
             Map<String, Object> result = restTemplate.postForObject(
-                FASTAPI_MENTOR_MATCH_URL,
+                fastApiBaseUrl + "/mentor-match",
                 request,
                 Map.class
             );

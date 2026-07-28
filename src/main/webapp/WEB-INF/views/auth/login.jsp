@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -38,7 +39,7 @@
         <div class="login-box">
           <div class="eyebrow">Welcome back</div>
           <h3>로그인</h3>
-          <form action="/auth/login" method="post">
+          <form action="${ctx}/auth/login" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="field"><label>아이디</label><input type="text" placeholder="학교 이메일 또는 아이디" name="login_id"></div>
             <div class="field"><label>비밀번호</label><input type="password" placeholder="••••••••" name="password"></div>
