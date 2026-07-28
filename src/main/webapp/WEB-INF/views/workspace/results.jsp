@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../resources/css/style.css">
+    <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
     <jsp:include page="../includes/header.jsp" />
@@ -36,6 +36,6 @@
   </section>
   </main>
 <jsp:include page="../includes/footer.jsp" />
-<script src="../resources/js/workspace/results.js"></script>
+<script src="${ctx}/resources/js/workspace/results.js"></script>
 </body>
 </html>

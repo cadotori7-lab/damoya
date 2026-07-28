@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../resources/css/style.css">
+    <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
     <jsp:include page="../includes/header.jsp" />
@@ -31,7 +31,11 @@
 
     <div class="proj-switch" id="boardTools" style="gap:10px">
       <input type="text" id="taskSearch" class="board-search" placeholder="업무 검색 (제목·담당자)" oninput="onTaskSearch(this.value)">
-      <button class="btn pri sm" style="margin-left:auto" onclick="go('taskform')">+ 업무 등록</button>
+      <a class="btn pri sm"
+        style="margin-left:auto"
+        href="${ctx}/workspace/${project_id}/taskform">
+        + 업무 등록
+      </a>
     </div>
 
     <div id="boardPanel">
@@ -144,7 +148,7 @@
 </div>
 
   <jsp:include page="../includes/footer.jsp" />
-  <script src="../resources/js/workspace/board.js"></script>
-  <script src="../resources/js/common.js"></script>
+  <script src="${ctx}/resources/js/workspace/board.js"></script>
+  <script src="${ctx}/resources/js/common.js"></script>
 </body>
 </html>

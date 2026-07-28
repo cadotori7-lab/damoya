@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +22,12 @@ public class GlobalExceptionHandler {
     public String handlerNotFound(NoHandlerFoundException e, HttpServletRequest request) {
         log.warn("404 에러 발생: 요청 URL = {}, 메서드 = {}", request.getRequestURL(), request.getMethod());
         return "error/404"; // 존재하지 않는 요청 시, 404 에러 페이지로 이동
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handlerAccessDenied(AccessDeniedException e, HttpServletRequest request) {
+        log.warn("403 권한 거부 에러 발생: 요청 URL = {}, 메서드 = {}", request.getRequestURL(), request.getMethod());
+        return "error/403"; // /WEB-INF/views/error/403.jsp 로 연결
     }
 
     @ExceptionHandler(Exception.class) // 기타 예외 처리

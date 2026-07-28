@@ -3,20 +3,25 @@ package com.soldesk.validation;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.soldesk.service.MemberService;
 import com.soldesk.vo.MemberVO;
 
 @Component
 public class MemberValidation implements Validator {
 
-    private static final Pattern EMAIL_PATTERN = 
+    private static final Pattern EMAIL_PATTERN =
         Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final Pattern PASSWORD_PATTERN = 
+    private static final Pattern PASSWORD_PATTERN =
         Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
+
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -30,17 +35,25 @@ public class MemberValidation implements Validator {
         // 이메일
         ValidationUtils.rejectIfEmptyOrWhitespace(
             errors, "email", "email.required", "이메일을 입력하세요.");
-        if (member.getEmail() != null 
+        if (member.getEmail() != null
             && !EMAIL_PATTERN.matcher(member.getEmail()).matches()) {
-            errors.rejectValue("email", "email.invalid", 
+            errors.rejectValue("email", "email.invalid",
                 "이메일 형식이 올바르지 않습니다.");
+        }
+        if (!errors.hasFieldErrors("email")
+            && memberService.countByEmail(member.getEmail()) > 0) {
+            errors.rejectValue("email", "email.duplicate", "이미 가입된 이메일이에요.");
         }
         //로그인 아이디
         ValidationUtils.rejectIfEmptyOrWhitespace(
             errors, "login_id", "login_id.required", "로그인 아이디를 입력하세요.");
         if (member.getLogin_id() != null && member.getLogin_id().length() < 4) {
-            errors.rejectValue("login_id", "login_id.invalid", 
+            errors.rejectValue("login_id", "login_id.invalid",
                 "로그인 아이디는 4자 이상이어야 합니다.");
+        }
+        if (!errors.hasFieldErrors("login_id")
+            && memberService.countByLoginId(member.getLogin_id()) > 0) {
+            errors.rejectValue("login_id", "login_id.duplicate", "이미 사용 중인 아이디예요.");
         }
         // 이름
         ValidationUtils.rejectIfEmptyOrWhitespace(
@@ -70,8 +83,8 @@ public class MemberValidation implements Validator {
 
         // 비밀번호 확인
         if (!Objects.equals(member.getPassword(), 
-                            member.getPasswordConfirm())) {
-            errors.rejectValue("passwordConfirm", "password.mismatch", 
+                            member.getPassword_confirm())) {
+            errors.rejectValue("password_confirm", "password.mismatch", 
                 "비밀번호가 일치하지 않습니다.");
         }
 

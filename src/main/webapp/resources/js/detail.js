@@ -1,4 +1,10 @@
-
+// 게시글 삭제
+function deleteProject(projectId) {
+    if (confirm("정말 이 프로젝트 모집글을 삭제하시겠습니까?")) {
+        location.href = ctx + '/project/delete?id=' + projectId;
+    }
+}
+  
   // ----- 댓글 등록 -----
   function addComment(){
     const ta=document.getElementById('cmtInput');

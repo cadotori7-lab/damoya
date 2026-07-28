@@ -59,27 +59,9 @@
   renderMp('joined');
 
   // ----- 프로필 수정 모달 -----
-  function openProfile(){
-    document.getElementById('profileModal').classList.add('on');
-    document.body.style.overflow='hidden';
-  }
   function closeProfile(){
     document.getElementById('profileModal').classList.remove('on');
     document.body.style.overflow='';
   }
-  function saveProfile(){
-    const name=document.getElementById('pfName').value.trim()||'김민재';
-    const dept=document.getElementById('pfDept').value;
-    const year=document.getElementById('pfYear').value;
-    const head=document.querySelector('#v-mypage .mp-head');
-    head.querySelector('.info h2').textContent=name;
-    head.querySelector('.info .line').textContent=`대진대학교 · ${dept} · ${year}`;
-    head.querySelector('.big').textContent=name.slice(-2,-1)||name.charAt(0);
-    // 관심 분야 배지 갱신 (학교 인증 배지는 유지)
-    const picked=[...document.querySelectorAll('#pfInterests input:checked')].map(c=>c.nextElementSibling.textContent);
-    head.querySelector('.info .badges').innerHTML=
-      picked.map(p=>`<span class="b">${p}</span>`).join('')+'<span class="b">✓ 학교 인증됨</span>';
-    closeProfile();
-  }
-  window.openProfile=openProfile; window.closeProfile=closeProfile; window.saveProfile=saveProfile;
+  window.closeProfile=closeProfile;
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfile();});

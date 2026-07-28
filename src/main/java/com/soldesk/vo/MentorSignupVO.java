@@ -32,7 +32,7 @@ public class MentorSignupVO {
     private String password;
 
     @NotBlank(message = "비밀번호 확인을 입력해주세요.")
-    private String passwordConfirm;   // 검증용 (DB 저장 안 함)
+    private String password_confirm;   // 검증용 (DB 저장 안 함)
 
     /* ---------- 2. 멘토 정보 (member 공통) ---------- */
 
@@ -42,7 +42,6 @@ public class MentorSignupVO {
     /** 소속 학과. 교내 교수면 선택, 외부 전문가면 비워둠(NULL 허용) */
     private Long dept_id;
 
-    /** 소개글 — 프로필에 노출 */
     private String intro;
 
     /* ---------- 3. 멘토 전용 (mentor 테이블) ---------- */
@@ -66,8 +65,8 @@ public class MentorSignupVO {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getPasswordConfirm() { return passwordConfirm; }
-    public void setPasswordConfirm(String passwordConfirm) { this.passwordConfirm = passwordConfirm; }
+    public String getPassword_confirm() { return password_confirm; }
+    public void setPassword_confirm(String password_confirm) { this.password_confirm = password_confirm; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
