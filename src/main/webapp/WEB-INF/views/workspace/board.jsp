@@ -30,7 +30,11 @@
     </div>
 
     <div class="proj-switch" id="boardTools" style="gap:10px">
-      <input type="text" id="taskSearch" class="board-search" placeholder="업무 검색 (제목·담당자)" oninput="onTaskSearch(this.value)">
+      <input type="text"
+       id="taskSearch"
+       class="board-search"
+       placeholder="업무 검색 (업무명·설명)"
+       oninput="onTaskSearch(this.value)">
       <a class="btn pri sm"
         style="margin-left:auto"
         href="${ctx}/workspace/${project_id}/taskform">
@@ -38,9 +42,48 @@
       </a>
     </div>
 
-    <div id="boardPanel">
-      <div class="kanban" id="kanban"></div>
+<!-- Controller에서 받은 실제 업무 데이터 -->
+<div id="taskData" hidden>
+  <c:forEach var="task" items="${taskList}">
+    <div class="task-source"
+         data-task-id="${task.task_id}"
+         data-status="${task.status}"
+         data-assignee-id="${task.assignee_id}">
+
+      <span class="task-name">
+        <c:out value="${task.task_name}"/>
+      </span>
+
+      <span class="task-description">
+        <c:out value="${task.description}"/>
+      </span>
+
+      <span class="task-due-date">
+        <c:out value="${task.due_date}"/>
+      </span>
+
+      <span class="task-submit-title">
+        <c:out value="${task.submit_title}"/>
+      </span>
+
+      <span class="task-submit-content">
+        <c:out value="${task.submit_content}"/>
+      </span>
+
+      <span class="task-submit-file">
+        <c:out value="${task.submit_file}"/>
+      </span>
+
+      <span class="task-reject-reason">
+        <c:out value="${task.reject_reason}"/>
+      </span>
     </div>
+  </c:forEach>
+</div>
+
+<div id="boardPanel">
+  <div class="kanban" id="kanban"></div>
+</div>
 
     <!-- 팀 현황 (팀장) -->
     <div id="teamPanel" style="display:none">
