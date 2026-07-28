@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.CommentMapper">
+    <!-- 댓글 resultMap: vo 객체와 DB 컬럼 매핑 -->
+    <resultMap id="commentResultMap" type="com.soldesk.vo.CommentVO">
+        <id property="comment_id" column="comment_id" />
+        <result property="project_id" column="project_id" />
+        <result property="member_id" column="member_id" />
+        <result property="content" column="content" />
+        <result property="created_at" column="created_at" />
+        <result property="memberName" column="memberName" />
+    </resultMap>
+
+    <!-- 댓글 등록 -->
+    <insert id="addComment" parameterType="com.soldesk.vo.CommentVO">
+        INSERT INTO comment (project_id, member_id, content, created_at)
+        VALUES (#{project_id}, #{member_id}, #{content}, NOW())
+    </insert>
+
+    <!-- 프로젝트별 댓글 조회 -->
+    <select id="getCommentsByProjectId" parameterType="java.lang.Long" resultMap="commentResultMap">
+        SELECT c.*, m.name AS memberName
+        FROM comment c
+        JOIN member m ON c.member_id = m.member_id
+        WHERE c.project_id = #{project_id}
+        ORDER BY c.created_at DESC
+    </select>
+    <!-- 댓글 수정 (본인 댓글만 수정 가능) -->
+    <update id="updateComment" parameterType="com.soldesk.vo.CommentVO">
+        UPDATE comment
+        SET content = #{content}
+        WHERE comment_id = #{comment_id} AND member_id = #{member_id}
+    </update>
+
+    <delete id="deleteComment" parameterType="java.lang.Long">
+        DELETE FROM comment WHERE comment_id = #{comment_id}
+    </delete>
+    <delete id="deleteCommentsByProjectId" parameterType="java.lang.Long">
+        DELETE FROM comment WHERE project_id = #{project_id}
+    </delete>
+</mapper>
