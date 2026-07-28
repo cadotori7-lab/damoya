@@ -156,7 +156,7 @@ public class LoginController {
             return "auth/signup-mentor";
         }
         // 2) 비밀번호 일치
-        if (!form.getPassword().equals(form.getPasswordConfirm())) {
+        if (!form.getPassword().equals(form.getPassword_confirm())) {
             bindingResult.rejectValue("passwordConfirm", "mismatch", "비밀번호가 일치하지 않아요.");
         }
         // 3) 중복 검사 — 일반 회원과 같은 member 테이블을 쓰므로 동일하게 검사

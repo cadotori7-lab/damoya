@@ -17,23 +17,9 @@
         <result property="account_status" column="account_status" />
         <result property="profile_public" column="profile_public" />
         <result property="role" column="role" />
-        <!--  OAuth 칼럼 매핑  -->r_i
+        <!--  OAuth 칼럼 매핑  -->
         <result column="provider" property="provider"/>
-        <result column="provider_id" property="provided"/>
-    </resultMap>
-
-    <resultMap id="mentorDocumentResultMap" type="com.soldesk.vo.MentorDocument">
-        <id property="member_id" column="member_id" />
-        <result property="login_id" column="login_id" />
-        <result property="name" column="name" />
-        <result property="dept_id" column="dept_id" />
-        <result property="intro" column="intro" />
-        <result property="account_status" column="account_status" />
-        <result property="approved" column="approved" />
-        <result property="profile_public" column="profile_public" />
-        <result property="field" column="mentor_field" />
-        <result property="career" column="career" />
-        <result property="cert" column="cert" />
+        <result column="provider_id" property="provider_id"/>
     </resultMap>
 
     <resultMap id="mentorDocumentResultMap" type="com.soldesk.vo.MentorDocument">
