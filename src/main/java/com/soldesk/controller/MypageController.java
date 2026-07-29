@@ -54,12 +54,21 @@ public class MypageController {
         List<ParticipationVO> participationList = participationService.getParticipatingProjectsByMemberId(member.getMember_id(), 0); // 참여 중인 프로젝트 목록 조회 (0 = 전체 조회)
         List<ParticipationVO> applicationList = participationService.getApplicationProjectsByMemberId(member.getMember_id(), 0); // 지원 중인 프로젝트 목록 조회 (0 = 전체 조회)
         List<ProjectVO> likedList = projectService.getFavoriteProjects((long) member.getMember_id()); // 관심 등록한 프로젝트 목록 조회
+
+        // 상단 통계: 참여 중인 프로젝트를 진행중/완료로 나누고, 지원 현황 중 승인 대기(WAITING) 건수만 집계
+        long ongoingCount = participationList.stream().filter(p -> !"DONE".equals(p.getStatus())).count();
+        long doneCount = participationList.stream().filter(p -> "DONE".equals(p.getStatus())).count();
+        long pendingCount = applicationList.stream().filter(a -> "WAITING".equals(a.getJoinStatus())).count();
+
         model.addAttribute("member", member);
         model.addAttribute("univList", univService.getAllUniv());
         model.addAttribute("univ", univ);
         model.addAttribute("participationList", participationList);
         model.addAttribute("applicationList", applicationList);
         model.addAttribute("likedList", likedList);
+        model.addAttribute("ongoingCount", ongoingCount);
+        model.addAttribute("doneCount", doneCount);
+        model.addAttribute("pendingCount", pendingCount);
 
         return "mypage/index";
     }

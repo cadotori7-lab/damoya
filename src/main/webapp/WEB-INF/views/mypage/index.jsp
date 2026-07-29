@@ -45,10 +45,10 @@
     </div>
 
     <div class="mp-stats">
-      <div class="mp-stat"><div class="n">3</div><div class="k">진행 중</div></div>
-      <div class="mp-stat"><div class="n">5</div><div class="k">완료</div></div>
-      <div class="mp-stat"><div class="n">2</div><div class="k">지원 대기</div></div>
-      <div class="mp-stat"><div class="n">7</div><div class="k">관심</div></div>
+      <div class="mp-stat"><div class="n">${ongoingCount}</div><div class="k">진행 중</div></div>
+      <div class="mp-stat"><div class="n">${doneCount}</div><div class="k">완료</div></div>
+      <div class="mp-stat"><div class="n">${pendingCount}</div><div class="k">지원 대기</div></div>
+      <div class="mp-stat"><div class="n">${likedList.size()}</div><div class="k">관심</div></div>
     </div>
 
     <div class="mp-tabs" id="mpTabs">
