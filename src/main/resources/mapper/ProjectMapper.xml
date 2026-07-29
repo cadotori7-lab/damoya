@@ -110,8 +110,9 @@
 
     <!-- 필터 조건에 맞는 게시글 리스트 조회 -->
     <select id="getProjectList" resultMap="projectResultMap" parameterType="com.soldesk.vo.ProjectVO">
-        SELECT *
-        FROM project
+        select p.*, 
+        (SELECT COUNT(*) FROM comment c WHERE c.project_id = p.project_id) AS commentCount
+        FROM project p
         <where>
             <!--  매칭 범위 (교내/전국) -->
             <if test="matchScope != null and matchScope != ''">
@@ -154,15 +155,25 @@
         
         <!-- 정렬 조건 -->
         <choose>
-            <when test="sort == 'deadline'">
-                ORDER BY end_date ASC, created_at DESC
-            </when>
-            <when test="sort == 'likes'">
-                ORDER BY favorit_count DESC, created_at DESC
-            </when>
+            <!--  추천순: (좋아요 * 10) + (조회수 * 5) 점수가 높은 순 -->
             <when test="sort == 'recommend'">
-                ORDER BY view_count DESC, created_at DESC
+                ORDER BY ((favorite_count * 10) + (view_count * 5)) DESC, created_at DESC
             </when>
+            
+            <!--  마감임박순: 오늘 날짜 기준으로 마감일이 남은 것 중 가까운 순 (마감된 건 뒤로 밀어냄) -->
+            <when test="sort == 'deadline'">
+                ORDER BY 
+                    CASE WHEN end_date &lt; CURDATE() THEN 1 ELSE 0 END ASC, 
+                    end_date ASC, 
+                    created_at DESC
+            </when>
+            
+            <!-- 3. 좋아요순: 좋아요 수 높은 순 (기존 favorit_count 오타 수정됨!) -->
+            <when test="sort == 'likes'">
+                ORDER BY favorite_count DESC, created_at DESC
+            </when>
+            
+            <!-- 4. 최신순 (디폴트) -->
             <otherwise>
                 ORDER BY created_at DESC
             </otherwise>
@@ -230,5 +241,13 @@
         WHERE f.member_id = #{memberId} 
         ORDER BY p.project_id DESC
     </select>
+
+    <!-- 게시글 조회수 불러오기-->
+    <update id="increaseViewCount">
+        update project
+        set view_count = view_count + 1
+        where project_id = #{projectId}
+    </update>
+
 
 </mapper>

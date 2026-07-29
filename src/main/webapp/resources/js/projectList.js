@@ -242,3 +242,16 @@ function toggleFavorite(projectId, buttonElement, event) {
     })
     .catch(error => console.error('Error:', error));
 }
+// 정렬 탭을 눌렀을 때 실행되는 함수
+    function changeSort(sortType) {
+        // 현재 URL의 파라미터들을 가져옴 (검색어, 카테고리 등 기존 필터 유지용)
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // 정렬 값 변경
+        urlParams.set('sort', sortType);
+        // 정렬이 바뀌면 1페이지부터 다시 보도록 page 값 초기화
+        urlParams.set('page', 1); 
+        
+        // 변경된 URL로 이동
+        window.location.search = urlParams.toString();
+    }

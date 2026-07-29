@@ -20,6 +20,6 @@ public interface ProjectMapper {
     void decreaseFavoriteCount(Long projectId);     // 프로젝트 좋아요 수 감소 (-)
     int checkFavorite(Map<String, Object> params);  // 이미 좋아요를 눌렀는지 확인
     List<ProjectVO> getFavoriteProjectsByMemberId(Long memberId);
-
+    void increaseViewCount(Long projectId); //게시글 조회수 반환
 
 }

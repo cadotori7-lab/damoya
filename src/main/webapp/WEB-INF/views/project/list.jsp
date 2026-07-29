@@ -74,11 +74,13 @@
         <div class="list-section">
           
           <div class="list-sort-header">
-            <div class="list-sort">
-              <button type="button" class="sort-btn ${currentSort eq 'recommend' ? 'active' : ''}" onclick="sortList('recommend')">추천순</button>
-              <button type="button" class="sort-btn ${currentSort eq 'latest' or empty currentSort ? 'active' : ''}" onclick="sortList('latest')">최신순</button>
-              <button type="button" class="sort-btn ${currentSort eq 'deadline' ? 'active' : ''}" onclick="sortList('deadline')">마감임박순</button>
-              <button type="button" class="sort-btn ${currentSort eq 'likes' ? 'active' : ''}" onclick="sortList('likes')">좋아요순</button>
+            <div class="sort-options" style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <button type="button" class="btn-sort ${empty currentSort or currentSort == 'latest' ? 'active' : ''}" onclick="changeSort('latest')">최신순</button>
+                <button type="button" class="btn-sort ${currentSort == 'recommend' ? 'active' : ''}" onclick="changeSort('recommend')">추천순</button>
+                <c:if test="${param.tab ne 'CLOSED'}">
+                  <button type="button" class="btn-sort ${currentSort == 'deadline' ? 'active' : ''}" onclick="changeSort('deadline')">마감임박순</button>
+                </c:if>
+                <button type="button" class="btn-sort ${currentSort == 'likes' ? 'active' : ''}" onclick="changeSort('likes')">좋아요순</button>
             </div>
             
             <!-- 내 관심등록 버튼 (토글 및 색상 상태 반영) -->
@@ -185,7 +187,7 @@
                       <!-- 3. 댓글 수 -->
                       <span style="display: inline-flex; align-items: center; gap: 4px;">
                           <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 
-                      </span>
+                      </span>${project.commentCount}
                       
                   </div>
                 </div>
