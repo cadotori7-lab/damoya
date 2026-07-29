@@ -68,4 +68,10 @@ public class TaskService {
                 task_id
         );
     }
+
+    //업무 제출
+    @Transactional
+    public boolean submitTask(TaskVO task) {
+        return taskMapper.submitTask(task) == 1;
+    }
 }

@@ -137,45 +137,82 @@
 </div>
 
 <!-- ===== 결과물 제출 모달 ===== -->
-<div class="modal-overlay" id="submitModal" onclick="if(event.target===this)closeSubmit()">
-  <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="smTitle">
+<div class="modal-overlay"
+     id="submitModal"
+     onclick="if(event.target===this) closeSubmit()">
+
+  <div class="modal form-modal"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="smTitle">
+
     <div class="modal-head">
-      <div class="mh-info"><h3 id="smTitle">결과물 제출</h3><div class="role">담당한 업무의 결과물을 제출해요</div></div>
-      <button class="modal-close" onclick="closeSubmit()" aria-label="닫기">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      <div class="mh-info">
+        <h3 id="smTitle">결과물 제출</h3>
+        <div class="role">
+          담당한 업무의 결과물을 제출해요
+        </div>
+      </div>
+
+      <button type="button"
+              class="modal-close"
+              onclick="closeSubmit()"
+              aria-label="닫기">
+        ×
       </button>
     </div>
-    <div class="modal-body" id="submitBody">
-      <div class="sm-task">
-        <div class="k">제출 업무</div>
-        <div class="v" id="smTaskName">매칭 검색 필터 구현</div>
-        <div class="due" id="smTaskDue">마감 08.15</div>
-      </div>
 
-      <div class="fld">
-        <label>결과물 파일</label>
-        <div class="dropzone" id="dropzone" onclick="pickFile()">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-          <div class="dz-main">파일을 끌어다 놓거나 클릭해서 업로드</div>
-          <div class="dz-sub">파일 또는 텍스트로 제출할 수 있어요 (최대 50MB)</div>
+    <form id="submitForm"
+          method="post">
+
+      <input type="hidden"
+             name="${_csrf.parameterName}"
+             value="${_csrf.token}">
+
+      <div class="modal-body">
+        <div class="sm-task">
+          <div class="k">제출 업무</div>
+          <div class="v" id="smTaskName"></div>
+          <div class="due" id="smTaskDue"></div>
         </div>
-        <div id="dzFileWrap"></div>
-      </div>
 
-      <div class="fld one">
-        <label>제출 설명 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
-        <textarea placeholder="무엇을 구현했는지, 확인할 점이 있는지 팀장에게 남겨주세요." style="min-height:80px"></textarea>
-      </div>
-      <div class="fld one">
-        <label>참고 링크 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
-        <input type="text" placeholder="GitHub·Figma 등 링크">
-      </div>
+        <div class="fld one">
+          <label>
+            제출 제목<span class="req">*</span>
+          </label>
 
-      <div class="form-foot">
-        <button class="btn ghost" onclick="closeSubmit()">취소</button>
-        <button class="btn pri" onclick="doSubmit()">제출하기</button>
+          <input type="text"
+                 name="submit_title"
+                 maxlength="200"
+                 placeholder="예: 검색 필터 구현 완료"
+                 required>
+        </div>
+
+        <div class="fld one">
+          <label>
+            제출 내용<span class="req">*</span>
+          </label>
+
+          <textarea name="submit_content"
+                    placeholder="구현한 내용과 확인할 사항을 입력해주세요."
+                    style="min-height:100px"
+                    required></textarea>
+        </div>
+
+        <div class="form-foot">
+          <button type="button"
+                  class="btn ghost"
+                  onclick="closeSubmit()">
+            취소
+          </button>
+
+          <button type="submit"
+                  class="btn pri">
+            제출하기
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
@@ -193,6 +230,11 @@
 </div>
 
   <jsp:include page="../includes/footer.jsp" />
+  <script>
+    window.APP_CONTEXT = '${ctx}';
+    window.PROJECT_ID = Number('${project_id}');
+    window.LOGIN_MEMBER_ID = Number('${currentMemberId}');
+  </script>
   <script src="${ctx}/resources/js/workspace/board.js"></script>
   <script src="${ctx}/resources/js/common.js"></script>
 </body>

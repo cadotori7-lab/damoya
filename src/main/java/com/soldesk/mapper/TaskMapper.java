@@ -30,4 +30,7 @@ public interface TaskMapper {
             @Param("project_id") long project_id,
             @Param("task_id") long task_id
     );
+
+    //업무 결과물 제출
+    int submitTask(TaskVO task);
 }

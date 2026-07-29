@@ -232,6 +232,21 @@ function openTask(taskId) {
     `
     : "";
 
+  const canSubmit =
+  Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID)
+  && ["ONGOING", "REJECTED"].includes(task.status);
+
+  const submitButton = canSubmit
+  ? `
+    <div class="tm-actions">
+      <button type="button"
+              class="btn pri"
+              onclick="openSubmit(${task.id})">
+        결과물 제출
+      </button>
+    </div>
+  `
+  : "";
   document.getElementById("taskModalBody").innerHTML = `
     <div class="tm-meta">
       <span class="chip ${STATUS_CHIP[task.status] || ""}">
@@ -253,6 +268,7 @@ function openTask(taskId) {
 
     ${submission}
     ${rejected}
+    ${submitButton}
   `;
 
   document.getElementById("taskModal").classList.add("on");
@@ -264,6 +280,65 @@ function closeTask() {
   document.body.style.overflow = "";
 }
 
+function openSubmit(taskId) {
+  const task = TASKS.find(item => item.id === taskId);
+
+  if (!task) {
+    return;
+  }
+
+  const isAssignee =
+    Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID);
+
+  const allowedStatus =
+    task.status === "ONGOING"
+    || task.status === "REJECTED";
+
+  if (!isAssignee || !allowedStatus) {
+    alert("본인에게 배정된 진행 중 또는 반려된 업무만 제출할 수 있습니다.");
+    return;
+  }
+
+  const form = document.getElementById("submitForm");
+  const modal = document.getElementById("submitModal");
+
+  if (!form || !modal) {
+    console.error("제출 폼 또는 제출 모달을 찾을 수 없습니다.");
+    return;
+  }
+
+  form.action =
+    window.APP_CONTEXT
+    + "/workspace/"
+    + window.PROJECT_ID
+    + "/tasks/"
+    + task.id
+    + "/submit";
+
+  form.reset();
+
+  document.getElementById("smTaskName").textContent =
+    task.name || "업무명 없음";
+
+  document.getElementById("smTaskDue").textContent =
+    "마감 " + formatDueDate(task.dueDate);
+
+  closeTask();
+
+  modal.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+
+function closeSubmit() {
+  const modal = document.getElementById("submitModal");
+
+  if (modal) {
+    modal.classList.remove("on");
+  }
+
+  document.body.style.overflow = "";
+}
+
 window.onTaskSearch = value => {
   taskSearch = value;
   renderKanban();
@@ -271,10 +346,13 @@ window.onTaskSearch = value => {
 
 window.openTask = openTask;
 window.closeTask = closeTask;
+window.openSubmit = openSubmit;
+window.closeSubmit = closeSubmit;
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     closeTask();
+    closeSubmit();
   }
 });
 

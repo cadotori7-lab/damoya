@@ -62,6 +62,13 @@ public class TaskBoardController {
             taskService.selectTaskList(project_id)
         );
 
+        model.addAttribute(
+            "currentMemberId",
+            loginMember != null
+            ? loginMember.getMember_id()
+            : 0
+        );
+
         return "workspace/board";
     }
 
@@ -197,5 +204,91 @@ public class TaskBoardController {
         model.addAttribute("project_id", project_id);
 
         return "workspace/taskdetail";
+    }
+
+    //업무제출
+    @PostMapping("/tasks/{task_id}/submit")
+    public String submitTask(
+        @PathVariable("project_id") long project_id,
+        @PathVariable("task_id") long task_id,
+        @ModelAttribute TaskVO task,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
+
+        MemberVO loginMember = null;
+
+        if (principal != null) {
+            loginMember = memberService.findByLoginId(
+                principal.getName()
+            );
+        }
+
+        if (loginMember == null) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "로그인이 필요합니다."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        String submitTitle = task.getSubmit_title();
+        String submitContent = task.getSubmit_content();
+
+        if (submitTitle == null || submitTitle.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "제출 제목을 입력해주세요."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        if (submitContent == null || submitContent.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "제출 내용을 입력해주세요."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        // URL과 로그인 정보로 서버에서 값을 고정
+        task.setTask_id(task_id);
+        task.setProject_id(project_id);
+        task.setAssignee_id(
+            (long) loginMember.getMember_id()
+        );
+
+        task.setSubmit_title(submitTitle.trim());
+        task.setSubmit_content(submitContent.trim());
+
+        boolean submitted = taskService.submitTask(task);
+
+        if (!submitted) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "본인에게 배정된 진행 중 또는 반려된 업무만 제출할 수 있습니다."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        redirectAttributes.addFlashAttribute(
+            "taskMessage",
+            "업무 결과물을 제출했습니다. 팀장의 검수를 기다려주세요."
+        );
+
+        return "redirect:/workspace/"
+            + project_id
+            + "/board";
     }
 }

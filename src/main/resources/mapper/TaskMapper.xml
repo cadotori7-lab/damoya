@@ -115,4 +115,23 @@
 
     </delete>
 
+    <!-- 담당자의 업무 결과물 제출 -->
+    <update id="submitTask"
+            parameterType="com.soldesk.vo.TaskVO">
+
+        UPDATE task
+
+        SET
+            submit_title = #{submit_title},
+            submit_content = #{submit_content},
+            status = 'REVIEW',
+            submitted_at = NOW(),
+            reject_reason = NULL
+
+        WHERE task_id = #{task_id}
+            AND project_id = #{project_id}
+            AND assignee_id = #{assignee_id}
+            AND status IN ('ONGOING', 'REJECTED')
+
+    </update>
 </mapper>
