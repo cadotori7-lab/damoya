@@ -29,9 +29,9 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/admin/**"))
                 .hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한을 가진 사용자만 접근 가능
                 .requestMatchers(
-                    new AntPathRequestMatcher("/feedback/**")
-                )
-                .hasRole("MENTOR") // /feedback/** 경로는 MENTOR 권한을 가진 사용자만 접근 가능
+                    new AntPathRequestMatcher("/feedback/**"),
+                    new AntPathRequestMatcher("/mentor/**"))
+                .hasRole("MENTOR") // 멘토 전용
                 .requestMatchers(
                     new AntPathRequestMatcher("/home"),
                     new AntPathRequestMatcher("/project/my"),

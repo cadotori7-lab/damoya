@@ -51,8 +51,9 @@ public class LoginController {
     @Autowired
     private CertVerifyService certVerifyService; // 자격증 이름 인증(FastAPI) 서비스
 
-    // 자격증 인증 성공 시, 인증된 이름을 세션에 저장하는 키
-    private static final String MENTOR_CERT_VERIFIED = "mentorCertVerified";
+    // 자격증 이미지 인증 성공 시: 회원 이름 + 인증된 자격증명 목록을 세션에 저장
+    private static final String MENTOR_CERT_VERIFIED_NAME = "mentorCertVerifiedName";
+    private static final String MENTOR_CERT_VERIFIED_LABELS = "mentorCertVerifiedLabels";
 
     @InitBinder({"signupMember"})
     public void initBinder(WebDataBinder binder) {
@@ -102,23 +103,27 @@ public class LoginController {
             model.addAttribute("signupMentor", new MentorSignupVO());
         }
         model.addAttribute("certVerified", false);
+        model.addAttribute("univList", univService.getAllUniv());
         return "auth/signup-mentor";
     }
 
     /**
-     * 자격증 이미지 + 이름을 받아 FastAPI 로 이름 대조.
-     * 성공 시 인증된 이름을 세션에 저장해두고, 실제 가입 시 이 값을 다시 확인한다(우회 방지).
-     * AJAX(JSON) 응답: { "matched": true/false, "detail": "..." }
+     * 자격증 이미지 + 회원 이름을 받아 FastAPI 로 이름 대조.
+     * 성공 시 해당 자격증명(certLabel)을 세션에 저장해, 가입 시 입력한 자격증마다 인증 여부를 확인한다.
      */
     @PostMapping("/signup/mentor/verify-cert")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> verifyMentorCert(
             @RequestParam("name") String name,
+            @RequestParam("certLabel") String certLabel,
             @RequestParam("file") MultipartFile file,
             HttpSession session) {
 
         if (name == null || name.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("matched", false, "detail", "이름을 입력해주세요."));
+        }
+        if (certLabel == null || certLabel.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("matched", false, "detail", "자격증명을 입력해주세요."));
         }
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("matched", false, "detail", "자격증 이미지를 첨부해주세요."));
@@ -127,10 +132,10 @@ public class LoginController {
         try {
             boolean matched = certVerifyService.isMatched(name, file);
             if (matched) {
-                session.setAttribute(MENTOR_CERT_VERIFIED, name.trim());
+                rememberVerifiedCert(session, name.trim(), certLabel.trim());
                 return ResponseEntity.ok(Map.of("matched", true));
             }
-            session.removeAttribute(MENTOR_CERT_VERIFIED);
+            forgetVerifiedCert(session, certLabel.trim());
             return ResponseEntity.ok(Map.of("matched", false, "detail", "이름과 자격증이 일치하지 않아요."));
         } catch (IOException e) {
             return ResponseEntity.status(500).body(Map.of("matched", false, "detail", "파일 처리 중 오류가 발생했어요."));
@@ -146,9 +151,7 @@ public class LoginController {
                                HttpSession session,
                                Model model) {
 
-        // 서버 측 자격증 인증 확인 (클라이언트 우회 방지)
-        boolean certVerified = isCertVerified(session, form.getName());
-        model.addAttribute("certVerified", certVerified);
+        model.addAttribute("univList", univService.getAllUniv());
 
         // 1) 형식 검증(@Valid)
         if (bindingResult.hasErrors()) {
@@ -157,7 +160,7 @@ public class LoginController {
         }
         // 2) 비밀번호 일치
         if (!form.getPassword().equals(form.getPassword_confirm())) {
-            bindingResult.rejectValue("passwordConfirm", "mismatch", "비밀번호가 일치하지 않아요.");
+            bindingResult.rejectValue("password_confirm", "mismatch", "비밀번호가 일치하지 않아요.");
         }
         // 3) 중복 검사 — 일반 회원과 같은 member 테이블을 쓰므로 동일하게 검사
         if (memberService.countByLoginId(form.getLogin_id()) > 0) {
@@ -166,31 +169,90 @@ public class LoginController {
         if (memberService.countByEmail(form.getEmail()) > 0) {
             bindingResult.rejectValue("email", "duplicate", "이미 가입된 이메일이에요.");
         }
-        // 4) 자격증 인증 필수
-        if (!certVerified) {
-            model.addAttribute("certError", "자격증 인증을 먼저 완료해주세요.");
-        }
-        if (bindingResult.hasErrors() || !certVerified) {
+        if (bindingResult.hasErrors()) {
              bindingResult.getAllErrors().forEach(error -> System.out.println("에러 원인: " + error.toString()));
+            return "auth/signup-mentor";
+        }
+        // 4) 자격증을 입력했다면 각 자격증 이미지 인증이 필수
+        String normalizedCert = normalizeCert(form.getCert());
+        form.setCert(normalizedCert);
+        if (normalizedCert != null && !areAllCertsVerified(session, form.getName(), normalizedCert)) {
+            model.addAttribute("certError", "입력한 자격증은 모두 이미지 인증을 완료해주세요.");
+            model.addAttribute("certVerified", false);
             return "auth/signup-mentor";
         }
         // 5) 저장
         try {
             memberService.registerMentor(form);
-            session.removeAttribute(MENTOR_CERT_VERIFIED); // 사용 후 정리
+            clearCertVerification(session);
         } catch (DuplicateKeyException e) {
             // 동시 요청 안전망
             bindingResult.rejectValue("login_id", "duplicate", "이미 사용 중인 아이디 또는 이메일이에요.");
-            model.addAttribute("univList", univService.getAllUniv());
             return "auth/signup-mentor";
         }
 
         return "redirect:/auth/login?joined=mentor";
     }
 
-    /** 세션에 저장된 인증 이름이 현재 입력한 이름과 같은지 확인 */
-    private boolean isCertVerified(HttpSession session, String name) {
-        Object verifiedName = session.getAttribute(MENTOR_CERT_VERIFIED);
-        return verifiedName != null && name != null && verifiedName.equals(name.trim());
+    private String normalizeCert(String cert) {
+        if (cert == null) {
+            return null;
+        }
+        String joined = java.util.Arrays.stream(cert.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .reduce((a, b) -> a + ", " + b)
+            .orElse("");
+        return joined.isEmpty() ? null : joined;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void rememberVerifiedCert(HttpSession session, String memberName, String certLabel) {
+        Object savedName = session.getAttribute(MENTOR_CERT_VERIFIED_NAME);
+        if (savedName == null || !memberName.equals(String.valueOf(savedName))) {
+            session.setAttribute(MENTOR_CERT_VERIFIED_NAME, memberName);
+            session.setAttribute(MENTOR_CERT_VERIFIED_LABELS, new java.util.HashSet<String>());
+        }
+        java.util.Set<String> labels = (java.util.Set<String>) session.getAttribute(MENTOR_CERT_VERIFIED_LABELS);
+        if (labels == null) {
+            labels = new java.util.HashSet<>();
+            session.setAttribute(MENTOR_CERT_VERIFIED_LABELS, labels);
+        }
+        labels.add(certLabel);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void forgetVerifiedCert(HttpSession session, String certLabel) {
+        java.util.Set<String> labels = (java.util.Set<String>) session.getAttribute(MENTOR_CERT_VERIFIED_LABELS);
+        if (labels != null) {
+            labels.remove(certLabel);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean areAllCertsVerified(HttpSession session, String memberName, String cert) {
+        if (memberName == null || memberName.trim().isEmpty()) {
+            return false;
+        }
+        Object savedName = session.getAttribute(MENTOR_CERT_VERIFIED_NAME);
+        if (savedName == null || !memberName.trim().equals(String.valueOf(savedName))) {
+            return false;
+        }
+        java.util.Set<String> labels = (java.util.Set<String>) session.getAttribute(MENTOR_CERT_VERIFIED_LABELS);
+        if (labels == null || labels.isEmpty()) {
+            return false;
+        }
+        for (String part : cert.split(",")) {
+            String label = part.trim();
+            if (!label.isEmpty() && !labels.contains(label)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void clearCertVerification(HttpSession session) {
+        session.removeAttribute(MENTOR_CERT_VERIFIED_NAME);
+        session.removeAttribute(MENTOR_CERT_VERIFIED_LABELS);
     }
 }

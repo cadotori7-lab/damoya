@@ -44,9 +44,10 @@
           </div>
         </div>
 
-        <!-- 프로젝트 수정 및 삭제 버튼 영역 -->
-        <div class="d-actions" style="margin-bottom: 16px; display: flex; gap: 8px;">
+        <!-- 프로젝트 수정 / 멘토 추천 / 삭제 -->
+        <div class="d-actions" style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
           <a class="btn ghost sm" href="${ctx}/project/edit?id=${project.projectId}">수정하기</a>
+          <a class="btn pri sm" href="${ctx}/project/mentor-recommend?id=${project.projectId}">멘토 AI 추천</a>
           <button type="button" class="btn ghost sm" style="color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
         </div>
 
