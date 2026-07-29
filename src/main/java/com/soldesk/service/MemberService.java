@@ -121,4 +121,10 @@ public class MemberService {
         updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
     }
 
+    // id로 회원 정보 조회
+    @Transactional
+    public MemberVO getMemberById(Long memberId) {
+    return memberMapper.getMemberById(memberId);
+    }
+
 }

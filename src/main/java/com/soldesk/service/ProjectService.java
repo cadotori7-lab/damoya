@@ -113,4 +113,10 @@ public class ProjectService {
     public List<ProjectVO> getFavoriteProjects(Long memberId){
         return projectmapper.getFavoriteProjectsByMemberId(memberId);
     }
+    
+    // 게시글 조회수 불러오기
+    @Transactional
+    public void increaseViewCount(Long projectId){
+        projectmapper.increaseViewCount(projectId);
+    }
 }

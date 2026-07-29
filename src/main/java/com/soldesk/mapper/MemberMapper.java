@@ -21,6 +21,7 @@ public interface MemberMapper {
 
     List<MemberVO> findAllMembers(); // 모든 회원 조회
     List<MentorDocument> findAllMentors(); // 멘토 인덱싱용 회원 + 멘토 정보 조회
+    MemberVO getMemberById(Long memberId); //회원 정보 가져오기
 
     void updateMember(MemberVO member); // 회원 정보 업데이트
     void updateAccountStatus(@Param("memberId") int memberId, @Param("status") String status); // 회원 계정 상태 업데이트
@@ -31,5 +32,6 @@ public interface MemberMapper {
     MemberVO findByProviderAndProviderId(@Param("provider") String provider, @Param("providerId") String providerId);
     MemberVO findByEmail(@Param("email") String email);
     void insertOAuthMember(MemberVO member);
+
 
 }

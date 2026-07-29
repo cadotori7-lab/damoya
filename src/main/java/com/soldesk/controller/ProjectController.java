@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -57,22 +61,66 @@ public class ProjectController {
     }
 
     @GetMapping("/detail")
-    public String detail(@RequestParam("id") Long projectId, Model model, Principal principal) {
-        ProjectVO project = projectService.getProjectById(projectId);
+    public String detail(@RequestParam("id") Long projectId, 
+                        HttpServletRequest request,
+                        HttpServletResponse response,
+                        Model model, Principal principal) {
+        
+        // 쿠키 이용해서 중복 방지
+        Cookie[] cookies = request.getCookies();
+        boolean isViewed = false;
+        String viewCookieValue = ""; //기존 쿠키 값 저장용 
 
+        if(cookies != null ){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("viewed_projects")){
+                    viewCookieValue = cookie.getValue();
+                    //해당 쿠키 안에 현재 프로젝트 id가 포함되어 있는지 검사
+                    if(viewCookieValue.contains("[" + projectId + "]"))
+                        isViewed = true;
+                }
+                break;
+            }
+        }
+
+        //처음 조회하는 글이라면
+        if(!isViewed){
+            // DB에서 조회수 1 증가 
+            projectService.increaseViewCount(projectId);
+
+            // 쿠키 값 업데이트
+            String newValue = viewCookieValue + "["+ projectId + "]";
+            Cookie newCookie = new Cookie("viewed_projects", newValue);
+
+            // 쿠키 설정
+            newCookie.setMaxAge(60*60 *24); //24시간 유지
+            newCookie.setPath("/");
+
+            //응답에 쿠키 담아서 클라이언트로 전송
+            response.addCookie(newCookie);
+        }
+                               
+        ProjectVO project = projectService.getProjectById(projectId);
         List<CommentVO> commentList = commentService.getCommentsByProjectId(projectId);
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.findByLoginId(member_id);
-        
-        // 1. 이미 지원했는지 체크 (기존 코드)
+        //프로젝트 작성자 정보 가져오기
+        if (project.getOwnerId() != null){
+            MemberVO owner = memberService.getMemberById(project.getOwnerId());
+            model.addAttribute("owner", owner);
+        }
+
+
+        //  이미 지원했는지 체크 
         boolean hashApplied = false;
         
         // 이미 관심등록 했는지 체크
         boolean isLiked = false;
         
-        //. 내가 쓴 글인지 체크
+        // 내가 쓴 글인지 체크
         boolean isOwner = false; 
 
+        // 로그인 상태인지 체크 
         if (principal != null) {
             String loginId = principal.getName();
             MemberVO loginUser = memberService.findByLoginId(loginId);
@@ -97,12 +145,11 @@ public class ProjectController {
                 isLiked = (favCheck > 0);
             }
         }
-        
+
         model.addAttribute("hashApplied", hashApplied);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("isLiked", isLiked);
-        
-        model.addAttribute("isOwner", isOwner); // ★ 뷰로 전달
+        model.addAttribute("isOwner", isOwner); 
         model.addAttribute("commentList", commentList);
         model.addAttribute("project", project);
         model.addAttribute("member", member);
@@ -212,8 +259,8 @@ public class ProjectController {
        return "project/apply_form";
     }
 
-    @GetMapping("/list")
-        public String getProjectList(
+@GetMapping("/list")
+    public String getProjectList(
             @RequestParam(value="page", defaultValue = "1") int page,
             @RequestParam(value="scope", defaultValue = "교내") String scope,
             @RequestParam(value="tab", defaultValue = "all") String tab,
@@ -224,57 +271,63 @@ public class ProjectController {
             @RequestParam(value = "view", required = false) String view,
             Model model, Principal principal){
 
-                // 페이지가 1 미만으로 내려가서 음수 오프셋이 발생하지 않도록 차단
-                if (page < 1) {
-                    page = 1;
-                }
-
-                // 만약 view=favorite이면 찜 목록 조회
-                if ("favorite".equals(view)) {
-                    if (principal == null) {
-                        return "redirect:/auth/login";
-                    }
-                    MemberVO loginUser = memberService.findByLoginId(principal.getName());
-                    long memberId = (long) loginUser.getMember_id();
-                    
-                    List<ProjectVO> projectList = projectService.getFavoriteProjects(memberId);
-                    
-                    // 찜 목록일 때도 화면 아래에 0이 뜨거나 깨지지 않도록 pageBean 전달
-                    int totalFavoriteCnt = projectList.size();
-                    PageBean favoritePageBean = new PageBean(1, totalFavoriteCnt, 6); 
-                    
-                    model.addAttribute("projectList", projectList);
-                    model.addAttribute("pageBean", favoritePageBean);
-                    model.addAttribute("isFavoriteView", true); // 찜 모드 활성화 표시
-                    return "project/list";
-                }
-
-                ProjectVO vo = new ProjectVO();
-                vo.setPage(page);
-                vo.setMatchScope(scope);
-                vo.setTab(tab);
-                vo.setKeyword(keyword);
-                vo.setSort(sort);
-                vo.calcOffset();
-
-                // 카테고리와 학년 파라미터를 List로 변환
-                if(categories != null && !categories.trim().isEmpty()){
-                    vo.setCategoryList(Arrays.asList(categories.split(",")));
-                }
-                if (grades != null && !grades.trim().isEmpty()) {
-                    vo.setGradeList(Arrays.asList(grades.split(",")));
-                }
-
-                // DB에서 전체 프로젝트 가져오기
-                int totalCnt = projectService.getTotalCount(vo);
-                PageBean pageBean = new PageBean(page, totalCnt, 6);
-                List<ProjectVO> projectList = projectService.getProjectList(vo);
-
-                model.addAttribute("projectList", projectList);
-                model.addAttribute("pageBean", pageBean);
-
-                return "project/list";
+        // 페이지가 1 미만으로 내려가서 음수 오프셋이 발생하지 않도록 차단
+        if (page < 1) {
+            page = 1;
         }
+
+        // 찜 목록 조회 모드일 때
+        if ("favorite".equals(view)) {
+            if (principal == null) {
+                return "redirect:/auth/login";
+            }
+            MemberVO loginUser = memberService.findByLoginId(principal.getName());
+            long memberId = (long) loginUser.getMember_id();
+            
+            List<ProjectVO> projectList = projectService.getFavoriteProjects(memberId);
+            
+            // 찜 목록일 때도 화면 아래에 0이 뜨거나 깨지지 않도록 pageBean 전달
+            int totalFavoriteCnt = projectList.size();
+            PageBean favoritePageBean = new PageBean(1, totalFavoriteCnt, 6); 
+            
+            model.addAttribute("projectList", projectList);
+            model.addAttribute("pageBean", favoritePageBean);
+            model.addAttribute("isFavoriteView", true); // 찜 모드 활성화 표시
+            model.addAttribute("currentSort", sort); // 정렬 상태 유지
+            
+            return "project/list";
+        }
+
+        // 일반 목록(필터, 검색, 정렬) 조회 모드일 때
+        ProjectVO vo = new ProjectVO();
+        vo.setPage(page);
+        vo.setMatchScope(scope);
+        vo.setTab(tab);
+        vo.setKeyword(keyword);
+        vo.setSort(sort);
+        vo.calcOffset();
+
+        // 카테고리와 학년 파라미터를 List로 변환
+        if(categories != null && !categories.trim().isEmpty()){
+            vo.setCategoryList(Arrays.asList(categories.split(",")));
+        }
+        if (grades != null && !grades.trim().isEmpty()) {
+            vo.setGradeList(Arrays.asList(grades.split(",")));
+        }
+
+        // DB에서 전체 프로젝트 가져오기
+        int totalCnt = projectService.getTotalCount(vo);
+        PageBean pageBean = new PageBean(page, totalCnt, 6);
+        List<ProjectVO> projectList = projectService.getProjectList(vo);
+
+
+        model.addAttribute("projectList", projectList);
+        model.addAttribute("pageBean", pageBean);
+        model.addAttribute("currentSort", sort);
+
+        return "project/list";
+    }
+    
     // 관심 등록 및 취소
     @PostMapping("/favorite/toggle")
     @ResponseBody

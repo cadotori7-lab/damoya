@@ -28,6 +28,8 @@ public class ProjectVO {
     private List<String> categoryList; // 다중 카테고리 체크박스 값
     private List<String> gradeList;    // 다중 학년 체크박스 값
     private boolean liked; // 현재 로그인한 유저가 좋아요를 눌렀는지 여부
+    private int commentCount; //댓글 수 
+
 
     // offset 자동 계산 메서드
     public void calcOffset() {
@@ -221,5 +223,13 @@ public class ProjectVO {
 
     public void setLiked(boolean liked) {
         this.liked = liked;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 }
