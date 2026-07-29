@@ -103,4 +103,9 @@
         order by p.applied_at DESC
         <if test="limit > 0">limit #{limit}</if>
     </select>
+    <!-- 지원 취소 -->
+    <delete id="deleteApplication" parameterType="com.soldesk.vo.ParticipationVO">
+        DELETE FROM participation
+        WHERE project_id = #{projectId} AND member_id = #{memberId}
+    </delete>
 </mapper>

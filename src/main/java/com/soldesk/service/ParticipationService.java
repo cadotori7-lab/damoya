@@ -44,6 +44,10 @@ public class ParticipationService {
     public List<ParticipationVO> getApplicationProjectsByMemberId(int memberId, int limit){
         return participationMapper.selectApplicationListByMemberId(memberId, limit);
     }
+    @Transactional
+    public void cancelApplication(Long projectId, Long memberId){
+        participationMapper.deleteApplication(projectId, memberId);
+    }
 }
     
     

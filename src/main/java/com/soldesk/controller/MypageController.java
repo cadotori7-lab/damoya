@@ -129,4 +129,12 @@ public class MypageController {
         ra.addFlashAttribute("openPassword", true);
         return "redirect:/mypage/index";
     }
+    @PostMapping("/cancel-application")
+    public String cancelApplication(@RequestParam("projectId") Long projectId, RedirectAttributes ra) {
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
+        participationService.cancelApplication(projectId, (long) member.getMember_id());
+        ra.addFlashAttribute("cancelSuccess", "지원이 취소됐어요.");
+        return "redirect:/mypage/index";
+    }
 }

@@ -94,16 +94,22 @@
               <c:when test="${a.joinStatus == 'REJECTED'}"><c:set var="chipClass" value="reject"/><c:set var="chipLabel" value="거절됨"/></c:when>
               <c:otherwise><c:set var="chipClass" value="wait"/><c:set var="chipLabel" value="${a.joinStatus}"/></c:otherwise>
             </c:choose>
-            <div class="mp-item" style="--c:var(--cat-${a.category})" onclick="location.href='${ctx}/project/detail?id=${a.projectId}'">
-              <div class="m-main">
-                <div class="m-cat">${a.category}</div>
-                <h4>${a.title}</h4>
-                <div class="m-meta"><span>지원일 ${fn:substring(a.appliedAt, 0, 10)}</span></div>
+            <form action="cancel-application" method="post">
+              <input type="hidden" name="projectId" value="${a.projectId}" />
+              <input type="hidden" name="memberId" value="${member.member_id}" />
+              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+              <div class="mp-item" style="--c:var(--cat-${a.category})">
+                <div class="m-main" onclick="location.href='${ctx}/project/detail?id=${a.projectId}'">
+                  <div class="m-cat">${a.category}</div>
+                  <h4>${a.title}</h4>
+                  <div class="m-meta"><span>지원일 ${fn:substring(a.appliedAt, 0, 10)}</span></div>
+                </div>
+                <div class="m-right">
+                  <span class="chip ${chipClass}">${chipLabel}</span>
+                  <button type="submit" class="btn sm ghost" onclick="return confirm('정말로 지원을 취소하시겠습니까?')">지원 취소</button>
+                </div>
               </div>
-              <div class="m-right">
-                <span class="chip ${chipClass}">${chipLabel}</span>
-              </div>
-            </div>
+            </form>
           </c:forEach>
         </c:otherwise>
       </c:choose>

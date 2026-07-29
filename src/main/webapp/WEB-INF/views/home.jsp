@@ -49,6 +49,9 @@
       <div class="ocard">
         <div class="oc-head"><div class="t">이어서 할 프로젝트</div><a class="oc-more" href="${ctx}/project/my">전체 보기</a></div>
         <div class="psel-list">
+        <c:if test="${participatingProjects.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">참여 중인 프로젝트가 없어요.</p>
+        </c:if>
         <c:forEach var="project" items="${participatingProjects}">
           <div class="psel-card" style="--c:var(--cat-${project.category});padding:16px 18px" onclick="go('overview')">
             <div class="psel-main">
@@ -82,6 +85,9 @@
       <div class="ocard">
         <div class="oc-head"><div class="t">내 지원 현황</div><a class="oc-more" href="${ctx}/mypage/index">전체 보기</a></div>
         <div class="home-appl">
+          <c:if test="${applicationProjects.size() == 0}">
+            <p style="color:var(--ink-soft);padding:16px">지원 중인 프로젝트가 없어요.</p>
+          </c:if>
           <c:forEach var="project" items="${applicationProjects}">
             <c:choose>
               <c:when test="${project.joinStatus == 'WAITING'}"><c:set var="statusClass" value="wait"/><c:set var="statusLabel" value="대기중"/></c:when>
