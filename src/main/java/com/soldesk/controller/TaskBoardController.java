@@ -13,6 +13,13 @@ import com.soldesk.service.TaskService;
 import com.soldesk.service.ParticipationService;
 import com.soldesk.vo.TaskVO;
 
+import java.security.Principal;
+
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.soldesk.service.MemberService;
+import com.soldesk.vo.MemberVO;
+
 @Controller
 @RequestMapping("/workspace/{project_id}")
 public class TaskBoardController {
@@ -23,16 +30,36 @@ public class TaskBoardController {
     @Autowired
     private ParticipationService participationService;
 
+    @Autowired
+    private MemberService memberService;
+
     // 업무 보드
     @GetMapping("/board")
     public String board(
-            @PathVariable("project_id") long project_id,
-            Model model) {
+        @PathVariable("project_id") long project_id,
+        Principal principal,
+        Model model) {
+
+        MemberVO loginMember = null;
+
+        if (principal != null) {
+            loginMember = memberService.findByLoginId(
+                principal.getName()
+            );
+        }
+
+        boolean isLeader = loginMember != null
+            && participationService.isLeader(
+                project_id,
+                loginMember.getMember_id()
+        );
 
         model.addAttribute("project_id", project_id);
+        model.addAttribute("isLeader", isLeader);
+
         model.addAttribute(
-                "taskList",
-                taskService.selectTaskList(project_id)
+            "taskList",
+            taskService.selectTaskList(project_id)
         );
 
         return "workspace/board";
@@ -42,15 +69,40 @@ public class TaskBoardController {
     @GetMapping("/taskform")
     public String taskForm(
         @PathVariable("project_id") long project_id,
-        Model model) {
+        Principal principal,
+        Model model,
+        RedirectAttributes redirectAttributes) {
 
-    TaskVO task = new TaskVO();
-    task.setProject_id(project_id);
+        MemberVO loginMember = null;
 
-    model.addAttribute("project_id", project_id);
-    model.addAttribute("task", task);
+        if (principal != null) {
+            loginMember = memberService.findByLoginId(
+                principal.getName()
+            );
+        }
 
-    model.addAttribute(
+        if (loginMember == null
+            || !participationService.isLeader(
+                    project_id,
+                    loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "프로젝트 팀장만 업무를 등록할 수 있습니다."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        TaskVO task = new TaskVO();
+        task.setProject_id(project_id);
+
+        model.addAttribute("project_id", project_id);
+        model.addAttribute("task", task);
+
+        model.addAttribute(
             "projectMembers",
             participationService.selectTaskMembers(project_id)
         );
@@ -62,7 +114,60 @@ public class TaskBoardController {
     @PostMapping("/tasks")
     public String insertTask(
         @PathVariable("project_id") long project_id,
-        @ModelAttribute TaskVO task) {
+        @ModelAttribute("task") TaskVO task,
+        Principal principal,
+        Model model,
+        RedirectAttributes redirectAttributes) {
+
+        task.setProject_id(project_id);
+
+        // 현재 로그인 사용자 조회
+        MemberVO loginMember = null;
+
+        if (principal != null) {
+            loginMember = memberService.findByLoginId(
+                principal.getName()
+            );
+        }
+
+        // 로그인 정보가 없거나 프로젝트 팀장이 아닌 경우
+        if (loginMember == null
+            || !participationService.isLeader(
+                    project_id,
+                    loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "프로젝트 팀장만 업무를 등록할 수 있습니다."
+            );
+
+            return "redirect:/workspace/"
+                + project_id
+                + "/board";
+        }
+
+        // 선택한 담당자가 해당 프로젝트 참여자인지 검사
+        Long assigneeId = task.getAssignee_id();
+
+        if (assigneeId == null
+            || !participationService.isTaskMember(
+                    project_id,
+                    assigneeId)) {
+
+            model.addAttribute("project_id", project_id);
+
+            model.addAttribute(
+                "projectMembers",
+                participationService.selectTaskMembers(project_id)
+            );
+
+            model.addAttribute(
+                "assigneeError",
+                "해당 프로젝트의 참여자만 담당자로 지정할 수 있습니다."
+            );
+
+            return "workspace/taskform";
+        }
 
         taskService.insertTask(project_id, task);
 

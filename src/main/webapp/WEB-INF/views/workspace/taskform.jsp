@@ -82,6 +82,12 @@
                 </option>
               </c:forEach>
             </select>
+
+            <c:if test="${not empty assigneeError}">
+              <p class="form-error">
+                <c:out value="${assigneeError}"/>
+              </p>
+            </c:if>
           </div>
 
           <div class="fld">

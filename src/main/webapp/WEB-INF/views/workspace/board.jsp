@@ -35,11 +35,13 @@
        class="board-search"
        placeholder="업무 검색 (업무명·설명)"
        oninput="onTaskSearch(this.value)">
-      <a class="btn pri sm"
-        style="margin-left:auto"
-        href="${ctx}/workspace/${project_id}/taskform">
-        + 업무 등록
-      </a>
+      <c:if test="${isLeader}">
+        <a class="btn pri sm"
+          style="margin-left:auto"
+          href="${ctx}/workspace/${project_id}/taskform">
+          + 업무 등록
+        </a>
+      </c:if>
     </div>
 
 <!-- Controller에서 받은 실제 업무 데이터 -->
