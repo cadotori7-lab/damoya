@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -56,7 +57,85 @@
       <button data-t="offers">받은 제의</button>
       <button data-t="liked">관심 목록</button>
     </div>
-    <div class="mp-list" id="mpList"></div>
+
+    <!-- 참여 중인 프로젝트 -->
+    <div class="mp-list" data-tab="joined">
+      <c:choose>
+        <c:when test="${empty participationList}">
+          <p style="color:var(--ink-soft);padding:16px">참여 중인 프로젝트가 없어요.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="p" items="${participationList}">
+            <div class="mp-item" style="--c:var(--cat-${p.category})" onclick="location.href='${ctx}/workspace/${p.projectId}/overview'">
+              <div class="m-main">
+                <div class="m-cat">${p.category}</div>
+                <h4>${p.title}</h4>
+              </div>
+              <div class="m-right">
+                <span class="role-tag ${p.projectRole == 'LEADER' ? 'lead' : 'member'}">${p.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
+              </div>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </div>
+
+    <!-- 내 지원 현황 -->
+    <div class="mp-list" data-tab="applied" style="display:none">
+      <c:choose>
+        <c:when test="${empty applicationList}">
+          <p style="color:var(--ink-soft);padding:16px">지원한 프로젝트가 없어요.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="a" items="${applicationList}">
+            <c:choose>
+              <c:when test="${a.joinStatus == 'WAITING'}"><c:set var="chipClass" value="wait"/><c:set var="chipLabel" value="승인 대기"/></c:when>
+              <c:when test="${a.joinStatus == 'INTERVIEW'}"><c:set var="chipClass" value="interview"/><c:set var="chipLabel" value="면접 예정"/></c:when>
+              <c:when test="${a.joinStatus == 'REJECTED'}"><c:set var="chipClass" value="reject"/><c:set var="chipLabel" value="거절됨"/></c:when>
+              <c:otherwise><c:set var="chipClass" value="wait"/><c:set var="chipLabel" value="${a.joinStatus}"/></c:otherwise>
+            </c:choose>
+            <div class="mp-item" style="--c:var(--cat-${a.category})" onclick="location.href='${ctx}/project/detail?id=${a.projectId}'">
+              <div class="m-main">
+                <div class="m-cat">${a.category}</div>
+                <h4>${a.title}</h4>
+                <div class="m-meta"><span>지원일 ${fn:substring(a.appliedAt, 0, 10)}</span></div>
+              </div>
+              <div class="m-right">
+                <span class="chip ${chipClass}">${chipLabel}</span>
+              </div>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </div>
+
+    <!-- 받은 제의 (기능 준비 중) -->
+    <div class="mp-list" data-tab="offers" style="display:none">
+      <p style="color:var(--ink-soft);padding:16px">받은 제의가 없어요.</p>
+    </div>
+
+    <!-- 관심 목록 -->
+    <div class="mp-list" data-tab="liked" style="display:none">
+      <c:choose>
+        <c:when test="${empty likedList}">
+          <p style="color:var(--ink-soft);padding:16px">관심 등록한 프로젝트가 없어요.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="l" items="${likedList}">
+            <div class="mp-item" style="--c:var(--cat-${l.category})" onclick="location.href='${ctx}/project/detail?id=${l.projectId}'">
+              <div class="m-main">
+                <div class="m-cat">${l.category}</div>
+                <h4>${l.title}</h4>
+                <div class="m-meta"><span>${l.status == 'RECRUITING' ? '모집중' : '모집마감'}</span></div>
+              </div>
+              <div class="m-right">
+                <button class="btn sm ghost">보기</button>
+              </div>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </div>
 
     <jsp:include page="withdraw-modal.jsp" />
     <jsp:include page="password-modal.jsp" />
@@ -115,6 +194,14 @@
           <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="double_major" type="text" id="pfMinor" name="double_major" value="${member.double_major}" placeholder="없으면 비워두세요" /></div>
         </div>
         <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="intro" type="text" id="pfBio" name="intro" value="${member.intro}" placeholder="예: Spring 백엔드에 관심 많은 4학년" /></div>
+
+        <div class="frow" style="margin-top:8px;border-top:1px solid var(--line);padding-top:18px">
+          <c:if test="${member.provider == 'LOCAL'}">
+            <button type="button" class="btn ghost" onclick="closeModal('profileModal');openModal('passwordModal')">비밀번호 변경</button>
+          </c:if>
+          <button type="button" class="btn ghost danger" onclick="closeModal('profileModal');openModal('withdrawModal')">회원 탈퇴</button>
+        </div>
+
         <div class="form-foot">
           <button class="btn ghost" onclick="closeProfile()">취소</button>
           <button class="btn pri" type="submit">저장하기</button>

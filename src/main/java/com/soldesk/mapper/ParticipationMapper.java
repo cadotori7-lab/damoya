@@ -12,5 +12,7 @@ public interface ParticipationMapper {
     List<ParticipationVO> selectApplicationList(Long projectId); //지원서 목록
     void insertProjectLeader(ParticipationVO vo); //프로젝트 등록 시 포지션을 리더로 정함
     int countByProjectAndMember(@Param("projectId") Long projectId, @Param("memberId") Long memberId);//이미 지원/참여 중인지 확인하기 위한 카운트 조회
-    
+    List<ParticipationVO> selectParticipationListByMemberId(@Param("memberId") int memberId, @Param("limit") int limit); //참여중인 프로젝트 목록 조회
+    List<ParticipationVO> selectApplicationListByMemberId(@Param("memberId") int memberId, @Param("limit") int limit); //지원 진행 중인 프로젝트 목록 조회
+
 }

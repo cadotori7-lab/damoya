@@ -36,6 +36,14 @@ public class ParticipationService {
     public List<ParticipationVO> getApplicants(Long projectId){
         return participationMapper.selectApplicationList(projectId);
     }
+    @Transactional
+    public List<ParticipationVO> getParticipatingProjectsByMemberId(int memberId, int limit){
+        return participationMapper.selectParticipationListByMemberId(memberId, limit);
+    }
+    @Transactional
+    public List<ParticipationVO> getApplicationProjectsByMemberId(int memberId, int limit){
+        return participationMapper.selectApplicationListByMemberId(memberId, limit);
+    }
 }
     
     

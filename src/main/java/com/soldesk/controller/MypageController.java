@@ -1,5 +1,7 @@
 package com.soldesk.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -15,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.soldesk.service.MemberService;
+import com.soldesk.service.ParticipationService;
 import com.soldesk.service.PasswordChangeException;
+import com.soldesk.service.ProjectService;
 import com.soldesk.service.UnivService;
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.ParticipationVO;
+import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.UnivVO;
 
 
@@ -33,15 +39,27 @@ public class MypageController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
+    @Autowired
+    private ParticipationService participationService;
+
+    @Autowired
+    private ProjectService projectService;
+
     @GetMapping("/index")
     public String index(Model model) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.findByLoginId(member_id);
         UnivVO univ = univService.getUnivByDeptId(member.getDept_id()); // 학생의 대학 이름과 학과 이름 조회
+        List<ParticipationVO> participationList = participationService.getParticipatingProjectsByMemberId(member.getMember_id(), 0); // 참여 중인 프로젝트 목록 조회 (0 = 전체 조회)
+        List<ParticipationVO> applicationList = participationService.getApplicationProjectsByMemberId(member.getMember_id(), 0); // 지원 중인 프로젝트 목록 조회 (0 = 전체 조회)
+        List<ProjectVO> likedList = projectService.getFavoriteProjects((long) member.getMember_id()); // 관심 등록한 프로젝트 목록 조회
         model.addAttribute("member", member);
         model.addAttribute("univList", univService.getAllUniv());
         model.addAttribute("univ", univ);
+        model.addAttribute("participationList", participationList);
+        model.addAttribute("applicationList", applicationList);
+        model.addAttribute("likedList", likedList);
 
         return "mypage/index";
     }

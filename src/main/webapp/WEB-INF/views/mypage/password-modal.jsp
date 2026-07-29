@@ -4,14 +4,6 @@
 
 <c:if test="${member.provider == 'LOCAL'}">
 
-  <div class="account-zone">
-    <div class="az-text">
-      <b>비밀번호 변경</b>
-      <span>주기적으로 바꾸면 계정을 더 안전하게 지킬 수 있어요.</span>
-    </div>
-    <button type="button" class="btn ghost" onclick="openModal('passwordModal')">비밀번호 변경</button>
-  </div>
-
   <div class="modal-overlay" id="passwordModal">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pwTitle" style="max-width:440px">
       <div class="modal-head">

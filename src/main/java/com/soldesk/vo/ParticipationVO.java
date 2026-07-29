@@ -15,6 +15,8 @@ public class ParticipationVO {
     private String experience; //경험/경력
     private String motive; //지원동기 
     private String memberName; // 지원자 이름
+    private String title; // 프로젝트 제목
+    private String category; // 프로젝트 카테고리
 
 
     public Long getPartId() {
@@ -89,4 +91,17 @@ public class ParticipationVO {
     public void setMemberName(String memberName) {
         this.memberName = memberName;
     }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
 }

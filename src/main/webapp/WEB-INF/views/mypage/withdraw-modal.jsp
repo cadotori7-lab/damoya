@@ -2,14 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<div class="danger-zone">
-  <div class="dz-text">
-    <b>회원 탈퇴</b>
-    <span>탈퇴하면 다시 로그인할 수 없어요. 작성한 기록은 익명으로 남습니다.</span>
-  </div>
-  <button type="button" class="btn ghost danger" onclick="openModal('withdrawModal')">회원 탈퇴</button>
-</div>
-
 <div class="modal-overlay" id="withdrawModal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wdTitle" style="max-width:440px">
     <div class="modal-head">

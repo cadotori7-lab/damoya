@@ -1,6 +1,7 @@
 package com.soldesk.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,9 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.soldesk.service.MemberService;
+import com.soldesk.service.ParticipationService;
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.ParticipationVO;
 
-/**
+/** 
  * 랜딩(비로그인)과 홈 대시보드(로그인)를 나눈 컨트롤러.
  */
 @Controller
@@ -19,6 +22,9 @@ public class HomeController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private ParticipationService participationService;
 
     @GetMapping("/")
     public String root(Principal principal) {
@@ -32,7 +38,12 @@ public class HomeController {
     public String home(Model model) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.findByLoginId(member_id);
+        List<ParticipationVO> participatingProjects = participationService.getParticipatingProjectsByMemberId(member.getMember_id(),3);
+        List<ParticipationVO> applicationProjects = participationService.getApplicationProjectsByMemberId(member.getMember_id(),3);
+
         model.addAttribute("member", member);
+        model.addAttribute("participatingProjects", participatingProjects);
+        model.addAttribute("applicationProjects", applicationProjects);
         return "home"; 
     }
 }

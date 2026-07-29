@@ -44,7 +44,7 @@
         <span class="dot"></span>
       </button>
       <a class="avatar" href="${ctx}/mypage/index" style="cursor:pointer">
-        <div class="who">${member.name}<small>컴퓨터공학 · 4학년</small></div>
+        <div class="who">${member.name}<small>${member.major} · ${member.grade}학년</small></div>
         <div class="pic">${member.name.substring(0, 1)}</div>
       </a>
     </div>

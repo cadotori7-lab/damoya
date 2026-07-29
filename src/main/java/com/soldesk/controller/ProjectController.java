@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +60,8 @@ public class ProjectController {
         ProjectVO project = projectService.getProjectById(projectId);
 
         List<CommentVO> commentList = commentService.getCommentsByProjectId(projectId);
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
         
         // 1. 이미 지원했는지 체크 (기존 코드)
         boolean hashApplied = false;
@@ -103,6 +104,7 @@ public class ProjectController {
         model.addAttribute("isOwner", isOwner); // ★ 뷰로 전달
         model.addAttribute("commentList", commentList);
         model.addAttribute("project", project);
+        model.addAttribute("member", member);
 
         return "project/detail";
     }
