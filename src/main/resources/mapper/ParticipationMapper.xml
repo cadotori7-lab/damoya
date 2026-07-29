@@ -17,6 +17,7 @@
         <result property="experience" column="experience"/>
         <result property="title" column="title"/>
         <result property="category" column="category"/>
+        <result property="status" column="status"/>
     </resultMap>
 
     <!-- 지원서 저장 -->
@@ -75,7 +76,8 @@
         select 
             p.*,
             pr.title,
-            pr.category
+            pr.category,
+            pr.status
         from participation p
         join member m on p.member_id = m.member_id
         join project pr on p.project_id = pr.project_id
@@ -89,7 +91,8 @@
         select 
             p.*,
             pr.title,
-            pr.category
+            pr.category,
+            pr.status
         from participation p
         join member m on p.member_id = m.member_id
         join project pr on p.project_id = pr.project_id

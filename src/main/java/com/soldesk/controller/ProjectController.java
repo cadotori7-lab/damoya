@@ -26,6 +26,7 @@ import com.soldesk.service.ReportService;
 import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
+import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.ReportVO;
 
@@ -326,7 +327,9 @@ public class ProjectController {
     }
     
     @GetMapping("/my")
-    public String my() {
+    public String my(Model model, Principal principal) {
+        List<ParticipationVO> project = participationMapper.selectParticipationListByMemberId((int) memberService.findByLoginId(principal.getName()).getMember_id(), 0);
+        model.addAttribute("project", project);
         return "project/my";
     }
 

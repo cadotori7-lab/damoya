@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 	var univSelect = document.querySelector('select[name="univ_name"]');
 	var deptSelect = document.querySelector('select[name="dept_id"]');
+	var doubleMajorSelect = document.querySelector('select[name="double_major"]');
 	var univPlaceholderText = "학교를 선택하세요";
 	var deptPlaceholderText = "학과를 선택하세요";
 
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	var initialUniv = univSelect.value;
 	var initialDept = deptSelect.value;
+	var initialDoubleMajor = doubleMajorSelect ? doubleMajorSelect.value : "";
 
 	var deptSource = Array.from(deptSelect.options).filter(function (option) {
 		return option.value !== "";
@@ -61,7 +63,45 @@ document.addEventListener("DOMContentLoaded", function () {
 		univSelect.value = selectedUniv;
 	}
 
-	function renderDeptOptions(univName, preferredDeptValue) {
+	function renderDoubleMajorOptions(univName, preferredDoubleMajor) {
+		if (!doubleMajorSelect) {
+			return;
+		}
+		doubleMajorSelect.innerHTML = "";
+
+		var placeholder = document.createElement("option");
+		placeholder.value = "";
+		placeholder.textContent = "없음";
+		doubleMajorSelect.appendChild(placeholder);
+
+		if (!univName) {
+			return;
+		}
+
+		var matched = deptSource.filter(function (dept) {
+			return dept.univName === univName && dept.value !== deptSelect.value;
+		});
+
+		matched.forEach(function (dept) {
+			var option = document.createElement("option");
+			if (dept.label === preferredDoubleMajor) {
+				option.selected = true;
+			}
+			option.value = dept.label; // 복수전공은 학과명 문자열 그대로 저장
+			option.textContent = dept.label;
+			doubleMajorSelect.appendChild(option);
+		});
+
+		var isPreferredValid = matched.some(function (dept) {
+			return dept.label === preferredDoubleMajor;
+		});
+
+		if (isPreferredValid) {
+			doubleMajorSelect.value = preferredDoubleMajor;
+		}
+	}
+
+	function renderDeptOptions(univName, preferredDeptValue, preferredDoubleMajor) {
 		deptSelect.innerHTML = "";
 
 		var deptPlaceholder = document.createElement("option");
@@ -101,11 +141,19 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (isPreferredValid) {
 			deptSelect.value = preferredDeptValue;
 		}
+
+		renderDoubleMajorOptions(univName, preferredDoubleMajor);
 	}
 
-	renderDeptOptions(univSelect.value, initialDept);
+	renderDeptOptions(univSelect.value, initialDept, initialDoubleMajor);
 
 	univSelect.addEventListener("change", function () {
-		renderDeptOptions(univSelect.value, "");
+		renderDeptOptions(univSelect.value, "", "");
+	});
+
+	// 주전공(학과)을 바꾸면, 방금 고른 학과는 복수전공 목록에서 빠지도록 다시 그림
+	deptSelect.addEventListener("change", function () {
+		var currentDoubleMajor = doubleMajorSelect ? doubleMajorSelect.value : "";
+		renderDoubleMajorOptions(univSelect.value, currentDoubleMajor);
 	});
 });

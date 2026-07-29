@@ -17,6 +17,7 @@ public class ParticipationVO {
     private String memberName; // 지원자 이름
     private String title; // 프로젝트 제목
     private String category; // 프로젝트 카테고리
+    private String status; // 프로젝트 상태
 
 
     public Long getPartId() {
@@ -102,6 +103,12 @@ public class ParticipationVO {
     }
     public void setCategory(String category) {
         this.category = category;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

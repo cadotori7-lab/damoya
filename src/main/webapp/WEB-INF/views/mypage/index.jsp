@@ -177,7 +177,7 @@
           </div>
         </div>
         <div class="frow">
-          <c:if test="${member.grade ne null && member.grade ne ''}">
+          <c:if test="${member.role == 'USER'}">
           <div class="fld"><label>학년</label>
               <select id="pfYear" name="grade">
                 <option value="1" <c:if test="${member.grade == 1}">selected</c:if>>1</option>
@@ -190,8 +190,14 @@
           </c:if>
         </div>
         <div class="frow">
-          <div class="fld"><label>주전공</label><form:input path="major" type="text" id="pfMajor" name="major" value="${member.major}" /></div>
-          <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="double_major" type="text" id="pfMinor" name="double_major" value="${member.double_major}" placeholder="없으면 비워두세요" /></div>
+          <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
+              <select name="double_major" id="doubleMajorSelect">
+                  <option value="" <c:if test="${empty member.double_major}">selected</c:if>>없음</option>
+                  <c:forEach var="dept" items="${univList}">
+                    <option value="${dept.dept_name}" data-univ-name="${dept.univ_name}" <c:if test="${dept.dept_name == member.double_major}">selected</c:if>>${dept.dept_name}</option>
+                  </c:forEach>
+              </select>
+          </div>
         </div>
         <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="intro" type="text" id="pfBio" name="intro" value="${member.intro}" placeholder="예: Spring 백엔드에 관심 많은 4학년" /></div>
 

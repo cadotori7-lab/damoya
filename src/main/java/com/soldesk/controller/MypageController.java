@@ -68,6 +68,11 @@ public class MypageController {
     public String update(MemberVO member) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         member.setLogin_id(member_id); // 로그인한 사용자의 ID를 설정
+        // 학과 선택값을 그대로 전공으로 저장 (학과 = 전공)
+        UnivVO dept = univService.getUnivByDeptId(member.getDept_id());
+        if (dept != null) {
+            member.setMajor(dept.getDept_name());
+        }
         memberService.updateMember(member); // 회원 정보 업데이트
         return "redirect:/mypage/index"; // 업데이트 후 마이페이지로 리다이렉트
     }
