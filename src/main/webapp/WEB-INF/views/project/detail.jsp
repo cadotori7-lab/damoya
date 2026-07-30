@@ -67,10 +67,10 @@
                 <c:if test="${isOwner}">
                     <a class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center;" href="${ctx}/project/edit?id=${project.projectId}">수정하기</a>
                     <button type="button" class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center; color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
+                    <a class="btn pri sm" href="${ctx}/project/mentor-recommend?id=${project.projectId}">멘토 AI 추천</a>
                 </c:if>
                 <a class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center;" href="${ctx}/project/list">목록으로</a>
             </div>
-
           </div>
 
           <div class="panel">

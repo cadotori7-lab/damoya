@@ -13,7 +13,6 @@
         <result column="start_date" property="startDate"/>  
         <result column="end_date" property="endDate"/>      
         <result column="status" property="status"/>
-        <result column="is_public" property="isPublic"/>
         <result column="created_at" property="createdAt"/>
         <result column="match_scope" property="matchScope"/>
         <result column="tags" property="tags"/>

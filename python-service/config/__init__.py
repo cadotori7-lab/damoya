@@ -17,7 +17,7 @@ load_dotenv(BASE_DIR / ".env")
 
 # 환경 변수 설정
 HOST = os.getenv("FASTAPI_HOST", "0.0.0.0") # FastAPI 애플리케이션 호스트
-PORT = int(os.getenv("FASTAPI_PORT", "8001")) # FastAPI 애플리케이션 포트
+PORT = int(os.getenv("FASTAPI_PORT", "8501")) # FastAPI 애플리케이션 포트
 OCR_LANGS = [lang.strip() for lang in os.getenv("OCR_LANGS", "ko,en").split(",") if lang.strip()] # OCR 언어 설정
 MATCH_THRESHOLD = float(os.getenv("MATCH_THRESHOLD", "0.8")) # 이미지 명의 매칭 임계값(높을수록 매칭 정확도 증가)
 

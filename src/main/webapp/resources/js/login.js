@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	if (uniqueUnivNames.length === 0) {
 		Array.from(univSelect.options).forEach(function (option) {
-			var name = option.value || option.textContent.trim();
+			// value가 비어 있으면 플레이스홀더이므로 학교 목록에 넣지 않는다
+			var name = (option.value || "").trim();
 			if (name && !seenUniv.has(name)) {
 				seenUniv.add(name);
 				uniqueUnivNames.push(name);

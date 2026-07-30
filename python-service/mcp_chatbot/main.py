@@ -18,7 +18,6 @@ PYTHON_SERVICE_DIR = Path(__file__).parent / ".."  # python-service 디렉토리
 MCP_SERVER_MODULE = "mcp_chatbot.service"  # MCP 서버 모듈 경로
 RESOURCE_URI = "guide://damoya/site-search"  # 리소스 경로
 
-
 # MCP 연결 및 세션관리
 class McpChatService:
     def __init__(self) -> None:

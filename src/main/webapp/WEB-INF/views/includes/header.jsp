@@ -6,14 +6,12 @@
   <div class="top-in">
     <a class="logo" href="${ctx}/">다<b>모여</b></a>
     <nav class="main">
-      <%-- 로그인 안 해도 보이는 것 --%>
       <sec:authorize access="!isAuthenticated()">
         <a href="${ctx}/" class="${nav=='home' ? 'on' : ''}">홈</a>
         <a href="${ctx}/project/list" class="${nav=='match' ? 'on' : ''}">프로젝트 찾기</a>
         <a href="${ctx}/talent/list" class="${nav=='talent' ? 'on' : ''}">인재풀</a>
       </sec:authorize>
 
-      <%-- 로그인해야 보이는 것 --%>
       <sec:authorize access="isAuthenticated()">
         <a href="${ctx}/home" class="${nav=='home' ? 'on' : ''}">홈</a>
         <a href="${ctx}/project/list" class="${nav=='match' ? 'on' : ''}">프로젝트 찾기</a>
@@ -22,12 +20,11 @@
         <a href="${ctx}/mypage/index" class="${nav=='mypage' ? 'on' : ''}">마이페이지</a>
       </sec:authorize>
 
-      <%-- 멘토에게만 --%>
       <sec:authorize access="hasRole('MENTOR')">
-        <a href="${ctx}/feedback/feedback" class="${nav=='feedback' ? 'on' : ''}">멘토</a>
+        <a href="${ctx}/mentor/" class="${nav=='mentor' ? 'on' : ''}">멘토</a>
+        <a href="${ctx}/feedback/feedback" class="${nav=='feedback' ? 'on' : ''}">피드백</a>
       </sec:authorize>
 
-      <%-- 관리자에게만 --%>
       <sec:authorize access="hasRole('ADMIN')">
         <a href="${ctx}/admin/dashboard" class="${nav=='admin' ? 'on' : ''}">관리자</a>
       </sec:authorize>
@@ -39,9 +36,8 @@
       </sec:authorize>
       <sec:authorize access="isAuthenticated()">
       <button class="btn sec" onclick="document.getElementById('logoutForm').submit();">로그아웃</button>
-      <button class="bell" aria-label="알림">
+      <button class="bell" aria-label="알림" type="button">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-        <span class="dot"></span>
       </button>
       <a class="avatar" href="${ctx}/mypage/index" style="cursor:pointer">
         <div class="who">${member.name}<small>${member.major} · ${member.grade}학년</small></div>

@@ -128,17 +128,11 @@
           </div>
 
           <div class="fld one">
-            <label>자격증 <span style="color:var(--ink-soft);font-weight:500">(필수)</span></label>
-            <form:input path="cert" placeholder="예: 정보처리기사, AWS SA Professional"/>
-          </div>
-
-          <div class="fld one">
-            <label>자격증 이미지 인증<span class="req">*</span></label>
-            <div class="cert-verify">
-              <input type="file" id="certFile" accept="image/*">
-              <button type="button" id="certVerifyBtn" class="btn ghost">자격증 인증</button>
-            </div>
-            <div id="certStatus" class="hint cert-status">위의 <b>이름</b>과 자격증 이미지를 올린 뒤 인증해주세요. 인증되어야 가입할 수 있어요.</div>
+            <label>자격증 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
+            <div id="certList" class="cert-list"></div>
+            <button type="button" id="certAddBtn" class="btn ghost sm" style="margin-top:8px">+ 자격증 추가</button>
+            <form:hidden path="cert" id="certHidden"/>
+            <div class="hint">자격증을 입력하면 해당 항목의 이미지 인증이 필수예요. 여러 개는 쉼표로 이어 저장됩니다.</div>
             <c:if test="${not empty certError}">
               <div class="hint cert-status bad">${certError}</div>
             </c:if>
@@ -156,7 +150,7 @@
 
           <div class="form-foot">
             <a class="btn ghost" href="${ctx}/auth/login">이미 계정이 있어요</a>
-            <button type="submit" class="btn pri" id="submitBtn" ${certVerified ? '' : 'disabled'}>멘토로 가입하기</button>
+            <button type="submit" class="btn pri" id="submitBtn">멘토로 가입하기</button>
           </div>
         </div>
       </form:form>
@@ -172,58 +166,182 @@
     const ctx = '${ctx}';
     const csrfToken = '${_csrf.token}';
     const csrfHeader = '${_csrf.headerName}';
+    const initialCert = '<c:out value="${signupMentor.cert}" default=""/>';
 
     const nameInput = document.getElementById('name');
-    const certFile = document.getElementById('certFile');
-    const certVerifyBtn = document.getElementById('certVerifyBtn');
-    const certStatus = document.getElementById('certStatus');
-    const submitBtn = document.getElementById('submitBtn');
+    const certList = document.getElementById('certList');
+    const certAddBtn = document.getElementById('certAddBtn');
+    const certHidden = document.getElementById('certHidden');
+    const form = document.getElementById('signupMentor');
+    const deptFields = document.getElementById('deptFields');
+    const univSelect = document.getElementById('univSelect');
+    const deptSelect = document.getElementById('deptSelect');
+    const affiliationToggle = document.getElementById('affiliationToggle');
 
-    function setStatus(text, state) {
-      certStatus.textContent = text;
-      certStatus.classList.remove('ok', 'bad');
-      if (state) certStatus.classList.add(state);
+    function syncCertHidden() {
+      const values = Array.from(certList.querySelectorAll('.cert-item'))
+        .map((input) => (input.value || '').trim())
+        .filter(Boolean);
+      certHidden.value = values.join(', ');
+      updateRemoveButtons();
     }
 
-    certVerifyBtn.addEventListener('click', async () => {
-      const name = (nameInput.value || '').trim();
-      const file = certFile.files[0];
-      if (!name) { setStatus('먼저 이름을 입력해주세요.', 'bad'); return; }
-      if (!file) { setStatus('자격증 이미지를 선택해주세요.', 'bad'); return; }
+    function updateRemoveButtons() {
+      const rows = certList.querySelectorAll('.cert-card');
+      rows.forEach((row) => {
+        const removeBtn = row.querySelector('.cert-remove');
+        if (removeBtn) removeBtn.style.display = rows.length > 1 ? '' : 'none';
+      });
+    }
 
-      certVerifyBtn.disabled = true;
-      setStatus('인증 중... (수 초 걸릴 수 있어요)');
+    function setRowStatus(row, text, state) {
+      const status = row.querySelector('.cert-status');
+      status.textContent = text;
+      status.classList.remove('ok', 'bad');
+      if (state) status.classList.add(state);
+    }
+
+    async function verifyRow(row) {
+      const name = (nameInput.value || '').trim();
+      const certLabel = (row.querySelector('.cert-item').value || '').trim();
+      const fileInput = row.querySelector('.cert-file');
+      const verifyBtn = row.querySelector('.cert-verify-btn');
+      const file = fileInput.files[0];
+
+      if (!name) { setRowStatus(row, '먼저 이름을 입력해주세요.', 'bad'); return; }
+      if (!certLabel) { setRowStatus(row, '자격증명을 먼저 입력해주세요.', 'bad'); return; }
+      if (!file) { setRowStatus(row, '자격증 이미지를 선택해주세요.', 'bad'); return; }
+
+      verifyBtn.disabled = true;
+      setRowStatus(row, '인증 중... (수 초 걸릴 수 있어요)');
 
       const fd = new FormData();
       fd.append('name', name);
+      fd.append('certLabel', certLabel);
       fd.append('file', file);
 
       try {
         const res = await fetch(ctx + '/auth/signup/mentor/verify-cert', {
           method: 'POST',
-          headers: { [csrfHeader]: csrfToken }, // CSRF 는 헤더로 전송(멀티파트 본문 파싱 전에 검증됨)
+          headers: { [csrfHeader]: csrfToken },
           body: fd
         });
         const data = await res.json();
         if (res.ok && data.matched) {
-          setStatus('✅ 자격증 인증 완료', 'ok');
-          submitBtn.disabled = false;
+          setRowStatus(row, '✅ 자격증 인증 완료', 'ok');
+          row.dataset.verified = 'true';
+          row.dataset.verifiedLabel = certLabel;
         } else {
-          setStatus('❌ ' + (data.detail || '이름과 자격증이 일치하지 않아요.'), 'bad');
-          submitBtn.disabled = true;
+          setRowStatus(row, '❌ ' + (data.detail || '이름과 자격증이 일치하지 않아요.'), 'bad');
+          row.dataset.verified = 'false';
+          row.dataset.verifiedLabel = '';
         }
       } catch (e) {
-        setStatus('오류: ' + e.message, 'bad');
-        submitBtn.disabled = true;
+        setRowStatus(row, '오류: ' + e.message, 'bad');
+        row.dataset.verified = 'false';
+        row.dataset.verifiedLabel = '';
       } finally {
-        certVerifyBtn.disabled = false;
+        verifyBtn.disabled = false;
       }
-    });
+    }
 
-    // 이름을 바꾸면 다시 인증해야 함
+    function addCertRow(value) {
+      const row = document.createElement('div');
+      row.className = 'cert-card';
+      row.dataset.verified = 'false';
+      row.dataset.verifiedLabel = '';
+      row.innerHTML =
+        '<div class="cert-row">' +
+          '<input type="text" class="cert-item" maxlength="100" placeholder="예: 정보처리기사">' +
+          '<button type="button" class="btn ghost sm cert-remove">삭제</button>' +
+        '</div>' +
+        '<div class="cert-verify">' +
+          '<input type="file" class="cert-file" accept="image/*">' +
+          '<button type="button" class="btn ghost cert-verify-btn">자격증 인증</button>' +
+        '</div>' +
+        '<div class="hint cert-status">자격증을 입력하면 이미지 인증이 필수예요.</div>';
+
+      const input = row.querySelector('.cert-item');
+      input.value = value || '';
+      input.addEventListener('input', () => {
+        row.dataset.verified = 'false';
+        row.dataset.verifiedLabel = '';
+        const label = (input.value || '').trim();
+        if (label) {
+          setRowStatus(row, '자격증명이 바뀌었어요. 이미지 인증을 완료해주세요.', 'bad');
+        } else {
+          setRowStatus(row, '비워 두면 인증 없이 가입할 수 있어요.');
+        }
+        syncCertHidden();
+      });
+      row.querySelector('.cert-remove').addEventListener('click', () => {
+        row.remove();
+        if (!certList.children.length) addCertRow('');
+        syncCertHidden();
+      });
+      row.querySelector('.cert-verify-btn').addEventListener('click', () => verifyRow(row));
+      row.querySelector('.cert-file').addEventListener('change', () => {
+        row.dataset.verified = 'false';
+        row.dataset.verifiedLabel = '';
+        setRowStatus(row, '이미지가 바뀌었어요. 다시 인증해주세요.', 'bad');
+      });
+
+      certList.appendChild(row);
+      syncCertHidden();
+    }
+
+    const seed = (initialCert || '').split(',').map((s) => s.trim()).filter(Boolean);
+    if (seed.length) seed.forEach(addCertRow);
+    else addCertRow('');
+
+    certAddBtn.addEventListener('click', () => addCertRow(''));
+
+    if (form) {
+      form.addEventListener('submit', (event) => {
+        syncCertHidden();
+        const invalid = Array.from(certList.querySelectorAll('.cert-card')).find((row) => {
+          const label = (row.querySelector('.cert-item').value || '').trim();
+          if (!label) return false;
+          return row.dataset.verified !== 'true' || row.dataset.verifiedLabel !== label;
+        });
+        if (invalid) {
+          event.preventDefault();
+          setRowStatus(invalid, '이 자격증은 이미지 인증이 필요해요.', 'bad');
+          invalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+
+    function setAffiliation(type) {
+      const internal = type === 'internal';
+      affiliationToggle.querySelectorAll('.opt').forEach((opt) => {
+        const on = opt.dataset.v === type;
+        opt.classList.toggle('on', on);
+        const radio = opt.querySelector('input[type="radio"]');
+        if (radio) radio.checked = on;
+      });
+      deptFields.style.display = internal ? '' : 'none';
+      univSelect.required = internal;
+      deptSelect.required = internal;
+      if (!internal) {
+        univSelect.value = '';
+        deptSelect.value = '';
+        deptSelect.disabled = true;
+      } else if (univSelect.value) {
+        deptSelect.disabled = false;
+      }
+    }
+
+    affiliationToggle.querySelectorAll('.opt').forEach((opt) => {
+      opt.addEventListener('click', () => setAffiliation(opt.dataset.v));
+    });
+    setAffiliation('${isInternal ? "internal" : "external"}');
+
     nameInput.addEventListener('input', () => {
-      submitBtn.disabled = true;
-      setStatus('이름이 바뀌었어요. 다시 인증해주세요.');
+      certList.querySelectorAll('.cert-card').forEach((row) => {
+        row.dataset.verified = 'false';
+        setRowStatus(row, '이름이 바뀌었어요. 이미지 인증을 다시 할 수 있어요.');
+      });
     });
   })();
 </script>

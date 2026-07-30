@@ -17,9 +17,15 @@ async def lifespan(app: FastAPI):
     # 기동 시 MCP 클라이언트/에이전트를 미리 연결해 첫 요청 지연을 줄인다.
     await app.state.chat_service.start()
     await app.state.mentor_service.start()
-    yield
-    await app.state.chat_service.close()
-    await app.state.mentor_service.close()
+    try:
+        yield
+    finally:
+        # 바인딩 실패 등으로 종료될 때도 stdio 정리 예외가 앱 종료를 가리지 않게 한다.
+        for service in (app.state.chat_service, app.state.mentor_service):
+            try:
+                await service.close()
+            except Exception:
+                pass
 
 
 # 1-1 FastAPI 애플리케이션 생성
@@ -46,5 +52,5 @@ app.include_router(verify_router)
 if __name__ == "__main__":
     import uvicorn
 
-    # 4 전역변수 가져오기
+    print(f"Starting Damoya Python Service on http://{config.HOST}:{config.PORT}")
     uvicorn.run(app, host=config.HOST, port=config.PORT)

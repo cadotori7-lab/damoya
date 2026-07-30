@@ -95,7 +95,7 @@ public class TestController {
         } catch (ResourceAccessException e) {
             logger.warning("FastAPI 챗봇 연결 실패: " + e.getMessage());
             return ResponseEntity.status(503).body(
-                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요.")
+                Map.of("detail", "Python 챗봇 서버에 연결할 수 없습니다. localhost:8501 서버를 확인하세요.")
             );
         }
     }
@@ -215,7 +215,7 @@ public class TestController {
             logger.warning("FastAPI 멘토 추천 연결 실패: " + e.getMessage());
             model.addAttribute(
                 "error",
-                "Python 서버에 연결할 수 없습니다. localhost:8001 서버를 확인하세요."
+                "Python 서버에 연결할 수 없습니다. localhost:8501 서버를 확인하세요."
             );
         }
 

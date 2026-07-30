@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.soldesk.mapper.MemberMapper;
+import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MemberDocument;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorDocument;
@@ -30,6 +31,9 @@ public class ElasticSearchService implements InitializingBean {
 
     @Autowired(required = false)
     private MemberMapper memberMapper;
+
+    @Autowired(required = false)
+    private MentorMapper mentorMapper;
 
     // 회원 인덱스
     @Value("${elasticsearch.index.members:${ELASTICSEARCH_MEMBERS_INDEX:damoya-members}}")
@@ -260,14 +264,14 @@ public class ElasticSearchService implements InitializingBean {
 
     // 멘토 전체 재색인
     public void reindexMentors() throws IOException {
-        if (memberMapper == null) {
-            log.warn("MemberMapper가 등록되지 않아 멘토 전체 재색인을 건너뜁니다.");
+        if (mentorMapper == null) {
+            log.warn("MentorMapper가 등록되지 않아 멘토 전체 재색인을 건너뜁니다.");
             return;
         }
         // 멘토 인덱스 생성
         createMentorIndexIfNotExists();
         // 멘토 목록 조회
-        List<MentorDocument> mentors = memberMapper.findAllMentors();
+        List<MentorDocument> mentors = mentorMapper.findAllMentors();
         String syncBatchId = UUID.randomUUID().toString();
 
         // 멘토 인덱스 업데이트
