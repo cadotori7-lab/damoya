@@ -124,6 +124,7 @@
         SET
             submit_title = #{submit_title},
             submit_content = #{submit_content},
+            submit_file = COALESCE(#{submit_file}, submit_file),
             status = 'REVIEW',
             submitted_at = NOW(),
             reject_reason = NULL

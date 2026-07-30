@@ -98,6 +98,18 @@ function formatDueDate(date) {
   return `${parts[1]}.${parts[2]}`;
 }
 
+function getOriginalFileName(savedFileName) {
+  if (!savedFileName) {
+    return "";
+  }
+
+  // 서버 저장명 형식: UUID_원본파일명
+  return savedFileName.replace(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_/i,
+    ""
+  );
+}
+
 function isDueSoon(date) {
   if (!date) {
     return false;
@@ -127,6 +139,7 @@ function matchesSearch(task, keyword) {
 
 function renderKanban() {
   const keyword = taskSearch.trim().toLowerCase();
+
   const filteredTasks = TASKS.filter(task =>
     matchesSearch(task, keyword)
   );
@@ -213,9 +226,10 @@ function openTask(taskId) {
         </p>
 
         ${task.submitFile
-          ? `<div class="file">
-               ${escapeHtml(task.submitFile)}
-             </div>`
+          ? `<a class="file"
+                href="${window.APP_CONTEXT}/workspace/${window.PROJECT_ID}/tasks/${task.id}/file">
+               ${escapeHtml(getOriginalFileName(task.submitFile))}
+             </a>`
           : ""}
       </div>
     `;
@@ -233,20 +247,21 @@ function openTask(taskId) {
     : "";
 
   const canSubmit =
-  Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID)
-  && ["ONGOING", "REJECTED"].includes(task.status);
+    Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID)
+    && ["ONGOING", "REJECTED"].includes(task.status);
 
   const submitButton = canSubmit
-  ? `
-    <div class="tm-actions">
-      <button type="button"
-              class="btn pri"
-              onclick="openSubmit(${task.id})">
-        결과물 제출
-      </button>
-    </div>
-  `
-  : "";
+    ? `
+      <div class="tm-actions">
+        <button type="button"
+                class="btn pri"
+                onclick="openSubmit(${task.id})">
+          결과물 제출
+        </button>
+      </div>
+    `
+    : "";
+
   document.getElementById("taskModalBody").innerHTML = `
     <div class="tm-meta">
       <span class="chip ${STATUS_CHIP[task.status] || ""}">
@@ -317,6 +332,12 @@ function openSubmit(taskId) {
 
   form.reset();
 
+  const fileName = document.getElementById("submitFileName");
+
+  if (fileName) {
+    fileName.textContent = "선택된 파일 없음";
+  }
+
   document.getElementById("smTaskName").textContent =
     task.name || "업무명 없음";
 
@@ -348,6 +369,19 @@ window.openTask = openTask;
 window.closeTask = closeTask;
 window.openSubmit = openSubmit;
 window.closeSubmit = closeSubmit;
+
+const submitFileInput = document.getElementById("submitFile");
+const submitFileName = document.getElementById("submitFileName");
+
+if (submitFileInput && submitFileName) {
+  submitFileInput.addEventListener("change", () => {
+    const file = submitFileInput.files[0];
+
+    submitFileName.textContent = file
+      ? file.name
+      : "선택된 파일 없음";
+  });
+}
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {

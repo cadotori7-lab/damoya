@@ -163,54 +163,45 @@
     </div>
 
     <form id="submitForm"
-          method="post">
+      method="post"
+      enctype="multipart/form-data">
 
       <input type="hidden"
-             name="${_csrf.parameterName}"
-             value="${_csrf.token}">
+         name="${_csrf.parameterName}"
+         value="${_csrf.token}">
 
-      <div class="modal-body">
-        <div class="sm-task">
-          <div class="k">제출 업무</div>
-          <div class="v" id="smTaskName"></div>
-          <div class="due" id="smTaskDue"></div>
-        </div>
+      <div class="field">
+        <label for="submitTitle">제출 제목</label>
+        <input id="submitTitle"
+             name="submit_title"
+             type="text"
+             maxlength="200"
+             required>
+      </div>
 
-        <div class="fld one">
-          <label>
-            제출 제목<span class="req">*</span>
-          </label>
+      <div class="field">
+        <label for="submitContent">제출 내용</label>
+        <textarea id="submitContent"
+                name="submit_content"
+                rows="6"
+                required></textarea>
+      </div>
 
-          <input type="text"
-                 name="submit_title"
-                 maxlength="200"
-                 placeholder="예: 검색 필터 구현 완료"
-                 required>
-        </div>
+      <div class="field">
+        <label for="submitFile">첨부 파일 (선택, 최대 20MB)</label>
+        <input id="submitFile"
+             name="submitFile"
+             type="file"
+             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx,.txt,.zip,.png,.jpg,.jpeg">
+        <small id="submitFileName">선택된 파일 없음</small>
+      </div>
 
-        <div class="fld one">
-          <label>
-            제출 내용<span class="req">*</span>
-          </label>
-
-          <textarea name="submit_content"
-                    placeholder="구현한 내용과 확인할 사항을 입력해주세요."
-                    style="min-height:100px"
-                    required></textarea>
-        </div>
-
-        <div class="form-foot">
-          <button type="button"
-                  class="btn ghost"
-                  onclick="closeSubmit()">
-            취소
-          </button>
-
-          <button type="submit"
-                  class="btn pri">
-            제출하기
-          </button>
-        </div>
+      <div class="modal-actions">
+        <button type="button"
+              class="btn ghost"
+              onclick="closeSubmit()">취소</button>
+        <button type="submit"
+              class="btn pri">제출</button>
       </div>
     </form>
   </div>
