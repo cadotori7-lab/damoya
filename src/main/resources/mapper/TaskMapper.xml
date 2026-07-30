@@ -132,7 +132,45 @@
         WHERE task_id = #{task_id}
             AND project_id = #{project_id}
             AND assignee_id = #{assignee_id}
-            AND status IN ('ONGOING', 'REJECTED')
+            AND status = 'ONGOING'
+
+    </update>
+
+    <!-- 팀장의 검수 승인 -->
+    <update id="approveTask">
+
+        UPDATE task
+        SET
+            status = 'APPROVED',
+            reject_reason = NULL
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
+          AND status = 'REVIEW'
+
+    </update>
+
+    <!-- 팀장의 검수 반려 -->
+    <update id="rejectTask">
+
+        UPDATE task
+        SET
+            status = 'REJECTED',
+            reject_reason = #{reject_reason}
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
+          AND status = 'REVIEW'
+
+    </update>
+
+    <!-- 담당자의 반려 사유 확인 -->
+    <update id="acknowledgeRejectedTask">
+
+        UPDATE task
+        SET status = 'ONGOING'
+        WHERE project_id = #{project_id}
+          AND task_id = #{task_id}
+          AND assignee_id = #{assignee_id}
+          AND status = 'REJECTED'
 
     </update>
 </mapper>

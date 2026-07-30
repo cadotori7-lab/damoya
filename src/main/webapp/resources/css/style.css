@@ -470,6 +470,12 @@
   .reason-box textarea:focus{outline:none;border-color:var(--reject);box-shadow:0 0 0 3px var(--reject-bg)}
   .reason-shown{background:var(--reject-bg);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13px;color:var(--reject)}
   .reason-shown b{font-weight:700}
+  .board-notice{margin:14px 0;padding:12px 15px;border-radius:10px;font-size:13.5px;font-weight:700}
+  .board-notice-success{background:var(--ok-bg);color:var(--ok)}
+  .board-notice-error{background:var(--reject-bg);color:var(--reject)}
+  .task-review-actions{display:flex;gap:8px;align-items:center}
+  .task-review-actions form{margin:0}
+  .task-reject-button{color:var(--reject)}
   .rv-result{margin-left:auto;font-size:13px;font-weight:700}
   .rv-result.ok{color:var(--ok)} .rv-result.no{color:var(--reject)}
 

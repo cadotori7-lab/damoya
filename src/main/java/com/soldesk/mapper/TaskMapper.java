@@ -33,4 +33,22 @@ public interface TaskMapper {
 
     //업무 결과물 제출
     int submitTask(TaskVO task);
+
+    //승인, 반려
+    int approveTask(
+        @Param("project_id") long project_id,
+        @Param("task_id") long task_id
+    );
+
+    int rejectTask(
+        @Param("project_id") long project_id,
+        @Param("task_id") long task_id,
+        @Param("reject_reason") String reject_reason
+    );
+
+    int acknowledgeRejectedTask(
+        @Param("project_id") long project_id,
+        @Param("task_id") long task_id,
+        @Param("assignee_id") long assignee_id
+    );
 }

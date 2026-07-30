@@ -74,4 +74,43 @@ public class TaskService {
     public boolean submitTask(TaskVO task) {
         return taskMapper.submitTask(task) == 1;
     }
+
+    //승인
+    @Transactional
+    public boolean approveTask(
+            long project_id,
+            long task_id) {
+
+        return taskMapper.approveTask(
+            project_id,
+            task_id
+        ) == 1;
+    }
+    //반려
+    @Transactional
+    public boolean rejectTask(
+            long project_id,
+            long task_id,
+            String reject_reason) {
+
+        return taskMapper.rejectTask(
+            project_id,
+            task_id,
+            reject_reason
+        ) == 1;
+    }
+
+    // 담당자가 반려 사유를 확인하고 업무를 다시 진행
+    @Transactional
+    public boolean acknowledgeRejectedTask(
+            long project_id,
+            long task_id,
+            long assignee_id) {
+
+        return taskMapper.acknowledgeRejectedTask(
+            project_id,
+            task_id,
+            assignee_id
+        ) == 1;
+    }
 }

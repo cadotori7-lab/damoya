@@ -74,6 +74,8 @@ const STATUS_CHIP = {
 };
 
 let taskSearch = "";
+const IS_LEADER =
+  String(window.IS_LEADER).toLowerCase() === "true";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -246,9 +248,50 @@ function openTask(taskId) {
     `
     : "";
 
+  const csrfInput = `
+    <input type="hidden"
+           name="${escapeHtml(window.CSRF_PARAMETER)}"
+           value="${escapeHtml(window.CSRF_TOKEN)}">
+  `;
+
+  const reviewActions =
+    IS_LEADER && task.status === "REVIEW"
+      ? `
+        <div class="tm-actions task-review-actions">
+          <form method="post"
+                action="${window.APP_CONTEXT}/workspace/${window.PROJECT_ID}/tasks/${task.id}/approve"
+                onsubmit="return confirm('이 업무를 승인할까요?')">
+            ${csrfInput}
+            <button type="submit" class="btn pri">승인</button>
+          </form>
+          <button type="button"
+                  class="btn ghost task-reject-button"
+                  onclick="openReject(${task.id})">
+            반려
+          </button>
+        </div>
+      `
+      : "";
+
+  const rejectionAcknowledge =
+    task.status === "REJECTED"
+    && Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID)
+      ? `
+        <form class="tm-actions"
+              method="post"
+              action="${window.APP_CONTEXT}/workspace/${window.PROJECT_ID}/tasks/${task.id}/acknowledge-rejection"
+              onsubmit="return confirm('반려 사유를 확인했나요? 확인하면 업무가 진행중으로 이동합니다.')">
+          ${csrfInput}
+          <button type="submit" class="btn pri">
+            반려 사유 확인
+          </button>
+        </form>
+      `
+      : "";
+
   const canSubmit =
     Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID)
-    && ["ONGOING", "REJECTED"].includes(task.status);
+    && task.status === "ONGOING";
 
   const submitButton = canSubmit
     ? `
@@ -283,6 +326,8 @@ function openTask(taskId) {
 
     ${submission}
     ${rejected}
+    ${reviewActions}
+    ${rejectionAcknowledge}
     ${submitButton}
   `;
 
@@ -306,11 +351,10 @@ function openSubmit(taskId) {
     Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID);
 
   const allowedStatus =
-    task.status === "ONGOING"
-    || task.status === "REJECTED";
+    task.status === "ONGOING";
 
   if (!isAssignee || !allowedStatus) {
-    alert("본인에게 배정된 진행 중 또는 반려된 업무만 제출할 수 있습니다.");
+    alert("본인에게 배정된 진행 중 업무만 제출할 수 있습니다.");
     return;
   }
 
@@ -360,6 +404,49 @@ function closeSubmit() {
   document.body.style.overflow = "";
 }
 
+function openReject(taskId) {
+  const task = TASKS.find(item => item.id === taskId);
+
+  if (!task || !IS_LEADER || task.status !== "REVIEW") {
+    alert("팀장만 검수 대기 중인 업무를 반려할 수 있습니다.");
+    return;
+  }
+
+  const form = document.getElementById("rejectForm");
+  const modal = document.getElementById("rejectModal");
+
+  if (!form || !modal) {
+    return;
+  }
+
+  form.action =
+    window.APP_CONTEXT
+    + "/workspace/"
+    + window.PROJECT_ID
+    + "/tasks/"
+    + task.id
+    + "/reject";
+
+  form.reset();
+  document.getElementById("rejectTaskName").textContent = task.name;
+
+  closeTask();
+  modal.classList.add("on");
+  document.body.style.overflow = "hidden";
+
+  document.getElementById("rejectReason").focus();
+}
+
+function closeReject() {
+  const modal = document.getElementById("rejectModal");
+
+  if (modal) {
+    modal.classList.remove("on");
+  }
+
+  document.body.style.overflow = "";
+}
+
 window.onTaskSearch = value => {
   taskSearch = value;
   renderKanban();
@@ -369,6 +456,8 @@ window.openTask = openTask;
 window.closeTask = closeTask;
 window.openSubmit = openSubmit;
 window.closeSubmit = closeSubmit;
+window.openReject = openReject;
+window.closeReject = closeReject;
 
 const submitFileInput = document.getElementById("submitFile");
 const submitFileName = document.getElementById("submitFileName");
@@ -387,6 +476,7 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     closeTask();
     closeSubmit();
+    closeReject();
   }
 });
 

@@ -382,6 +382,162 @@ public class TaskBoardController {
             + "/board";
     }
 
+    // 팀장의 업무 검수 승인
+    @PostMapping("/tasks/{task_id}/approve")
+    public String approveTask(
+        @PathVariable("project_id") long project_id,
+        @PathVariable("task_id") long task_id,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
+
+        MemberVO loginMember = principal == null
+            ? null
+            : memberService.findByLoginId(principal.getName());
+
+        if (loginMember == null
+                || !participationService.isLeader(
+                    project_id,
+                    loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "프로젝트 팀장만 업무를 승인할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        if (!taskService.approveTask(project_id, task_id)) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "검수 대기 중인 업무만 승인할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        redirectAttributes.addFlashAttribute(
+            "taskMessage",
+            "업무를 승인했습니다."
+        );
+
+        return boardRedirect(project_id);
+    }
+
+    // 팀장의 업무 검수 반려
+    @PostMapping("/tasks/{task_id}/reject")
+    public String rejectTask(
+        @PathVariable("project_id") long project_id,
+        @PathVariable("task_id") long task_id,
+        @RequestParam(
+            value = "reject_reason",
+            required = false
+        ) String rejectReason,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
+
+        MemberVO loginMember = principal == null
+            ? null
+            : memberService.findByLoginId(principal.getName());
+
+        if (loginMember == null
+                || !participationService.isLeader(
+                    project_id,
+                    loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "프로젝트 팀장만 업무를 반려할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        String trimmedReason = rejectReason == null
+            ? ""
+            : rejectReason.trim();
+
+        if (trimmedReason.isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "반려 사유를 입력해주세요."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        if (trimmedReason.length() > 1000) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "반려 사유는 1000자 이하로 입력해주세요."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        if (!taskService.rejectTask(
+                project_id,
+                task_id,
+                trimmedReason)) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "검수 대기 중인 업무만 반려할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        redirectAttributes.addFlashAttribute(
+            "taskMessage",
+            "업무를 반려했습니다."
+        );
+
+        return boardRedirect(project_id);
+    }
+
+    // 담당자가 반려 사유를 확인한 뒤 다시 진행
+    @PostMapping("/tasks/{task_id}/acknowledge-rejection")
+    public String acknowledgeRejection(
+        @PathVariable("project_id") long project_id,
+        @PathVariable("task_id") long task_id,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
+
+        MemberVO loginMember = principal == null
+            ? null
+            : memberService.findByLoginId(principal.getName());
+
+        if (loginMember == null) {
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "로그인이 필요합니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        if (!taskService.acknowledgeRejectedTask(
+                project_id,
+                task_id,
+                loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "본인에게 배정된 반려 업무만 확인할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        redirectAttributes.addFlashAttribute(
+            "taskMessage",
+            "반려 사유를 확인했습니다. 업무를 다시 진행해주세요."
+        );
+
+        return boardRedirect(project_id);
+    }
+
     // 제출 파일 다운로드
     @GetMapping("/tasks/{task_id}/file")
     public ResponseEntity<Resource> downloadSubmitFile(
@@ -551,5 +707,9 @@ public class TaskBoardController {
         }
 
         return savedFileName.substring(separatorIndex + 1);
+    }
+
+    private String boardRedirect(long project_id) {
+        return "redirect:/workspace/" + project_id + "/board";
     }
 }

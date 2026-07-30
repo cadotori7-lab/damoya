@@ -23,6 +23,17 @@
 
     <jsp:include page="../includes/workspaceHeader.jsp" />
 
+    <c:if test="${not empty taskMessage}">
+      <div class="board-notice board-notice-success">
+        <c:out value="${taskMessage}"/>
+      </div>
+    </c:if>
+    <c:if test="${not empty taskError}">
+      <div class="board-notice board-notice-error">
+        <c:out value="${taskError}"/>
+      </div>
+    </c:if>
+
     <div class="seg-toggle" id="taskToggle">
       <button class="on" data-p="all">전체 업무</button>
       <button data-p="mine">내 업무</button>
@@ -209,6 +220,56 @@
   </div>
 </div>
 
+<!-- ===== 반려 사유 입력 모달 ===== -->
+<div class="modal-overlay"
+     id="rejectModal"
+     onclick="if(event.target===this) closeReject()">
+
+  <div class="modal form-modal"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="rejectModalTitle">
+
+    <div class="modal-head">
+      <div class="mh-info">
+        <h3 id="rejectModalTitle">업무 반려</h3>
+        <div class="role" id="rejectTaskName"></div>
+      </div>
+      <button type="button"
+              class="modal-close"
+              onclick="closeReject()"
+              aria-label="닫기">×</button>
+    </div>
+
+    <form id="rejectForm"
+          class="submit-form"
+          method="post">
+
+      <input type="hidden"
+             name="${_csrf.parameterName}"
+             value="${_csrf.token}">
+
+      <div class="field">
+        <label for="rejectReason">반려 사유</label>
+        <textarea id="rejectReason"
+                  name="reject_reason"
+                  rows="6"
+                  maxlength="1000"
+                  placeholder="담당자가 수정할 내용을 구체적으로 작성해주세요."
+                  required></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button"
+                class="btn ghost"
+                onclick="closeReject()">취소</button>
+        <button type="submit"
+                class="btn pri">반려하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- ===== 업무 상세 + 검수 모달 ===== -->
 <div class="modal-overlay" id="taskModal" onclick="if(event.target===this)closeTask()">
   <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
@@ -227,6 +288,9 @@
     window.APP_CONTEXT = '${ctx}';
     window.PROJECT_ID = Number('${project_id}');
     window.LOGIN_MEMBER_ID = Number('${currentMemberId}');
+    window.IS_LEADER = '${isLeader}';
+    window.CSRF_PARAMETER = '${_csrf.parameterName}';
+    window.CSRF_TOKEN = '${_csrf.token}';
   </script>
   <script src="${ctx}/resources/js/workspace/board.js"></script>
   <script src="${ctx}/resources/js/common.js"></script>
