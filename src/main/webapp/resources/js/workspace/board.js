@@ -190,13 +190,15 @@ function renderKanban() {
           <div class="cnt">${columnTasks.length}</div>
         </div>
 
-        ${cards}
+        <div class="col-body">
+          ${cards}
 
-        ${columnTasks.length === 0
-          ? `<p class="col-empty">${
-              keyword ? "검색 결과 없음" : "없음"
-            }</p>`
-          : ""}
+          ${columnTasks.length === 0
+            ? `<p class="col-empty">${
+                keyword ? "검색 결과 없음" : "없음"
+              }</p>`
+            : ""}
+        </div>
       </div>
     `;
   }).join("");
@@ -305,6 +307,20 @@ function openTask(taskId) {
     `
     : "";
 
+  const deleteAction = IS_LEADER
+    ? `
+      <form class="tm-actions task-delete-action"
+            method="post"
+            action="${window.APP_CONTEXT}/workspace/${window.PROJECT_ID}/tasks/${task.id}/delete"
+            onsubmit="return confirm('이 업무를 삭제할까요? 삭제한 업무는 복구할 수 없습니다.')">
+        ${csrfInput}
+        <button type="submit" class="btn ghost task-delete-button">
+          업무 삭제
+        </button>
+      </form>
+    `
+    : "";
+
   document.getElementById("taskModalBody").innerHTML = `
     <div class="tm-meta">
       <span class="chip ${STATUS_CHIP[task.status] || ""}">
@@ -329,6 +345,7 @@ function openTask(taskId) {
     ${reviewActions}
     ${rejectionAcknowledge}
     ${submitButton}
+    ${deleteAction}
   `;
 
   document.getElementById("taskModal").classList.add("on");

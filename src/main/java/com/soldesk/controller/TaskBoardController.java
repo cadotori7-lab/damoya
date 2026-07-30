@@ -538,6 +538,57 @@ public class TaskBoardController {
         return boardRedirect(project_id);
     }
 
+    // 팀장의 업무 삭제
+    @PostMapping("/tasks/{task_id}/delete")
+    public String deleteTask(
+        @PathVariable("project_id") long project_id,
+        @PathVariable("task_id") long task_id,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
+
+        MemberVO loginMember = principal == null
+            ? null
+            : memberService.findByLoginId(principal.getName());
+
+        if (loginMember == null
+                || !participationService.isLeader(
+                    project_id,
+                    loginMember.getMember_id())) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "프로젝트 팀장만 업무를 삭제할 수 있습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        TaskVO task = taskService.selectTaskById(
+            project_id,
+            task_id
+        );
+
+        if (task == null
+                || taskService.deleteTask(project_id, task_id) != 1) {
+
+            redirectAttributes.addFlashAttribute(
+                "taskError",
+                "삭제할 업무를 찾을 수 없습니다."
+            );
+
+            return boardRedirect(project_id);
+        }
+
+        deleteSubmitFile(task.getSubmit_file());
+
+        redirectAttributes.addFlashAttribute(
+            "taskMessage",
+            "업무를 삭제했습니다."
+        );
+
+        return boardRedirect(project_id);
+    }
+
     // 제출 파일 다운로드
     @GetMapping("/tasks/{task_id}/file")
     public ResponseEntity<Resource> downloadSubmitFile(

@@ -166,11 +166,15 @@
   .proj-switch{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
   .proj-switch .pill{border:1px solid var(--line);background:var(--surface);border-radius:30px;padding:7px 16px;font-weight:700;font-size:14px}
   .proj-switch .pill.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
-  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-  .col{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-height:340px}
+  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;align-items:start}
+  .col{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;height:clamp(340px,62vh,680px);display:flex;flex-direction:column;min-width:0}
   .col-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--cc,var(--line))}
   .col-h .t{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
   .col-h .cnt{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink-soft);background:var(--paper);padding:1px 8px;border-radius:10px}
+  .col-body{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-right:4px}
+  .col-body::-webkit-scrollbar{width:7px}
+  .col-body::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px}
+  .col-body::-webkit-scrollbar-track{background:transparent}
   .task{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:13px;margin-bottom:10px;transition:.15s;cursor:grab}
   .task:hover{border-color:var(--line-strong);box-shadow:0 6px 16px -10px rgba(20,35,63,.3)}
   .task h5{font-size:14px;font-weight:700;margin-bottom:5px;line-height:1.4}
@@ -476,6 +480,8 @@
   .task-review-actions{display:flex;gap:8px;align-items:center}
   .task-review-actions form{margin:0}
   .task-reject-button{color:var(--reject)}
+  .task-delete-action{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .btn.task-delete-button{color:var(--reject);border-color:var(--reject)}
   .rv-result{margin-left:auto;font-size:13px;font-weight:700}
   .rv-result.ok{color:var(--ok)} .rv-result.no{color:var(--reject)}
 
