@@ -150,7 +150,9 @@
       <div class="mh-info">
         <h3 id="smTitle">결과물 제출</h3>
         <div class="role">
-          담당한 업무의 결과물을 제출해요
+          <span id="smTaskName">업무명</span>
+          ·
+          <span id="smTaskDue">마감일</span>
         </div>
       </div>
 
@@ -163,6 +165,7 @@
     </div>
 
     <form id="submitForm"
+      class="submit-form"
       method="post"
       enctype="multipart/form-data">
 
@@ -193,7 +196,6 @@
              name="submitFile"
              type="file"
              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx,.txt,.zip,.png,.jpg,.jpeg">
-        <small id="submitFileName">선택된 파일 없음</small>
       </div>
 
       <div class="modal-actions">
