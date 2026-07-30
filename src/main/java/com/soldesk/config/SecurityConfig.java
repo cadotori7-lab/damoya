@@ -24,6 +24,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider)
         throws Exception {
         http
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/project/favorite/toggle"))
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     new AntPathRequestMatcher("/admin/**"))
@@ -37,6 +40,7 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/project/my"),
                     new AntPathRequestMatcher("/project/form"),
                     new AntPathRequestMatcher("/talent/form"),
+                    new AntPathRequestMatcher("/project/favorite/toggle"),
                     new AntPathRequestMatcher("/mypage/**"),
                     new AntPathRequestMatcher("/workspace/**"))
                 .authenticated()

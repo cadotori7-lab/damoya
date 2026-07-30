@@ -21,34 +21,35 @@
     <h1 class="page"><em>내 프로젝트</em></h1>
     <p class="sub">참여 중인 프로젝트예요. 눌러서 들어가면 개요·업무·회의를 관리할 수 있어요.</p>
 
-    <div class="psel-list">
-      <a class="psel-card" style="--c:var(--cat-contest)" href="${ctx}/workspace/8/overview">
-        <div class="psel-main">
-          <div class="psel-top"><span class="psel-cat">공모전 · 교내</span><span class="psel-role lead">팀장</span><span class="chip ing">진행중</span></div>
-          <h3>AI 헬스케어 웹서비스</h3>
-          <div class="psel-meta"><span>팀원 4명</span><span>D-24</span><span>내 업무 4건</span></div>
+    <c:choose>
+      <c:when test="${empty project}">
+        <div style="text-align:center;padding:60px 24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)">
+          <p style="font-size:16px;font-weight:700;color:var(--ink)">아직 참여 중인 프로젝트가 없어요.</p>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin-top:6px">프로젝트를 찾아 지원하거나, 함께할 팀원을 인재풀에서 찾아보세요.</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+            <a class="btn pri" href="${ctx}/project/list">프로젝트 찾기</a>
+            <a class="btn ghost" href="${ctx}/talent/list">인재풀 보기</a>
+          </div>
         </div>
-        <svg class="psel-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </a>
-
-      <div class="psel-card" style="--c:var(--cat-major)" onclick="go('overview')" tabindex="0" onkeydown="if(event.key==='Enter')go('overview')">
-        <div class="psel-main">
-          <div class="psel-top"><span class="psel-cat">학과 · 교내</span><span class="psel-role member">팀원</span><span class="chip ing">진행중</span></div>
-          <h3>데이터베이스 텀 프로젝트</h3>
-          <div class="psel-meta"><span>팀원 3명</span><span>D-11</span><span>내 업무 2건</span></div>
+      </c:when>
+      <c:otherwise>
+        <div class="psel-list">
+          <c:forEach var="project" items="${project}">
+            <a class="psel-card" style="--c:var(--cat-${project.category})" href="${ctx}/workspace/${project.projectId}/overview">
+              <div class="psel-main">
+                <div class="psel-top">
+                  <span class="psel-cat">${project.category}</span>
+                  <span class="psel-role ${project.projectRole == 'LEADER' ? 'lead' : 'member'}">${project.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
+                  <span class="chip approve">참여중</span>
+                </div>
+                <h3>${project.title}</h3>
+              </div>
+            <svg class="psel-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </c:forEach>
         </div>
-        <svg class="psel-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
-
-      <div class="psel-card" style="--c:var(--cat-liberal)" onclick="go('overview')" tabindex="0" onkeydown="if(event.key==='Enter')go('overview')">
-        <div class="psel-main">
-          <div class="psel-top"><span class="psel-cat">교양 · 교내</span><span class="psel-role member">팀원</span><span class="chip ing">진행중</span></div>
-          <h3>〈창업과 경영〉 발표 팀플</h3>
-          <div class="psel-meta"><span>팀원 5명</span><span>D-6</span><span>내 업무 1건</span></div>
-        </div>
-        <svg class="psel-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
-    </div>
+      </c:otherwise>
+    </c:choose>
   </section>
   </main>
 <jsp:include page="../includes/footer.jsp" />

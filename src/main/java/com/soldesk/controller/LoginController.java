@@ -30,6 +30,7 @@ import com.soldesk.validation.MemberValidation;
 import com.soldesk.validation.MentorSignupValidation;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
+import com.soldesk.vo.UnivVO;
 
 
 @Controller
@@ -80,6 +81,11 @@ public class LoginController {
             bindingResult.getAllErrors().forEach(error -> System.out.println(" 에러 원인: " + error.toString()));
             model.addAttribute("univList", univService.getAllUniv());
             return "auth/signup";
+        }
+        // 학과 선택값을 그대로 전공으로 저장 (학과 = 전공)
+        UnivVO dept = univService.getUnivByDeptId(member.getDept_id());
+        if (dept != null) {
+            member.setMajor(dept.getDept_name());
         }
         try {
             memberService.registerMember(member);

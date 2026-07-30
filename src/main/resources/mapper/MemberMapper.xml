@@ -77,4 +77,9 @@
     <update id="updatePassword" parameterType="map">
         UPDATE member SET password = #{password} WHERE member_id = #{member_id}
     </update>
+
+    <!-- 고유번호(PK)로 회원 정보 조회 -->
+    <select id="getMemberById" resultType="com.soldesk.vo.MemberVO" parameterType="long">
+    SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
 </mapper>

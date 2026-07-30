@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.ParticipationMapper">
+    <resultMap id="participationMap" type="com.soldesk.vo.ParticipationVO">
+        <id property="partId" column="part_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="memberName" column="member_name"/>
+        <result property="projectRole" column="project_role"/>
+        <result property="joinStatus" column="join_status"/>
+        <result property="successionOrder" column="succession_order"/>
+        <result property="contribution" column="contribution"/>
+        <result property="appliedAt" column="applied_at"/>
+        <result property="wantPosition" column="want_position"/>
+        <result property="motive" column="motive"/>
+        <result property="experience" column="experience"/>
+        <result property="title" column="title"/>
+        <result property="category" column="category"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <!-- 지원서 저장 -->
+    <insert id="insertApplication" parameterType="com.soldesk.vo.ParticipationVO">
+        insert into participation (
+                project_id,
+                member_id,
+                want_position,
+                motive,
+                experience,
+                project_role,
+                join_status,
+                applied_at
+        ) values (
+            #{projectId},
+            #{memberId},
+            #{wantPosition},  
+            #{motive},        
+            #{experience},   
+            'MEMBER', 
+            'WAITING',
+            NOW()
+        )
+    </insert>
+
+    <!-- 프로젝트 개설자(리더) 자동 등록 (ParticipationMapper.xml) -->
+    <insert id="insertProjectLeader" parameterType="com.soldesk.vo.ParticipationVO">
+        INSERT INTO participation (
+            project_id, member_id, project_role, join_status, applied_at
+        ) VALUES (
+            #{projectId}, #{memberId}, 'LEADER', 'JOINED', NOW()
+        )
+    </insert>
+
+    <!-- 지원자 목록 조회 -->
+    <select id="selectApplicationList" resultMap="participationMap">
+        select 
+            p.*,
+            m.name as member_name
+        from participation p
+        join member m on p.member_id = m.member_id
+        where p.project_id = #{projectId} 
+          and p.project_role = 'MEMBER'
+        order by p.applied_at DESC
+    </select>
+
+    <!-- 이미 지원(참여)했는지 개수 확인 -->
+    <select id="countByProjectAndMember" resultType="int">
+        select count(*) 
+        from participation 
+        where project_id = #{projectId} 
+        and member_id = #{memberId}
+    </select>
+    <!-- 현재 참여중인 프로젝트 목록 조회 -->
+    <select id="selectParticipationListByMemberId" resultMap="participationMap">
+        select 
+            p.*,
+            pr.title,
+            pr.category,
+            pr.status
+        from participation p
+        join member m on p.member_id = m.member_id
+        join project pr on p.project_id = pr.project_id
+        where p.member_id = #{memberId}
+          and p.join_status = 'JOINED'
+        order by p.applied_at DESC
+        <if test="limit > 0">limit #{limit}</if>
+    </select>
+    <!-- 현재 지원 중인 프로젝트 목록 조회 -->
+    <select id="selectApplicationListByMemberId" resultMap="participationMap">
+        select 
+            p.*,
+            pr.title,
+            pr.category,
+            pr.status
+        from participation p
+        join member m on p.member_id = m.member_id
+        join project pr on p.project_id = pr.project_id
+        where p.member_id = #{memberId}
+          and (p.join_status = 'WAITING'
+           or p.join_status = 'INTERVIEW'
+           or p.join_status = 'REJECTED')
+        order by p.applied_at DESC
+        <if test="limit > 0">limit #{limit}</if>
+    </select>
+    <!-- 지원 취소 -->
+    <delete id="deleteApplication" parameterType="com.soldesk.vo.ParticipationVO">
+        DELETE FROM participation
+        WHERE project_id = #{projectId} AND member_id = #{memberId}
+    </delete>
+</mapper>
