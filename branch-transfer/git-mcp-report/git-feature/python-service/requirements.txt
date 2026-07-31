@@ -1,0 +1,16 @@
+# 필요 모듈
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+langchain-core>=0.3
+langchain>=1.0,<2.0
+langchain-openai>=1.0,<2.0
+langchain-mcp-adapters>=0.1,<1.0
+mcp[cli]>=1.27,<2
+elasticsearch>=8.13,<9.0
+sentence-transformers>=3.0,<6.0
+easyocr
+jinja2>=3.1,<4
+playwright>=1.52,<2
+pypdf>=5,<7

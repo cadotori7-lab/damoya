@@ -4,7 +4,8 @@
 <mapper namespace="com.soldesk.mapper.MemberMapper">
     <!-- 회원 정보 resultMap: vo 객체와 DB 컬럼 매핑 -->
     <resultMap id="memberResultMap" type="com.soldesk.vo.MemberVO">
-        <id property="login_id" column="login_id" />
+        <id property="member_id" column="member_id" />
+        <result property="login_id" column="login_id" />
         <result property="email" column="email" />
         <result property="password" column="password" />
         <result property="dept_id" column="dept_id" />
@@ -17,9 +18,13 @@
         <result property="account_status" column="account_status" />
         <result property="profile_public" column="profile_public" />
         <result property="role" column="role" />
+        <result property="created_at" column="created_at" />
         <!--  OAuth 칼럼 매핑  -->
         <result column="provider" property="provider"/>
         <result column="provider_id" property="provider_id"/>
+        <!-- 학교 정보 매핑 -->
+        <result column="univ_name" property="univ_name"/>
+        <result column="dept_name" property="dept_name"/>
     </resultMap>
 
     <resultMap id="mentorDocumentResultMap" type="com.soldesk.vo.MentorDocument">
@@ -39,6 +44,10 @@
     <!-- 모든 회원 조회 (Elasticsearch reindex 용) -->
     <select id="findAllMembers" resultMap="memberResultMap">
         SELECT * FROM member
+    </select>
+    <!-- 전체 회원 수 -->
+    <select id="countAllMembers" resultType="long">
+        SELECT COUNT(*) FROM member
     </select>
     <!-- 회원가입 -->
     <insert id="registerMember" parameterType="com.soldesk.vo.MemberVO">
@@ -133,5 +142,99 @@
     <!-- 고유번호(PK)로 회원 정보 조회 -->
     <select id="getMemberById" resultType="com.soldesk.vo.MemberVO" parameterType="long">
     SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
+
+    <!-- 승인이 필요한 회원 조회 -->
+    <select id="getApprovedRequiredMembers" resultMap="memberResultMap">
+        select * 
+        from member m 
+        join univ_department ud
+        on m.dept_id = ud.dept_id 
+        where m.approved = 0 
+        order by m.created_at desc
+    </select>
+
+    <!-- 학교 인증 승인 -->
+    <update id="approveMember" parameterType="int">
+        UPDATE member SET approved = 1 WHERE member_id = #{memberId}
+    </update>
+    <!-- 학교 인증 반려 -->
+    <update id="rejectMember" parameterType="int">
+        UPDATE member SET approved = 2 WHERE member_id = #{memberId}
+    </update>
+
+    <!-- 승인이 필요한 회원 수 조회 -->
+    <select id="countApprovedRequiredMembers" resultType="int">
+        SELECT COUNT(*) 
+        FROM member m 
+        join univ_department ud 
+        on m.dept_id = ud.dept_id  
+        WHERE approved = 0
+    </select>
+    
+    <!-- 관리자 계정 목록 조회 -->
+    <select id="getAllMembers" resultMap="memberResultMap">
+        SELECT
+            m.member_id,
+            m.login_id,
+            m.email,
+            m.name,
+            m.dept_id,
+            m.grade,
+            m.major,
+            m.double_major,
+            m.intro,
+            m.approved,
+            m.account_status,
+            m.profile_public,
+            m.role,
+            m.provider,
+            m.provider_id,
+            m.created_at,
+            ud.univ_name,
+            ud.dept_name
+        FROM member m
+        LEFT JOIN univ_department ud ON m.dept_id = ud.dept_id
+        <where>
+            <if test="search != null and search != ''">
+                AND (
+                    m.name LIKE CONCAT('%', #{search}, '%')
+                    OR m.login_id LIKE CONCAT('%', #{search}, '%')
+                    OR ud.univ_name LIKE CONCAT('%', #{search}, '%')
+                    OR ud.dept_name LIKE CONCAT('%', #{search}, '%')
+                )
+            </if>
+            <if test="status != null and status != '' and status != 'all'">
+                AND UPPER(m.account_status) = UPPER(#{status})
+            </if>
+            <if test="role != null and role != '' and role != 'all'">
+                AND UPPER(m.role) = UPPER(#{role})
+            </if>
+        </where>
+        ORDER BY m.member_id DESC
+        LIMIT #{amount} OFFSET #{offset}
+    </select>
+
+    <!-- 관리자 계정 목록 건수 -->
+    <select id="getMemberCount" resultType="int">
+        SELECT COUNT(*)
+        FROM member m
+        LEFT JOIN univ_department ud ON m.dept_id = ud.dept_id
+        <where>
+            <if test="search != null and search != ''">
+                AND (
+                    m.name LIKE CONCAT('%', #{search}, '%')
+                    OR m.login_id LIKE CONCAT('%', #{search}, '%')
+                    OR ud.univ_name LIKE CONCAT('%', #{search}, '%')
+                    OR ud.dept_name LIKE CONCAT('%', #{search}, '%')
+                )
+            </if>
+            <if test="status != null and status != '' and status != 'all'">
+                AND UPPER(m.account_status) = UPPER(#{status})
+            </if>
+            <if test="role != null and role != '' and role != 'all'">
+                AND UPPER(m.role) = UPPER(#{role})
+            </if>
+        </where>
     </select>
 </mapper>

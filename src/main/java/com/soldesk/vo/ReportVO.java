@@ -11,6 +11,8 @@ public class ReportVO{
     private String status;
     private LocalDateTime createdAt;
 
+    private String memberName;
+
     public Long getReportId() {
         return reportId;
     }
@@ -65,6 +67,14 @@ public class ReportVO{
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 
 }

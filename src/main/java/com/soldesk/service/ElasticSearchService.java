@@ -98,39 +98,11 @@ public class ElasticSearchService implements InitializingBean {
         }
     }
 
-    // 인덱스 준비 (회원 인덱스 없으면 생성 + 재색인, 부가 인덱스도 확인)
-    public void ensureIndicesReady() throws IOException {
-        if (!indexExists(membersIndex)) {
-            createIndexIfNotExists();
-            reindexAll();
-        }
-        if (!indexExists(mentorsIndex)) {
-            createMentorIndexIfNotExists();
-            reindexMentors();
-        }
-    }
-
     // 인덱스 존재 여부 확인
-    public boolean indexExists(String indexName) throws IOException {
+    private boolean indexExists(String indexName) throws IOException {
         return elasticsearchClient.indices()
             .exists(ExistsRequest.of(request -> request.index(indexName)))
             .value();
-    }
-
-    // 인덱스 문서 수 조회
-    public long countDocuments(String indexName) throws IOException {
-        if (!indexExists(indexName)) {
-            return 0L;
-        }
-        return elasticsearchClient.count(count -> count.index(indexName)).count();
-    }
-
-    // 클러스터 상태 조회
-    public String getClusterStatus() throws IOException {
-        return elasticsearchClient.cluster()
-            .health()
-            .status()
-            .jsonValue();
     }
 
     // 회원 인덱스 생성
@@ -259,18 +231,15 @@ public class ElasticSearchService implements InitializingBean {
     }
 
     // 멘토 전체 재색인
-    public void reindexMentors() throws IOException {
+    private void reindexMentors() throws IOException {
         if (memberMapper == null) {
             log.warn("MemberMapper가 등록되지 않아 멘토 전체 재색인을 건너뜁니다.");
             return;
         }
-        // 멘토 인덱스 생성
         createMentorIndexIfNotExists();
-        // 멘토 목록 조회
         List<MentorDocument> mentors = memberMapper.findAllMentors();
         String syncBatchId = UUID.randomUUID().toString();
 
-        // 멘토 인덱스 업데이트
         for (MentorDocument mentor : mentors) {
             mentor.rebuildSearchText();
             mentor.setSync_batch_id(syncBatchId);
@@ -281,7 +250,6 @@ public class ElasticSearchService implements InitializingBean {
                 .docAsUpsert(true),
                 MentorDocument.class);
         }
-        // 기존 멘토 인덱스 삭제
         elasticsearchClient.deleteByQuery(delete -> delete
             .index(mentorsIndex)
             .query(query -> query.bool(bool -> bool

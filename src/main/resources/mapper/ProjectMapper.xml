@@ -249,5 +249,9 @@
         where project_id = #{projectId}
     </update>
 
+    <!-- 상태별 프로젝트 수 -->
+    <select id="countByStatus" resultType="long" parameterType="string">
+        SELECT COUNT(*) FROM project WHERE status = #{status}
+    </select>
 
 </mapper>

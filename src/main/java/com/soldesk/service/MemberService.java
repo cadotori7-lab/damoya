@@ -1,6 +1,9 @@
 package com.soldesk.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soldesk.mapper.MemberMapper;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
+import com.soldesk.vo.PageBean;
 
 @Service
 public class MemberService {
@@ -18,9 +22,11 @@ public class MemberService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${pagination.size}")
+    private int paginationSize;
+
     @Transactional
     public void registerMember(MemberVO member) { //회원가입
-
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberMapper.registerMember(member);
     }
@@ -124,7 +130,24 @@ public class MemberService {
     // id로 회원 정보 조회
     @Transactional
     public MemberVO getMemberById(Long memberId) {
-    return memberMapper.getMemberById(memberId);
+        return memberMapper.getMemberById(memberId);
+    }
+    // 관리자 계정 목록 조회
+    @Transactional(readOnly = true)
+    public List<MemberVO> getAllMembers(int page, String search, String status, String role) {
+        int offset = Math.max(page - 1, 0) * paginationSize;
+        List<MemberVO> members = memberMapper.getAllMembers(search, status, role, paginationSize, offset);
+        for (MemberVO member : members) {
+            member.setPassword(null);
+            member.setPassword_confirm(null);
+        }
+        return members;
     }
 
+    // 관리자 계정 목록 페이징
+    @Transactional(readOnly = true)
+    public PageBean getPageBean(int page, String search, String status, String role) {
+        int memberCount = memberMapper.getMemberCount(search, status, role);
+        return new PageBean(page, memberCount, paginationSize);
+    }
 }
