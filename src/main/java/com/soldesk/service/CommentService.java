@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.soldesk.mapper.CommentMapper;
 import com.soldesk.vo.CommentVO;
+import com.soldesk.vo.ProjectVO;
 
 @Service
 public class CommentService {
@@ -15,8 +16,19 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private ProjectService projectService;
+
     @Transactional
     public void addComment(CommentVO comment) {
+        ProjectVO project = projectService.getProjectById(comment.getProject_id());
+        if (project != null) {
+            int ownerId = project.getOwnerId().intValue();
+            notificationService.toMessage(comment.getProject_id(), ownerId, "SYSTEM", project.getTitle());
+        }
         commentMapper.addComment(comment);
     }
     @Transactional

@@ -63,8 +63,11 @@ echo Deploying...
 del "%CATALINA_HOME%\webapps\damoya.war" 2>nul
 rd /s /q "%CATALINA_HOME%\webapps\damoya" 2>nul
 rd /s /q "%CATALINA_HOME%\work\Catalina\localhost\damoya" 2>nul
+del "%CATALINA_HOME%\webapps\ROOT.war" 2>nul
+rd /s /q "%CATALINA_HOME%\webapps\ROOT" 2>nul
+rd /s /q "%CATALINA_HOME%\work\Catalina\localhost\ROOT" 2>nul
 
-copy /Y "%WAR_SOURCE%" "%CATALINA_HOME%\webapps\damoya.war"
+copy /Y "%WAR_SOURCE%" "%CATALINA_HOME%\webapps\ROOT.war"
 if errorlevel 1 (
     echo DEPLOY FAILED - WAR copy failed.
     echo Tip: Run as Administrator if Tomcat is under Program Files.
@@ -74,7 +77,7 @@ if errorlevel 1 (
 echo Starting Tomcat...
 start "" "%CATALINA_HOME%\bin\startup.bat"
 
-echo Done! http://localhost:8080/damoya/
+echo Done! http://localhost:8080/
 endlocal
 exit /b 0
 

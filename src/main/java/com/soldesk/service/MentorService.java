@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MentorDashboardStatsVO;
+import com.soldesk.vo.MentorVO;
 
 @Service
 public class MentorService {
@@ -20,5 +21,15 @@ public class MentorService {
         stats.setActiveProjectCount(mentorMapper.countActiveProjects(memberId));
         stats.setFeedbackCount(mentorMapper.countFeedbacks(memberId));
         return stats;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isMentor(int memberId) {
+        return mentorMapper.selectMentorById(memberId) > 0;
+    }
+
+    @Transactional(readOnly = true)
+    public MentorVO getMentorInfo(int memberId) {
+        return mentorMapper.findByMemberId(memberId);
     }
 }

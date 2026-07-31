@@ -68,7 +68,7 @@ public class MemberValidation implements Validator {
         }
 
         // 학과
-        if (member.getDept_id() <= 0) {
+        if (member.getDept_id() == null || member.getDept_id() <= 0) {
             errors.rejectValue("dept_id", "dept_id.required", "학과를 선택하세요.");
         }
 

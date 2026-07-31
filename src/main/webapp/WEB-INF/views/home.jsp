@@ -40,7 +40,7 @@
       </a>
       <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-        <div><div class="n">3</div><div class="k">새 알림</div></div>
+        <div><div class="n">${notiCount}</div><div class="k">새 알림</div></div>
       </a>
     </div>
 
@@ -53,7 +53,7 @@
           <p style="color:var(--ink-soft);padding:16px">참여 중인 프로젝트가 없어요.</p>
         </c:if>
         <c:forEach var="project" items="${participatingProjects}">
-          <div class="psel-card" style="--c:var(--cat-${project.category});padding:16px 18px" onclick="go('overview')">
+          <div class="psel-card" style="--c:var(--cat-${project.category});padding:16px 18px" onclick="location.href='${ctx}/workspace/${project.projectId}/overview'">
             <div class="psel-main">
               <div class="psel-top"><span class="psel-cat">${project.category}</span><span class="psel-role ${project.projectRole}">${project.projectRole}</span></div>
               <h3 style="font-size:15.5px">${project.title}</h3>

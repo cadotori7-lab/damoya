@@ -33,7 +33,15 @@
           <c:if test="${member.approved}">
             <span class="b">✓ 학교 인증됨</span>
           </c:if>
+          <c:if test="${isMentor}">
+            <span class="b">멘토</span>
+            <c:if test="${not empty mentor.field}"><span class="b">${mentor.field}</span></c:if>
+            <c:if test="${not empty mentor.cert}"><span class="b">${mentor.cert}</span></c:if>
+          </c:if>
         </div>
+        <c:if test="${isMentor && not empty mentor.career}">
+          <div class="line" style="margin-top:4px">경력 ${mentor.career}</div>
+        </c:if>
         <c:if test="${member.intro != null && !member.intro.isEmpty()}">
           <div class="bio">"${member.intro}"</div>
         </c:if>
@@ -163,7 +171,7 @@
           <span class="big" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none"><c:out value="${member.name.substring(0, 1)}" /></span>
           <button class="btn ghost sm">사진 변경</button>
         </div>
-        <div class="fld one"><label>이름</label><form:input path="name" type="text" id="pfName" name="name" value="${member.name}" /></div>
+        <div class="fld one"><label>이름</label><form:input path="name" type="text" id="pfName" name="name" value="${member.name}" required="required" minlength="2" /></div>
         <div class="frow">
           <div class="fld"><label>학교</label>
               <select name="univ_name" id="univSelect" required>
@@ -183,7 +191,7 @@
           </div>
         </div>
         <div class="frow">
-          <c:if test="${member.role == 'USER'}">
+          <c:if test="${!isMentor}">
           <div class="fld"><label>학년</label>
               <select id="pfYear" name="grade">
                 <option value="1" <c:if test="${member.grade == 1}">selected</c:if>>1</option>
@@ -195,6 +203,7 @@
           </div>
           </c:if>
         </div>
+        <c:if test="${!isMentor}">
         <div class="frow">
           <div class="fld"><label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
               <select name="double_major" id="doubleMajorSelect">
@@ -205,6 +214,7 @@
               </select>
           </div>
         </div>
+        </c:if>
         <div class="fld one"><label>한 줄 소개 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label><form:input path="intro" type="text" id="pfBio" name="intro" value="${member.intro}" placeholder="예: Spring 백엔드에 관심 많은 4학년" /></div>
 
         <div class="frow" style="margin-top:8px;border-top:1px solid var(--line);padding-top:18px">

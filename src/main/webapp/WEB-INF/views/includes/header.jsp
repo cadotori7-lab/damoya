@@ -36,11 +36,17 @@
       </sec:authorize>
       <sec:authorize access="isAuthenticated()">
       <button class="btn sec" onclick="document.getElementById('logoutForm').submit();">로그아웃</button>
-      <button class="bell" aria-label="알림" type="button">
+      <button class="bell" aria-label="알림" type="button" data-member-id="${member.member_id}" data-ctx="${ctx}" onclick="toggleNotifications()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot" id="notiDot" style="display:none"></span>
       </button>
       <a class="avatar" href="${ctx}/mypage/index" style="cursor:pointer">
-        <div class="who">${member.name}<small>${member.major} · ${member.grade}학년</small></div>
+        <div class="who">${member.name}
+          <c:choose>
+            <c:when test="${isMentor}"><small>멘토<c:if test="${not empty mentor.field}"> · ${mentor.field}</c:if></small></c:when>
+            <c:otherwise><small>${member.major} · ${member.grade}학년</small></c:otherwise>
+          </c:choose>
+        </div>
         <div class="pic">${member.name.substring(0, 1)}</div>
       </a>
     </div>
@@ -50,3 +56,27 @@
 <form id="logoutForm" action="${ctx}/auth/logout" method="post" style="display:none;">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form>
+
+<sec:authorize access="isAuthenticated()">
+  <!-- 알림 모달 -->
+  <div class="modal-overlay" id="notificationModal" onclick="if(event.target===this)closeModal('notificationModal')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="notiTitle">
+      <div class="modal-head">
+        <div class="mh-info"><h3 id="notiTitle">알림</h3><div class="role">새로운 소식을 확인하세요</div></div>
+        <button class="modal-close" onclick="closeModal('notificationModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="noti-list" id="notiList">
+          <p style="color:var(--ink-soft);padding:16px;text-align:center">불러오는 중...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="${ctx}/resources/js/common.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script src="${ctx}/resources/js/notification.js"></script>
+</sec:authorize>

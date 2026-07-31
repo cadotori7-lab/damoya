@@ -60,6 +60,7 @@ public class MypageController {
         long doneCount = participationList.stream().filter(p -> "DONE".equals(p.getStatus())).count();
         long pendingCount = applicationList.stream().filter(a -> "WAITING".equals(a.getJoinStatus())).count();
 
+        // isMentor / mentor는 GlobalModelAttributeAdvice가 모든 요청에 대해 채워준다.
         model.addAttribute("member", member);
         model.addAttribute("univList", univService.getAllUniv());
         model.addAttribute("univ", univ);
@@ -76,9 +77,13 @@ public class MypageController {
     @PostMapping("/update")
     public String update(MemberVO member) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO originMember = memberService.findByLoginId(member_id);
         member.setLogin_id(member_id); // 로그인한 사용자의 ID를 설정
         // 학과 선택값을 그대로 전공으로 저장 (학과 = 전공)
         UnivVO dept = univService.getUnivByDeptId(member.getDept_id());
+        if (member.getName() == null || member.getName().trim().isEmpty()) {
+            member.setName(originMember.getName()); // 빈 값이 제출되면 기존 이름 유지
+        }
         if (dept != null) {
             member.setMajor(dept.getDept_name());
         }

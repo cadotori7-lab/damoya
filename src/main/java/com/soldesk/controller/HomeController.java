@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.soldesk.service.MemberService;
+import com.soldesk.service.NotificationService;
 import com.soldesk.service.ParticipationService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ParticipationVO;
@@ -26,6 +27,9 @@ public class HomeController {
     @Autowired
     private ParticipationService participationService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @GetMapping("/")
     public String root(Principal principal) {
         if (principal != null) {
@@ -40,6 +44,8 @@ public class HomeController {
         MemberVO member = memberService.findByLoginId(member_id);
         List<ParticipationVO> participatingProjects = participationService.getParticipatingProjectsByMemberId(member.getMember_id(),3);
         List<ParticipationVO> applicationProjects = participationService.getApplicationProjectsByMemberId(member.getMember_id(),3);
+        int notiCount = notificationService.countNotificationsByMemberId(member.getMember_id());
+        model.addAttribute("notiCount", notiCount);
 
         model.addAttribute("member", member);
         model.addAttribute("participatingProjects", participatingProjects);

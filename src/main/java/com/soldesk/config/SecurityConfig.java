@@ -25,7 +25,11 @@ public class SecurityConfig {
         throws Exception {
         http
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers(new AntPathRequestMatcher("/project/favorite/toggle"))
+                .ignoringRequestMatchers(
+                    new AntPathRequestMatcher("/project/favorite/toggle"),
+                    new AntPathRequestMatcher("/notification/read/**"), // fetch()로 CSRF 토큰 없이 보내는 POST 요청
+                    new AntPathRequestMatcher("/notification/delete/**"), // 위와 동일
+                    new AntPathRequestMatcher("/ws/**")) // SockJS 폴백 전송(xhr-streaming 등)이 보내는 POST 요청은 CSRF 토큰이 없어 별도 예외 처리. 인증은 StompAuthChannelInterceptor가 STOMP CONNECT 단계에서 별도로 검사한다.
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
