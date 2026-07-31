@@ -12,7 +12,7 @@
         <a href="${ctx}/talent/list" class="${nav=='talent' ? 'on' : ''}">인재풀</a>
       </sec:authorize>
 
-      <sec:authorize access="isAuthenticated()">
+      <sec:authorize access="isAuthenticated() && (hasRole('USER') || hasRole('MENTOR'))">
         <a href="${ctx}/home" class="${nav=='home' ? 'on' : ''}">홈</a>
         <a href="${ctx}/project/list" class="${nav=='match' ? 'on' : ''}">프로젝트 찾기</a>
         <a href="${ctx}/talent/list" class="${nav=='talent' ? 'on' : ''}">인재풀</a>
@@ -20,12 +20,12 @@
         <a href="${ctx}/mypage/index" class="${nav=='mypage' ? 'on' : ''}">마이페이지</a>
       </sec:authorize>
 
-      <sec:authorize access="hasRole('MENTOR')">
+      <sec:authorize access="isAuthenticated() && hasRole('MENTOR')">
         <a href="${ctx}/mentor/" class="${nav=='mentor' ? 'on' : ''}">멘토</a>
         <a href="${ctx}/feedback/feedback" class="${nav=='feedback' ? 'on' : ''}">피드백</a>
       </sec:authorize>
 
-      <sec:authorize access="hasRole('ADMIN')">
+      <sec:authorize access="isAuthenticated() && hasRole('ADMIN')">
         <a href="${ctx}/admin/dashboard" class="${nav=='admin' ? 'on' : ''}">관리자</a>
       </sec:authorize>
     </nav>

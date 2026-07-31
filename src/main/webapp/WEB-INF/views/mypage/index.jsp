@@ -42,6 +42,7 @@
         <c:if test="${isMentor && not empty mentor.career}">
           <div class="line" style="margin-top:4px">경력 ${mentor.career}</div>
         </c:if>
+        <div></div>
         <c:if test="${member.intro != null && !member.intro.isEmpty()}">
           <div class="bio">"${member.intro}"</div>
         </c:if>

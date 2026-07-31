@@ -487,11 +487,13 @@
   /* ===== 마이페이지 ===== */
   .mp-head{display:flex;align-items:center;gap:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px 28px;margin-bottom:22px}
   .mp-head .big{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#2b46c8,#5b45c8);color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;flex:none}
+  .mp-head .info{flex:1;min-width:0}
   .mp-head .info h2{font-size:23px;font-weight:800;letter-spacing:-.02em}
   .mp-head .info .line{color:var(--ink-soft);font-size:14px;margin-top:3px}
   .mp-head .info .badges{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
   .mp-head .info .badges .b{font-family:var(--mono);font-size:11.5px;font-weight:600;border:1px solid var(--line);border-radius:20px;padding:3px 10px;color:var(--ink-soft)}
-  .mp-head .edit{margin-left:auto;align-self:flex-start}
+  .mp-head .edit{margin-left:auto;align-self:flex-start;flex:none;white-space:nowrap}
+  .mp-head .bio{margin-top:8px;overflow-wrap:break-word}
   .mp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
   .mp-stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-align:center}
   .mp-stat .n{font-size:26px;font-weight:800}

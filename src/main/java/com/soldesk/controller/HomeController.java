@@ -31,7 +31,13 @@ public class HomeController {
     private NotificationService notificationService;
 
     @GetMapping("/")
-    public String root(Principal principal) {
+    public String root(Principal principal,Model model) {
+        if(principal != null) {
+            MemberVO member = memberService.findByLoginId(principal.getName());
+            if(member.getRole().equals("ADMIN")) {
+                return "redirect:/admin/dashboard";
+            }
+        }
         if (principal != null) {
             return "redirect:/home";
         }

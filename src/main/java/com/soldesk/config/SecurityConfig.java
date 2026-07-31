@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.soldesk.security.MemberDetailsService;
@@ -33,6 +34,9 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    new AntPathRequestMatcher("/resources/**"))
+                .permitAll() // 정적 리소스(CSS/JS/이미지)는 어드민 포함 누구나 항상 접근 가능해야 함
+                .requestMatchers(
                     new AntPathRequestMatcher("/admin/**"))
                 .hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한을 가진 사용자만 접근 가능
                 .requestMatchers(
@@ -47,14 +51,19 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/project/favorite/toggle"),
                     new AntPathRequestMatcher("/mypage/**"),
                     new AntPathRequestMatcher("/workspace/**"))
-                .authenticated()
-                .anyRequest().permitAll()) // 위의 경로를 제외한 모든 요청은 인증 없이 접근 허용
+                .access(new WebExpressionAuthorizationManager("isAuthenticated() and !hasRole('ADMIN')")) // 어드민은 일반 페이지 접근 불가
+                .anyRequest().access(new WebExpressionAuthorizationManager("!hasRole('ADMIN')"))) // 어드민이 아니면 그대로 허용(비로그인 포함), 어드민은 /admin/** 외 전부 차단
             .formLogin(form -> form
                 .loginPage("/auth/login") // 커스텀 로그인 페이지 경로 설정
                 .loginProcessingUrl("/auth/login") // 로그인 처리 URL 설정
                 .usernameParameter("login_id") // 로그인 시 사용할 사용자 이름 파라미터 설정
                 .passwordParameter("password") // 로그인 시 사용할 비밀번호 파라미터 설정
-                .defaultSuccessUrl("/home", true) // 로그인 성공 시 이동할 URL 설정
+                .successHandler((request, response, authentication) -> {
+                    // 어드민은 일반 페이지 접근이 막혀 있으므로 로그인 후 관리자 페이지로 보낸다
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                    response.sendRedirect(request.getContextPath() + (isAdmin ? "/admin/dashboard" : "/home"));
+                })
                 .failureUrl("/auth/login?error=true") // 로그인 실패 시 이동할 URL 설정
                 .permitAll()) // 로그인 페이지는 인증 없이 접근 허용
             .logout(logout -> logout
