@@ -13,6 +13,7 @@
 
   function kindLabel(kind) {
     if (kind === 'SYSTEM') return '댓글';
+    if (kind === 'APPLY') return '지원';
     return kind || '알림';
   }
 
@@ -20,6 +21,7 @@
   function targetUrl(n) {
     if (!n.target_id) return null;
     if (n.kind === 'SYSTEM') return ctx + '/project/detail?id=' + n.target_id;
+    if (n.kind === 'APPLY') return ctx + '/workspace/' + n.target_id + '/applicants';
     return null;
   }
 
@@ -37,8 +39,12 @@
 
     var contentEl = document.createElement('div');
     contentEl.className = 'noti-content';
-    contentEl.textContent = n.kind === 'SYSTEM' ? ("("+n.content + ') 게시글에 댓글이 작성되었습니다.') : n.content;
-
+    if(n.kind === 'SYSTEM') {
+      contentEl.textContent = "(" + n.content + ") 게시글에 댓글이 작성되었습니다.";
+    } else if(n.kind === 'APPLY') {
+      contentEl.textContent = "프로젝트 지원 알림: " + n.content;
+    }
+    
     mainEl.appendChild(kindEl);
     mainEl.appendChild(contentEl);
 
