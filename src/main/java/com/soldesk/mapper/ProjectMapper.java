@@ -21,5 +21,5 @@ public interface ProjectMapper {
     int checkFavorite(Map<String, Object> params);  // 이미 좋아요를 눌렀는지 확인
     List<ProjectVO> getFavoriteProjectsByMemberId(Long memberId);
     void increaseViewCount(Long projectId); //게시글 조회수 반환
-
+    List<ProjectVO> getTop3RecommendedProjects(); // 추천순 게시글 3개 조회
 }

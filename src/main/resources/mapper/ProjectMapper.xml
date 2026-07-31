@@ -248,5 +248,14 @@
         where project_id = #{projectId}
     </update>
 
+    <!-- 추천순 게시글 3개 조회 -->
+    <select id="getTop3RecommendedProjects" resultMap="projectResultMap">
+        SELECT *
+        FROM project
+        WHERE status = 'RECRUITING'
+        ORDER BY (favorite_count * 10 + view_count * 5) DESC, created_at DESC
+        LIMIT 3
+    </select>
+
 
 </mapper>

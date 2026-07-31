@@ -104,27 +104,19 @@
           </c:forEach>
         </div>
       </div>
-
       <!-- 추천 프로젝트 -->
       <div class="ocard">
-        <div class="oc-head"><div class="t">추천 공모</div><button class="oc-more" onclick="go('match')">더 보기</button></div>
-        <div class="home-reco">
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-major)"></span>
-            <div class="rc-main"><div class="tt">졸업작품 — Unity 게임 개발 팀원</div><div class="mt">학과 · 게임공학 · 2/3명 · D-3</div></div>
-            <span class="chip recruit">모집중</span>
+        <div class="oc-head"><div class="t">인기 프로젝트</div><button class="oc-more" onclick="go('match')">더 보기</button></div>
+        <c:if test="${top3RecommendedProjects.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">추천할 프로젝트가 없어요.</p>
+        </c:if>
+        <c:forEach var="project" items="${top3RecommendedProjects}">
+          <div class="reco-item" onclick="location.href='${ctx}/project/detail?id=${project.projectId}'">
+            <span class="rc-spine" style="--c:var(--cat-${project.category})"></span>
+            <div class="rc-main"><div class="tt">${project.title}</div><div class="mt">${project.category} · 정원 ${project.capacity}명</div></div>
+            <span class="chip ${project.status == 'RECRUITING' ? 'recruit' : 'done'}">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
           </div>
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-contest)"></span>
-            <div class="rc-main"><div class="tt">교내 창업 아이디어톤 팀원 모집</div><div class="mt">공모전 · 무관 · 1/5명 · D-8</div></div>
-            <span class="chip recruit">모집중</span>
-          </div>
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-liberal)"></span>
-            <div class="rc-main"><div class="tt">교양 발표 스터디 같이 해요</div><div class="mt">교양 · 전 학년 · 3/5명 · D-6</div></div>
-            <span class="chip recruit">모집중</span>
-          </div>
-        </div>
+        </c:forEach>
       </div>
     </div>
   </section>

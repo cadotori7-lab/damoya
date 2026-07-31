@@ -119,4 +119,9 @@ public class ProjectService {
     public void increaseViewCount(Long projectId){
         projectmapper.increaseViewCount(projectId);
     }
+    // 추천순 게시글 3개 불러오기
+    @Transactional
+    public List<ProjectVO> getTop3RecommendedProjects() {
+        return projectmapper.getTop3RecommendedProjects();
+    }
 }
