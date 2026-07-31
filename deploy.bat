@@ -1,7 +1,7 @@
 @echo off
-set "CATALINA_HOME=C:\apache-tomcat-9.0.118"
-set "CATALINA_BASE=C:\apache-tomcat-9.0.118"
-set "JAVA_HOME=C:\Program Files\Java\jdk-21"
+set "CATALINA_HOME=C:\Program Files\Apache Software Foundation\Tomcat 9.0"
+set "CATALINA_BASE=C:\Program Files\Apache Software Foundation\Tomcat 9.0"
+set "JAVA_HOME=C:\Program Files\Java\jdk-17"
 set "WAR_SOURCE=target\damoya.war"
 
 echo Building WAR...

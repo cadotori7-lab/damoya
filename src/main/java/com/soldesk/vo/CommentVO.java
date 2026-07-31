@@ -3,6 +3,7 @@ package com.soldesk.vo;
 public class CommentVO {
     private int comment_id;
     private Long project_id;
+    private Long post_id;
     private int member_id;
     private String content;
     private String created_at;
@@ -13,6 +14,14 @@ public class CommentVO {
 
     public void setComment_id(int comment_id) {
         this.comment_id = comment_id;
+    }
+
+    public Long getPost_id() {
+        return post_id;
+    }
+
+    public void setPost_id(Long post_id) {
+        this.post_id = post_id;
     }
 
     public Long getProject_id() {

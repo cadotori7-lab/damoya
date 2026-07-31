@@ -180,9 +180,9 @@ public class ProjectController {
 
         //  로그인한 유저의 PK를 ownerId와 참여 리더로 세팅
         Long loginMemberId = (long) loginUser.getMember_id();
-        projectVO.setOwnerId(loginMemberId); // ★ 이 부분이 빠져있어서 null이 들어갔던 것입니다!
+        projectVO.setOwnerId(loginMemberId); 
 
-        // 4. 프로젝트 등록 서비스 호출 (내부에 리더 자동 등록 로직 포함)
+        //  프로젝트 등록 서비스 호출 (내부에 리더 자동 등록 로직 포함)
         projectService.registerProject(projectVO, loginMemberId);
 
         rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 등록되었습니다.");
@@ -256,14 +256,14 @@ public class ProjectController {
        return "project/apply_form";
     }
 
-@GetMapping("/list")
+    @GetMapping("/list")
     public String getProjectList(
             @RequestParam(value="page", defaultValue = "1") int page,
-            @RequestParam(value="scope", defaultValue = "교내") String scope,
+            @RequestParam(value="matchScope", defaultValue = "교내") String matchScope, 
             @RequestParam(value="tab", defaultValue = "all") String tab,
             @RequestParam(value="keyword", required = false) String keyword,
-            @RequestParam(value="categories", required = false) String categories,
-            @RequestParam(value="grades", required = false) String grades,
+            @RequestParam(value="categoryList", required = false) String categoryList,
+            @RequestParam(value="gradeList", required = false) String gradeList,     
             @RequestParam(value="sort", defaultValue = "latest") String sort,
             @RequestParam(value = "view", required = false) String view,
             Model model, Principal principal){
@@ -298,18 +298,19 @@ public class ProjectController {
         // 일반 목록(필터, 검색, 정렬) 조회 모드일 때
         ProjectVO vo = new ProjectVO();
         vo.setPage(page);
-        vo.setMatchScope(scope);
+        vo.setMatchScope(matchScope);
         vo.setTab(tab);
         vo.setKeyword(keyword);
         vo.setSort(sort);
         vo.calcOffset();
 
+
         // 카테고리와 학년 파라미터를 List로 변환
-        if(categories != null && !categories.trim().isEmpty()){
-            vo.setCategoryList(Arrays.asList(categories.split(",")));
+        if(categoryList != null && !categoryList.trim().isEmpty()){
+            vo.setCategoryList(Arrays.asList(categoryList.split(",")));
         }
-        if (grades != null && !grades.trim().isEmpty()) {
-            vo.setGradeList(Arrays.asList(grades.split(",")));
+        if (gradeList != null && !gradeList.trim().isEmpty()) {
+            vo.setGradeList(Arrays.asList(gradeList.split(",")));
         }
 
         // DB에서 전체 프로젝트 가져오기
@@ -452,4 +453,6 @@ public class ProjectController {
         rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 신고되었습니다.");
         return "redirect:/project/detail?id=" + targetId;
     }
+        
 }
+

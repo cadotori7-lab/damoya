@@ -21,27 +21,27 @@
         <result column="view_count" property="viewCount"/>
     </resultMap>
 
-    <!-- 프로젝트 등록-->
+    <!-- 프로젝트 등록 -->
     <insert id="insertProject" parameterType="com.soldesk.vo.ProjectVO" 
             useGeneratedKeys="true" keyProperty="projectId">
         insert into project (owner_id, title, category, summary, capacity, target_grade, status,  match_scope, tags, end_date)
         values (#{ownerId}, #{title}, #{category}, #{summary}, #{capacity}, #{targetGrade}, #{status}, #{matchScope}, #{tags}, #{endDate})
     </insert>
 
-    <!-- 프로젝트 전체 목록 조회-->
+    <!-- 프로젝트 전체 목록 조회 -->
     <select id="getAllProjects" resultMap="projectResultMap">
         select * from project order by created_at desc
     </select>
 
-    <!-- 프로잭트 상세 조회-->
-     <select id="getProjectById" parameterType="long" resultMap="projectResultMap" >
+    <!-- 프로잭트 상세 조회 -->
+    <select id="getProjectById" parameterType="long" resultMap="projectResultMap" >
         select *
         from project 
         where project_id = #{projectId}
-     </select>
+    </select>
 
-    <!-- 프로젝트 모집 수정-->
-     <update id="updateProject" parameterType="com.soldesk.vo.ProjectVO">
+    <!-- 프로젝트 모집 수정 -->
+    <update id="updateProject" parameterType="com.soldesk.vo.ProjectVO">
         update project
         set title = #{title},
             category = #{category},
@@ -52,15 +52,14 @@
             status = #{status},
             tags = #{tags},
             end_date = #{endDate}
-
         where project_id = #{projectId}
-     </update>
+    </update>
 
-    <!-- 프로젝트 모집 삭제-->
-     <delete id="deleteProject" parameterType="long">
+    <!-- 프로젝트 모집 삭제 -->
+    <delete id="deleteProject" parameterType="long">
         delete from project
         where project_id = #{projectId}
-     </delete>
+    </delete>
 
     <!-- 필터 조건에 맞는 전체 게시글 개수 구하기 -->
     <select id="getTotalCount" resultType="int" parameterType="com.soldesk.vo.ProjectVO">
@@ -71,7 +70,7 @@
             <if test="matchScope != null and matchScope != ''">
                 AND match_scope = #{matchScope}
             </if>
-            <!--  탭 상태 -->
+            <!-- 탭 상태 -->
             <if test="tab != null and tab != 'all'">
                 AND status = #{tab}
             </if>
@@ -92,10 +91,11 @@
             </if>
             <!-- 대상 학년 다중 선택 -->
             <if test="gradeList != null and gradeList.size() > 0">
-                <if test="!gradeList.contains('ALL') and !gradeList.contains('무관')">
+                <if test="!gradeList.contains('all') and !gradeList.contains('ALL') and !gradeList.contains('무관')">
                     AND (
                         target_grade = '무관' 
                         OR target_grade = 'ALL' 
+                        OR target_grade = 'all'
                         OR target_grade IS NULL 
                         OR target_grade = ''
                         <foreach collection="gradeList" item="grade">
@@ -107,22 +107,21 @@
         </where>
     </select>
 
-
     <!-- 필터 조건에 맞는 게시글 리스트 조회 -->
     <select id="getProjectList" resultMap="projectResultMap" parameterType="com.soldesk.vo.ProjectVO">
         select p.*, 
         (SELECT COUNT(*) FROM comment c WHERE c.project_id = p.project_id) AS commentCount
         FROM project p
         <where>
-            <!--  매칭 범위 (교내/전국) -->
+            <!-- 매칭 범위 (교내/전국) -->
             <if test="matchScope != null and matchScope != ''">
                 AND match_scope = #{matchScope}
             </if>
-            <!--  탭 상태 -->
+            <!-- 탭 상태 -->
             <if test="tab != null and tab != 'all'">
                 AND status = #{tab}
             </if>
-            <!--  키워드 검색 -->
+            <!-- 키워드 검색 -->
             <if test="keyword != null and keyword != ''">
                 AND (
                     title LIKE CONCAT('%', #{keyword}, '%')
@@ -130,19 +129,20 @@
                     OR tags LIKE CONCAT('%', #{keyword}, '%')
                 )
             </if>
-            <!--  카테고리 다중 선택 -->
+            <!-- 카테고리 다중 선택 -->
             <if test="categoryList != null and categoryList.size() > 0">
                 AND category IN
                 <foreach collection="categoryList" item="category" open="(" separator="," close=")">
                     #{category}
                 </foreach>
             </if>
-            <!--  대상 학년 다중 선택 -->
+            <!-- 대상 학년 다중 선택 -->
             <if test="gradeList != null and gradeList.size() > 0">
-                <if test="!gradeList.contains('ALL') and !gradeList.contains('무관')">
+                <if test="!gradeList.contains('all') and !gradeList.contains('ALL') and !gradeList.contains('무관')">
                     AND (
                         target_grade = '무관' 
                         OR target_grade = 'ALL' 
+                        OR target_grade = 'all'
                         OR target_grade IS NULL 
                         OR target_grade = ''
                         <foreach collection="gradeList" item="grade">
@@ -155,66 +155,58 @@
         
         <!-- 정렬 조건 -->
         <choose>
-            <!--  추천순: (좋아요 * 10) + (조회수 * 5) 점수가 높은 순 -->
             <when test="sort == 'recommend'">
                 ORDER BY ((favorite_count * 10) + (view_count * 5)) DESC, created_at DESC
             </when>
-            
-            <!--  마감임박순: 오늘 날짜 기준으로 마감일이 남은 것 중 가까운 순 (마감된 건 뒤로 밀어냄) -->
             <when test="sort == 'deadline'">
                 ORDER BY 
                     CASE WHEN end_date &lt; CURDATE() THEN 1 ELSE 0 END ASC, 
                     end_date ASC, 
                     created_at DESC
             </when>
-            
-            <!-- 3. 좋아요순: 좋아요 수 높은 순 (기존 favorit_count 오타 수정됨!) -->
             <when test="sort == 'likes'">
                 ORDER BY favorite_count DESC, created_at DESC
             </when>
-            
-            <!-- 4. 최신순 (디폴트) -->
             <otherwise>
                 ORDER BY created_at DESC
             </otherwise>
         </choose>
 
-        <!-- 페이징 컷 (6개씩) -->
         LIMIT #{amount} OFFSET #{offset}
     </select>
 
-    <!-- 관심 등록-->
-     <insert id="insertFavorite">
+    <!-- 관심 등록 -->
+    <insert id="insertFavorite">
         insert into favorite (member_id, project_id)
         values(#{memberId}, #{projectId})
-     </insert>
+    </insert>
 
-    <!-- 관심 취소-->
+    <!-- 관심 취소 -->
     <delete id="deleteFavorite">
         delete from favorite
         where member_id = #{memberId} and project_id = #{projectId}
     </delete>
 
-    <!-- favorite_count  증가-->
-     <update id="increaseFavoriteCount">
+    <!-- favorite_count  증가 -->
+    <update id="increaseFavoriteCount">
         update project
         set favorite_count = favorite_count +1
         where project_id = #{projectId}
-     </update>
+    </update>
 
-    <!-- favorite_count  감소-->
+    <!-- favorite_count  감소 -->
     <update id="decreaseFavoriteCount">
         update project
         set favorite_count = favorite_count -1
         where project_id = #{projectId}
     </update>
 
-    <!-- 로그인한 유저가 좋아요 눌렀는지 확인-->
-     <select id="checkFavorite">
+    <!-- 로그인한 유저가 좋아요 눌렀는지 확인 -->
+    <select id="checkFavorite">
         select count(*)
         from favorite
         where member_id = #{memberId} and project_id = #{projectId}
-     </select>
+    </select>
 
     <!-- 사용자가 관심 등록한 프로젝트 총 개수 -->
     <select id="getFavoriteTotalCount" resultType="int" parameterType="long">
@@ -242,12 +234,11 @@
         ORDER BY p.project_id DESC
     </select>
 
-    <!-- 게시글 조회수 불러오기-->
+    <!-- 게시글 조회수 불러오기 -->
     <update id="increaseViewCount">
         update project
         set view_count = view_count + 1
         where project_id = #{projectId}
     </update>
-
 
 </mapper>

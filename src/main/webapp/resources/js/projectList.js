@@ -1,32 +1,82 @@
-// 전역 변수
-let currentTab = 'all';
-let currentScope = '교내';
 
-// [1] 상단 탭 (전체/모집중/마감) 클릭 시
-function filterTab(status) {
-    currentTab = status;
-    submitSearch(1); 
+//  매칭 범위(교내/전국)에 따라 카테고리 체크박스를 동적으로 움직임
+function renderCategoriesByScope(scope) {
+    const categoryContainer = document.getElementById('categoryContainer');
+    if (!categoryContainer) return;
+
+    if (scope === '교내') {
+        categoryContainer.innerHTML = `
+            <input type="checkbox" id="c1" value="공모전" checked><label for="c1">공모전</label>
+            <input type="checkbox" id="c2" value="학과" checked><label for="c2">학과</label>
+            <input type="checkbox" id="c3" value="교양" checked><label for="c3">교양</label>
+            <input type="checkbox" id="c4" value="교내활동" checked><label for="c4">교내활동</label>
+        `;
+    } else if (scope === '전국') {
+        categoryContainer.innerHTML = `
+            <input type="checkbox" id="c1" value="공모전" checked><label for="c1">공모전</label>
+            <input type="checkbox" id="c5" value="사이드프로젝트" checked><label for="c5">사이드프로젝트</label>
+        `;
+    }
+
+    // 새로 생성된 체크박스에 변경 감지 이벤트 재연결
+    const newCheckboxes = categoryContainer.querySelectorAll('input[type="checkbox"]');
+    newCheckboxes.forEach(cb => {
+        cb.addEventListener('change', handleFilterChange);
+    });
 }
 
-// [2] 매칭 범위 (교내/전국) 클릭 시
-function setScope(scopeType) {
-    currentScope = scopeType;
-    submitSearch(1); 
+// 검색 조건(범위, 카테고리, 학년 등)을 수집하여 서버로 전송
+function submitSearch(pageNum = 1) {
+    const keywordInput = document.querySelector('input[name="keyword"]');
+    const keyword = keywordInput ? keywordInput.value.trim() : '';
+
+    const tabInput = document.querySelector('input[name="tab"]');
+    const tab = tabInput ? tabInput.value : 'all';
+
+    const scopeBtn = document.querySelector('.scope button.on');
+    const matchScope = scopeBtn ? scopeBtn.innerText.trim() : '교내';
+
+    const sortInput = document.querySelector('input[name="sort"]');
+    const sort = sortInput ? sortInput.value : 'latest';
+
+    // 체크된 카테고리 수집
+    const catEls = document.querySelectorAll('#categoryContainer input[type="checkbox"]:checked');
+    const categoryList = Array.from(catEls).map(el => el.value).join(',');
+
+    // 체크된 학년 수집
+    const gradeEls = document.querySelectorAll('.filters .flt:not(#categoryContainer) input[type="checkbox"]:checked');
+    const gradeList = Array.from(gradeEls).map(el => el.value).join(',');
+
+    const params = new URLSearchParams();
+    
+    params.append('page', pageNum);
+    if (tab !== 'all') params.append('tab', tab);
+    
+    // VO 필드명과 파라미터명 일치화
+    if (matchScope) params.append('matchScope', matchScope);
+    if (keyword) params.append('keyword', keyword);
+    if (categoryList) params.append('categoryList', categoryList); 
+    if (gradeList) params.append('gradeList', gradeList); 
+    if (sort && sort !== 'latest') params.append('sort', sort);
+
+    location.href = ctx + '/project/list?' + params.toString();
 }
 
-// [3] 필터(카테고리/학년) 체크박스 제어 및 검색 요청
+// 3체크박스 변경 시 최소 개수 유지 및 학년 무관 로직 처리 함수
 function handleFilterChange(e) {
     const target = e.target;
     
+    // 카테고리가 모두 해제되지 않도록 방어
     if (target.closest('#categoryContainer')) {
         const checkedCats = document.querySelectorAll('#categoryContainer input[type="checkbox"]:checked');
         if (checkedCats.length === 0) {
             alert("카테고리는 최소 1개 이상 선택해야 합니다.");
-            target.checked = true;
+            target.checked = true; 
             return;
         }
     }
 
+    // 학년 무관 및 개별 학년 선택 상호작용 제어
     if (target.closest('.filters .flt') && !target.closest('#categoryContainer')) {
         const gradeAny = document.getElementById('y0');
         const specGrades = document.querySelectorAll('.filters .flt:not(#categoryContainer) input[type="checkbox"]:not(#y0)');
@@ -49,45 +99,47 @@ function handleFilterChange(e) {
             }
         }
     }
-
     submitSearch(1); 
 }
 
-// 서버(Controller)로 파라미터를 묶어서 전송하는 함수
-function submitSearch(pageNo) {
-    const searchInput = document.getElementById('searchInput');
-    const keyword = searchInput ? searchInput.value.trim() : '';
+// 상단 탭(전체/모집중/마감) 변경 함수
+function filterTab(tabValue) {
+    const tabInput = document.querySelector('input[name="tab"]');
+    if (tabInput) tabInput.value = tabValue;
+    submitSearch(1);
+}
 
-    const catEls = document.querySelectorAll('#categoryContainer input[type="checkbox"]:checked');
-    const categories = Array.from(catEls).map(el => el.value).join(',');
-
-    const gradeEls = document.querySelectorAll('.filters .flt:not(#categoryContainer) input[type="checkbox"]:checked');
-    const grades = Array.from(gradeEls).map(el => el.value).join(',');
-
-    let url = `${ctx}/project/list?page=${pageNo}&scope=${currentScope}&tab=${currentTab}&keyword=${encodeURIComponent(keyword)}&categories=${encodeURIComponent(categories)}&grades=${encodeURIComponent(grades)}`;
+//  매칭 범위(교내/전국) 변경 함수
+function setScope(scopeValue, btnElement) {
+    document.querySelectorAll('.scope button').forEach(b => b.classList.remove('on'));
     
-    const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has('sort')) url += `&sort=${urlParams.get('sort')}`;
-
-    window.location.href = url;
+    if (btnElement) {
+        btnElement.classList.add('on');
+    } else {
+        document.querySelectorAll('.scope button').forEach(b => {
+            if (b.innerText.trim() === scopeValue) b.classList.add('on');
+        });
+    }
+    
+    renderCategoriesByScope(scopeValue);
+    submitSearch(1);
 }
 
-// 검색창 엔터 키 이벤트
-document.getElementById('searchInput')?.addEventListener('keyup', (e) => {
-    if(e.key === 'Enter') submitSearch(1);
-});
-
-// 정렬 변경 함수
-function sortList(sortType) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('sort', sortType);
-    urlParams.set('page', '1'); 
-    window.location.href = window.location.pathname + '?' + urlParams.toString();
+// 정렬 기준 변경 함수
+function changeSort(sortValue) {
+    const sortInput = document.querySelector('input[name="sort"]');
+    if (sortInput) sortInput.value = sortValue;
+    submitSearch(1);
 }
 
-// 목록 페이지용 좋아요(관심등록) 토글 함수
+// 관심 등록(좋아요) 토글 비동기 처리 함수
 function toggleFavorite(projectId, buttonElement, event) {
-    if (event) event.stopPropagation();
+    if (event) {
+        event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === 'function') {
+            event.stopImmediatePropagation();
+        }
+    }
     
     fetch(`${ctx}/project/favorite/toggle?projectId=${projectId}`, {
         method: 'POST'
@@ -101,11 +153,8 @@ function toggleFavorite(projectId, buttonElement, event) {
             }
             return;
         }
-
         const countSpan = buttonElement.querySelector('.fav-count');
-        if (countSpan) {
-            countSpan.innerText = data.favoriteCount;
-        }
+        if (countSpan) countSpan.innerText = data.favoriteCount;
 
         if (data.isLiked) {
             buttonElement.classList.add('active');
@@ -113,58 +162,10 @@ function toggleFavorite(projectId, buttonElement, event) {
             buttonElement.classList.remove('active');
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('좋아요 처리 중 에러 발생:', error));
 }
 
-function restoreStateFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    if (urlParams.has('tab')) currentTab = urlParams.get('tab');
-    document.querySelectorAll('.tab-item').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('onclick').includes(currentTab)) btn.classList.add('active');
-    });
-
-    if (urlParams.has('scope')) currentScope = urlParams.get('scope');
-    document.querySelectorAll('.scope button').forEach(btn => {
-        btn.classList.remove('on');
-        if (btn.innerText.trim() === currentScope) btn.classList.add('on');
-    });
-
-    const categoryContainer = document.getElementById('categoryContainer');
-    if (categoryContainer) {
-        if (currentScope === '교내' || currentScope === 'CAMPUS') {
-            categoryContainer.innerHTML = `
-                <input type="checkbox" id="c1" value="공모전"><label for="c1">공모전</label>
-                <input type="checkbox" id="c2" value="학과"><label for="c2">학과</label>
-                <input type="checkbox" id="c3" value="교양"><label for="c3">교양</label>
-                <input type="checkbox" id="c4" value="교내활동"><label for="c4">교내활동</label>
-            `;
-        } else {
-            categoryContainer.innerHTML = `
-                <input type="checkbox" id="c1" value="공모전"><label for="c1">공모전</label>
-                <input type="checkbox" id="c2" value="사이드 프로젝트"><label for="c2">사이드 프로젝트</label>
-            `;
-        }
-    }
-
-    const paramCategories = urlParams.has('categories') ? urlParams.get('categories').split(',') : ['공모전','학과','교양','교내활동','사이드 프로젝트'];
-    document.querySelectorAll('#categoryContainer input').forEach(el => {
-        if (paramCategories.includes(el.value)) el.checked = true;
-    });
-
-    const paramGrades = urlParams.has('grades') ? urlParams.get('grades').split(',') : ['ALL'];
-    document.querySelectorAll('.filters .flt:not(#categoryContainer) input').forEach(el => {
-        if (paramGrades.includes(el.value)) el.checked = true;
-        else el.checked = false;
-    });
-
-    if (urlParams.has('keyword')) {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = urlParams.get('keyword');
-    }
-}
-
+// 마감일에 따른 D-Day 계산 및 상태 배지 갱신 함수
 function updateDdayAndStatus() {
     const cards = document.querySelectorAll('.card-item');
     const today = new Date();
@@ -196,62 +197,67 @@ function updateDdayAndStatus() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    restoreStateFromURL();
+// 페이지 로드 시 URL 파라미터 상태를 UI에 복원하는 초기화 블록
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentScope = '교내';
+
+    // 매칭 범위 복원
+    if (urlParams.has('matchScope')) {
+        currentScope = urlParams.get('matchScope');
+        document.querySelectorAll('.scope button').forEach(b => {
+            if (b.innerText.trim() === currentScope) b.classList.add('on');
+            else b.classList.remove('on');
+        });
+    }
+    renderCategoriesByScope(currentScope);
+
+    // 상단 탭 복원
+    if (urlParams.has('tab')) {
+        const currentTab = urlParams.get('tab');
+        const tabInput = document.querySelector('input[name="tab"]');
+        if (tabInput) tabInput.value = currentTab;
+        
+        document.querySelectorAll('.tab-item').forEach(btn => {
+            btn.classList.remove('active');
+            if ((currentTab === 'all' && btn.innerText.trim() === '전체') ||
+                (currentTab === 'RECRUITING' && btn.innerText.trim() === '모집중') ||
+                (currentTab === 'CLOSED' && btn.innerText.trim() === '모집마감')) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    // 카테고리 체크 상태 복원
+    if (urlParams.has('categoryList')) {
+        const urlCategories = urlParams.get('categoryList').split(',');
+        document.querySelectorAll('input[id^="c"]').forEach(cb => {
+            cb.checked = urlCategories.includes(cb.value);
+        });
+    }
+
+    // 학년 체크 상태 복원
+    if (urlParams.has('gradeList')) {
+        const urlGrades = urlParams.get('gradeList').split(',');
+        document.querySelectorAll('input[id^="y"]').forEach(cb => {
+            cb.checked = urlGrades.includes(cb.value);
+        });
+    }
+
     updateDdayAndStatus();
 
-    document.querySelectorAll('.filters input[type="checkbox"]').forEach(el => {
-        el.addEventListener('change', handleFilterChange);
+    // 검색 폼 전송 이벤트 연결
+    const searchForm = document.querySelector('.searchbar form');
+    if(searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            submitSearch(1);    
+        });
+    }
+
+    // 필터 체크박스 변경 이벤트 연결
+    const checkboxes = document.querySelectorAll('.flt input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', handleFilterChange);
     });
 });
-// 목록 페이지용 좋아요(관심등록) 토글 함수
-function toggleFavorite(projectId, buttonElement, event) {
-    // 이벤트 전파를 완벽하게 차단하여 카드 전체 링크(상세페이지 이동)가 실행되지 않도록 막음
-    if (event) {
-        event.stopPropagation();
-        if (typeof event.stopImmediatePropagation === 'function') {
-            event.stopImmediatePropagation();
-        }
-    }
-    
-    fetch(`${ctx}/project/favorite/toggle?projectId=${projectId}`, {
-        method: 'POST'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'FAIL') {
-            alert(data.message);
-            if (data.message && data.message.includes('로그인')) {
-                location.href = `${ctx}/auth/login`;
-            }
-            return;
-        }
-
-        // 좋아요 카운트 텍스트 갱신
-        const countSpan = buttonElement.querySelector('.fav-count');
-        if (countSpan) {
-            countSpan.innerText = data.favoriteCount;
-        }
-
-        // 하트 채우기 클래스 토글
-        if (data.isLiked) {
-            buttonElement.classList.add('active');
-        } else {
-            buttonElement.classList.remove('active');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-// 정렬 탭을 눌렀을 때 실행되는 함수
-    function changeSort(sortType) {
-        // 현재 URL의 파라미터들을 가져옴 (검색어, 카테고리 등 기존 필터 유지용)
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        // 정렬 값 변경
-        urlParams.set('sort', sortType);
-        // 정렬이 바뀌면 1페이지부터 다시 보도록 page 값 초기화
-        urlParams.set('page', 1); 
-        
-        // 변경된 URL로 이동
-        window.location.search = urlParams.toString();
-    }

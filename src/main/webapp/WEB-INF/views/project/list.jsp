@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로젝트 찾기</title>
+    <title>프로젝트 찾기 - 다모여</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
 
       <div class="board">
         
-        <!-- 1. 상단 헤더 영역 (탭, 검색바) -->
+        <!-- 상단 헤더 영역 (탭) -->
         <div class="board-header">
           <div class="board-tabs">
             <div class="tab-group">
@@ -34,16 +34,9 @@
               <button type="button" class="tab-item" onclick="filterTab('CLOSED')">모집마감</button>
             </div>
           </div>
-
-          <div class="board-top-actions">
-            <div class="searchbar" style="margin-bottom: 0;">
-              <input type="text" id="searchInput" placeholder="제목, 소개, 태그로 검색 (예: 캡스톤, Spring, 데이터 분석)">
-            </div>
-            <button type="button" class="btn pri" onclick="filterProjects()">검색</button>
-          </div>
         </div>
 
-        <!-- 2. 좌측 필터 사이드바 -->
+        <!-- 좌측 필터 사이드바 -->
         <aside class="filters">
           <h3>매칭 범위</h3>
           <div class="scope">
@@ -53,7 +46,6 @@
 
           <h3>카테고리</h3>
           <div class="flt" id="categoryContainer">
-            <!-- 디폴트(교내 선택 시): 공모전, 학과, 교양, 교내활동 모두 체크 -->
             <input type="checkbox" id="c1" value="공모전" checked><label for="c1">공모전</label>
             <input type="checkbox" id="c2" value="학과" checked><label for="c2">학과</label>
             <input type="checkbox" id="c3" value="교양" checked><label for="c3">교양</label>
@@ -70,39 +62,53 @@
           </div>
         </aside>
 
-        <!-- 3. 우측 리스트 영역 -->
+        <!-- 우측 리스트 영역 -->
         <div class="list-section">
           
-          <div class="list-sort-header">
-            <div class="sort-options" style="display: flex; gap: 12px; margin-bottom: 20px;">
-                <button type="button" class="btn-sort ${empty currentSort or currentSort == 'latest' ? 'active' : ''}" onclick="changeSort('latest')">최신순</button>
-                <button type="button" class="btn-sort ${currentSort == 'recommend' ? 'active' : ''}" onclick="changeSort('recommend')">추천순</button>
-                <c:if test="${param.tab ne 'CLOSED'}">
-                  <button type="button" class="btn-sort ${currentSort == 'deadline' ? 'active' : ''}" onclick="changeSort('deadline')">마감임박순</button>
-                </c:if>
-                <button type="button" class="btn-sort ${currentSort == 'likes' ? 'active' : ''}" onclick="changeSort('likes')">좋아요순</button>
-            </div>
-            
-            <!-- 내 관심등록 버튼 (토글 및 색상 상태 반영) -->
-            <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
-                <c:choose>
-                    <c:when test="${isFavoriteView}">
-                        <a class="btn ghost sm active" 
-                           style="background-color: var(--ink); color: #fff; border-color: var(--ink);"
-                           href="${ctx}/project/list">
-                            ⭐ 내 관심등록 보기 중
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a class="btn ghost sm" href="${ctx}/project/list?view=favorite">
-                            ⭐ 내 관심등록
-                        </a>
-                    </c:otherwise>
-                </c:choose>
-                <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
-            </div>
+          <!-- 검색 바 -->
+          <div class="searchbar" style="margin-bottom: 24px;">
+              <form action="${ctx}/project/list" method="get" style="display: flex; width: 100%; gap: 10px;">
+                  <input type="hidden" name="tab" value="${param.tab != null ? param.tab : 'all'}">
+                  <input type="hidden" name="sort" value="${currentSort}">
+                  <input type="text" name="keyword" value="${param.keyword}" placeholder="관심 분야·기술·소개로 검색 (예: Spring, 디자인)" style="flex: 1;">
+                  <button type="submit" class="btn pri">검색</button>
+              </form>
           </div>
 
+          <!-- 정렬 메뉴 & 우측 액션 버튼 -->
+          <div class="list-sort-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 24px;">
+              
+              <!-- 정렬 메뉴 -->
+              <div class="list-sort">
+                  <button type="button" class="sort-btn ${empty currentSort or currentSort == 'latest' ? 'active' : ''}" onclick="changeSort('latest')">최신순</button>
+                  <button type="button" class="sort-btn ${currentSort == 'recommend' ? 'active' : ''}" onclick="changeSort('recommend')">추천순</button>
+                  <c:if test="${param.tab ne 'CLOSED'}">
+                    <button type="button" class="sort-btn ${currentSort == 'deadline' ? 'active' : ''}" onclick="changeSort('deadline')">마감임박순</button>
+                  </c:if>
+                  <button type="button" class="sort-btn ${currentSort == 'likes' ? 'active' : ''}" onclick="changeSort('likes')">좋아요순</button>
+              </div>
+
+              <!-- 내 관심등록 & 글쓰기 버튼 -->
+              <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
+                  <c:choose>
+                      <c:when test="${isFavoriteView}">
+                          <a class="btn ghost sm active" 
+                             style="background-color: var(--ink); color: #fff; border-color: var(--ink);"
+                             href="${ctx}/project/list">
+                              ⭐ 내 관심등록 보기 중
+                          </a>
+                      </c:when>
+                      <c:otherwise>
+                          <a class="btn ghost sm" href="${ctx}/project/list?view=favorite">
+                              ⭐ 내 관심등록
+                          </a>
+                      </c:otherwise>
+                  </c:choose>
+                  <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
+              </div>
+          </div>
+
+          <!-- 프로젝트 카드 목록 -->
           <div class="project-list">
             <c:forEach var="project" items="${projectList}">
               
@@ -119,9 +125,9 @@
                   <c:set var="catClass" value="cat-liberal" />
                   <c:set var="catName" value="교양" />
                 </c:when>
-                <c:when test="${project.category eq '사이드 프로젝트' or project.category eq 'SIDE_PROJECT'}">
+                <c:when test="${project.category eq '사이드 프로젝트' or project.category eq 'SIDE_PROJECT' or project.category eq '사이드프로젝트'}">
                   <c:set var="catClass" value="cat-side" />
-                  <c:set var="catName" value="사이드 프로젝트" />
+                  <c:set var="catName" value="사이드프로젝트" />
                 </c:when>
                 <c:otherwise>
                   <c:set var="catClass" value="cat-club" />
@@ -129,13 +135,14 @@
                 </c:otherwise>
               </c:choose>
 
+              <!-- 💡 툴팁: 클릭 시 현재 검색/필터 쿼리스트링을 통째로 들고 상세페이지로 이동 -->
               <div class="card-item" 
               data-match="${project.matchScope}"
               data-category="${catName}"
               data-grade="${project.targetGrade}"
               data-status="${project.status}"
               data-end-date="${project.endDate}"
-              onclick="location.href='${ctx}/project/detail?id=${project.projectId}'" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
+              onclick="location.href='${ctx}/project/detail?id=${project.projectId}&' + window.location.search.substring(1)" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
                 
                 <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
@@ -173,21 +180,22 @@
                   </div>
                   <div class="stats" style="display: flex; align-items: center; gap: 12px;">
                       
-                      <!-- 1. 관심(하트) 버튼 -->
+                      <!-- 관심 버튼 -->
                       <button type="button" class="btn-favorite ${project.liked ? 'active' : ''}" style="font-size: 13px; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleFavorite(${project.projectId}, this, event)">
                           <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 
                           <span class="fav-count">${project.favoriteCount}</span>
                       </button>
                       
-                      <!-- 2. 조회수 -->
+                      <!-- 조회수 -->
                       <span style="display: inline-flex; align-items: center; gap: 4px;">
                           <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${project.viewCount}
                       </span>
                       
-                      <!-- 3. 댓글 수 -->
+                      <!-- 댓글 수 -->
                       <span style="display: inline-flex; align-items: center; gap: 4px;">
                           <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 
-                      </span>${project.commentCount}
+                          ${project.commentCount}
+                      </span>
                       
                   </div>
                 </div>
@@ -215,7 +223,7 @@
                     </li>
                 </c:if>
             
-                <!-- 페이지 번호 1, 2, 3... -->
+                <!-- 페이지 번호 -->
                 <c:forEach begin="${pageBean.min}" end="${pageBean.max}" var="pageNum">
                     <li class="page-item ${pageNum == pageBean.currentPage ? 'active' : ''}">
                         <a class="page-link" href="#" onclick="submitSearch(${pageNum}); return false;" 
@@ -245,12 +253,12 @@
 
   <jsp:include page="../includes/footer.jsp" />
   
-  <script src="${ctx}/resources/js/projectList.js"></script>
   <script>
     const ctx = '${pageContext.request.contextPath}';
     <c:if test="${not empty msg}">
         alert("${msg}");
     </c:if>
   </script>
+  <script src="${ctx}/resources/js/projectList.js"></script>
 </body>
 </html>

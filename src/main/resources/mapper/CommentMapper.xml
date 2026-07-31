@@ -6,6 +6,7 @@
     <resultMap id="commentResultMap" type="com.soldesk.vo.CommentVO">
         <id property="comment_id" column="comment_id" />
         <result property="project_id" column="project_id" />
+        <result property="post_id" column="post_id" />
         <result property="member_id" column="member_id" />
         <result property="content" column="content" />
         <result property="created_at" column="created_at" />
@@ -26,6 +27,9 @@
         WHERE c.project_id = #{project_id}
         ORDER BY c.created_at DESC
     </select>
+
+
+    
     <!-- 댓글 수정 (본인 댓글만 수정 가능) -->
     <update id="updateComment" parameterType="com.soldesk.vo.CommentVO">
         UPDATE comment
