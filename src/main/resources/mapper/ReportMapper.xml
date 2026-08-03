@@ -34,7 +34,7 @@
         ORDER BY created_at DESC
     </select>
     <!-- 프로젝트의 모든 신고 삭제 -->
-    <delete id="deleteReport" parameterType="java.lang.Long">
+    <delete id="deleteReport">
         DELETE FROM report WHERE target_type = #{targetType} AND target_id = #{targetId}
     </delete>
 
