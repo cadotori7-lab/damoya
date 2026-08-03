@@ -82,4 +82,24 @@
     <select id="getMemberById" resultType="com.soldesk.vo.MemberVO" parameterType="long">
     SELECT * FROM member WHERE member_id = #{memberId}
     </select>
+    <!-- 공개 프로필 조회 -->
+    <select id="selectPublicProfile" resultType="com.soldesk.vo.PublicProfileVO">
+        SELECT
+        m.member_id            AS memberId,
+        m.name                 AS name,
+        d.dept_name            AS deptName,
+        m.grade                AS grade,
+        m.major                AS major,
+        m.intro                AS intro,
+        m.approved             AS approved,
+        m.profile_public       AS isPublic,
+        (mt.member_id IS NOT NULL) AS isMentor,
+        mt.field               AS field,
+        mt.career              AS career
+        FROM member m
+        LEFT JOIN univ_department d ON d.dept_id = m.dept_id
+        LEFT JOIN mentor mt         ON mt.member_id = m.member_id
+    WHERE m.member_id = #{memberId}
+        AND m.account_status &lt;&gt; 'WITHDRAWN'   <!-- 탈퇴 회원은 조회 안 됨 -->
+</select>
 </mapper>

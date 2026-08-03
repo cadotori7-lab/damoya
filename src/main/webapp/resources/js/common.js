@@ -55,3 +55,87 @@ document.addEventListener('click', function (e) {
   var closeId = e.target.closest ? e.target.closest('[data-modal-close]') : null;
   if (closeId) { closeModal(closeId.getAttribute('data-modal-close')); }
 });
+
+var PV_CTX = (typeof window.CTX !== 'undefined') ? window.CTX : '';
+ 
+function openProfile(memberId) {
+  // 로딩 상태로 모달 먼저 연다 (반응 빠르게)
+  document.getElementById('pvLoading').style.display = '';
+  document.getElementById('pvContent').style.display = 'none';
+  openModal('profileViewModal');
+ 
+  fetch(PV_CTX + '/members/' + memberId + '/profile')
+    .then(function (res) {
+      if (!res.ok) throw new Error('not found');
+      return res.json();
+    })
+    .then(function (m) {
+      fillProfile(m);
+    })
+    .catch(function () {
+      document.getElementById('pvLoading').textContent = '프로필을 불러올 수 없어요.';
+    });
+}
+ 
+function fillProfile(m) {
+  // 아바타 = 이름 첫 글자
+  var avatar = document.getElementById('pvAvatar');
+  avatar.textContent = m.name ? m.name.substring(0, 1) : '?';
+ 
+  document.getElementById('pvName').textContent = m.name || '';
+ 
+  // 학과 · 학년 (없을 수 있음)
+  var subParts = [];
+  if (m.deptName) subParts.push(m.deptName);
+  if (m.grade) subParts.push(m.grade + '학년');
+  if (m.major) subParts.push(m.major);
+  document.getElementById('pvSub').textContent = subParts.join(' · ');
+ 
+  // 배지
+  var badges = '';
+  if (m.mentor)  badges += '<span class="b">🧭 멘토</span>';
+  if (m.approved) badges += '<span class="b">✓ 학교 인증됨</span>';
+  document.getElementById('pvBadges').innerHTML = badges;
+ 
+  // 비공개면 상세를 숨기고 안내만
+  var introWrap  = document.getElementById('pvIntroWrap');
+  var mentorWrap = document.getElementById('pvMentorWrap');
+  var privateBox = document.getElementById('pvPrivate');
+ 
+  if (m.public === false) {
+    introWrap.style.display = 'none';
+    mentorWrap.style.display = 'none';
+    privateBox.style.display = '';
+  } else {
+    privateBox.style.display = 'none';
+ 
+    // 소개글
+    if (m.intro) {
+      document.getElementById('pvIntro').textContent = m.intro;
+      introWrap.style.display = '';
+    } else {
+      introWrap.style.display = 'none';
+    }
+ 
+    // 멘토 전용
+    if (m.mentor) {
+      document.getElementById('pvField').textContent = m.field || '-';
+      if (m.career) {
+        document.getElementById('pvCareer').textContent = m.career;
+        document.getElementById('pvCareerLabel').style.display = '';
+      } else {
+        document.getElementById('pvCareer').textContent = '';
+        document.getElementById('pvCareerLabel').style.display = 'none';
+      }
+      mentorWrap.style.display = '';
+    } else {
+      mentorWrap.style.display = 'none';
+    }
+  }
+ 
+  // 로딩 → 내용 전환
+  document.getElementById('pvLoading').style.display = 'none';
+  document.getElementById('pvContent').style.display = '';
+}
+ 
+window.openProfile = openProfile;

@@ -1165,3 +1165,13 @@ nav.main a.on {                 /* 현재 페이지 강조 */
 .account-zone .az-text{flex:1;min-width:0}
 .account-zone .az-text b{display:block;font-size:15px;font-weight:800;color:var(--ink)}
 .account-zone .az-text span{font-size:13px;color:var(--ink-soft)}
+
+.pv-body{padding:20px 24px;overflow-y:auto}
+.pv-head{text-align:center;padding:8px 0 4px}
+.pv-avatar{width:72px;height:72px;border-radius:20px;margin:0 auto 14px;display:grid;place-items:center;font-size:30px;font-weight:800;color:#fff;background:linear-gradient(135deg,#2b46c8,#5b45c8)}
+.pv-head h3{font-size:20px;font-weight:800;margin-bottom:6px}
+.pv-sub{font-size:13.5px;color:var(--ink-soft)}
+.pv-badges{margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.pv-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.pv-label{font-size:12px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.pv-section p{font-size:14px;line-height:1.65;color:#33405e}

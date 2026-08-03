@@ -77,7 +77,9 @@
             <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">${fn:length(commentList)}</span></h5>
             <c:forEach var="comment" items="${commentList}">
               <div class="cmt" data-comment-id="${comment.comment_id}">
-                <div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">${comment.memberName.substring(0, 1)}</div>
+                <div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">
+                  <a href="#" style="color:inherit;text-decoration:none" onclick="openProfile(${comment.member_id}); return false;">${comment.memberName.substring(0, 1)}</a>
+                </div>
                 <div class="body">
                   <div class="nm">
                     ${comment.memberName} <span>${comment.created_at}</span>
@@ -257,6 +259,7 @@
 
   <jsp:include page="apply_form.jsp" />
   <jsp:include page="../includes/footer.jsp" />
+  <jsp:include page="../includes/profile-view-modal.jsp" />
   
   <script>
       const ctx = '${pageContext.request.contextPath}';
@@ -266,5 +269,6 @@
   </script>
   
   <script src="${ctx}/resources/js/detail.js"></script>
+  <script src="${ctx}/resources/js/common.js"></script>
 </body>
 </html>
