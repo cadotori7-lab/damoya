@@ -28,4 +28,14 @@ public class ReportService {
         reportMapper.deleteReport(targetType, targetId);
     }
 
+    @Transactional(readOnly = true)
+    public List<ReportVO> getReportsByTargetType(String targetType) {
+        return reportMapper.getReportsByTargetType(targetType);
+    }
+
+    @Transactional
+    public void updateReportStatusByTarget(String targetType, Long targetId, String status) {
+        reportMapper.updateReportStatusByTarget(targetType, targetId, status);
+    }
+
 }

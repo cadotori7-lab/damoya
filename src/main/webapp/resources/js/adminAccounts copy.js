@@ -28,10 +28,6 @@ const accs = (members || []).map(member => {
   const status = (member.account_status || '').toUpperCase();
   const role = roleLabel[member.role] || member.role || '';
   const school = [member.univ_name, member.dept_name].filter(Boolean).join(' · ') || '—';
-  const isMentor = (member.role || '').toUpperCase() === 'MENTOR';
-  const approved = !!member.approved;
-  const displayStatus = statusKey[status] || status.toLowerCase();
-
   return {
     memberId: member.member_id,
     n: member.name || '',
@@ -39,10 +35,7 @@ const accs = (members || []).map(member => {
     sch: school,
     role: role,
     date: formatDate(member.created_at),
-    status: displayStatus,
-    needsApprove: isMentor && !approved
-      && displayStatus !== 'suspended'
-      && displayStatus !== 'withdrawn',
+    status: statusKey[status] || status.toLowerCase(),
     c: statusColor[status] || '#888'
   };
 });
@@ -50,8 +43,7 @@ const accs = (members || []).map(member => {
 const stChip = {
   active: '<span class="chip approve">정상</span>',
   suspended: '<span class="chip reject">정지</span>',
-  withdrawn: '<span class="chip">탈퇴</span>',
-  pending: '<span class="chip wait">승인대기</span>'
+  withdrawn: '<span class="chip">탈퇴</span>'
 };
 
 function escapeHtml(value) {
@@ -79,10 +71,7 @@ function renderAction(a) {
   if (a.role === '관리자') {
     return '<span style="color:var(--ink-soft);font-size:12.5px">—</span>';
   }
-  if (a.needsApprove) {
-    return actionForm('approve', a.memberId, '승인', 'pri');
-  }
-  if (a.status === 'active' || a.status === 'pending') {
+  if (a.status === 'active') {
     return actionForm('suspend', a.memberId, '계정 정지', 'ghost');
   }
   if (a.status === 'suspended') {
@@ -90,6 +79,9 @@ function renderAction(a) {
   }
   if (a.status === 'withdrawn') {
     return '<span style="color:var(--ink-soft);font-size:12.5px">탈퇴</span>';
+  }
+  if (a.status === 'pending') {
+    return actionForm('suspend', a.memberId, '계정 정지', 'ghost');
   }
   return '<span style="color:var(--ink-soft);font-size:12.5px">—</span>';
 }
@@ -117,4 +109,5 @@ if (!accs.length) {
       <td>${renderAction(a)}</td>
     </tr>`;
     }).join('');
+
 }

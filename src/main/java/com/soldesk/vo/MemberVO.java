@@ -17,6 +17,11 @@ public class MemberVO {
    private boolean profile_public; // 프로필 공개 여부
    private String password_confirm; // 비밀번호 확인
 
+    // 학교 정보 필드
+    private String univ_name; // 대학 이름
+    private String dept_name; // 학과 이름
+    private String created_at; // 가입일
+
    //oauth 관련 필드
    private String provider; // OAuth2 제공자
    private String provider_id; // OAuth2 제공자에서 제공하는 사용자 ID
@@ -128,4 +133,22 @@ public class MemberVO {
         this.provider_id = provider_id;
     }
 
+    public String getUniv_name() {
+        return univ_name;
+    }
+    public void setUniv_name(String univ_name) {
+        this.univ_name = univ_name;
+    }
+    public String getDept_name() {
+        return dept_name;
+    }
+    public void setDept_name(String dept_name) {
+        this.dept_name = dept_name;
+    }
+    public String getCreated_at() {
+        return created_at;
+    }
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
 }

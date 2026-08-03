@@ -34,7 +34,8 @@
     </bean>
     <!-- 트랜잭션 어노테이션 활성화 --> 
     <tx:annotation-driven transaction-manager="transactionManager" />
-    
 
+    <!-- Jackson ObjectMapper -->
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 
 </beans>

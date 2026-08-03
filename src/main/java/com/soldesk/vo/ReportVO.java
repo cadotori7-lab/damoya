@@ -11,6 +11,12 @@ public class ReportVO{
     private String status;
     private LocalDateTime createdAt;
 
+    private String memberName;
+    private String projectTitle;
+    private String projectCategory;
+    private String projectStatus;
+    private String projectCreatedAt;
+
     public Long getReportId() {
         return reportId;
     }
@@ -65,6 +71,46 @@ public class ReportVO{
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
+    public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
+
+    public String getProjectCategory() {
+        return projectCategory;
+    }
+
+    public void setProjectCategory(String projectCategory) {
+        this.projectCategory = projectCategory;
+    }
+
+    public String getProjectStatus() {
+        return projectStatus;
+    }
+
+    public void setProjectStatus(String projectStatus) {
+        this.projectStatus = projectStatus;
+    }
+
+    public String getProjectCreatedAt() {
+        return projectCreatedAt;
+    }
+
+    public void setProjectCreatedAt(String projectCreatedAt) {
+        this.projectCreatedAt = projectCreatedAt;
     }
 
 }

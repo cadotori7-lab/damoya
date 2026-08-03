@@ -11,5 +11,10 @@ public interface ReportMapper {
     public void addReport(ReportVO reportVO);
     public List<ReportVO> getReportsByTarget(@Param("targetType") String targetType, @Param("targetId") Long targetId);
     public void deleteReport(@Param("targetType") String targetType, @Param("targetId") Long targetId);
+    public List<ReportVO> getReportList();
+    public List<ReportVO> getReportsByTargetType(@Param("targetType") String targetType);
+    public void updateReportStatusByTarget(@Param("targetType") String targetType,
+                                           @Param("targetId") Long targetId,
+                                           @Param("status") String status);
 
 }

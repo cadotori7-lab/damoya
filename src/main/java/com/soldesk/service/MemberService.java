@@ -1,6 +1,9 @@
 package com.soldesk.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +12,7 @@ import com.soldesk.mapper.MemberMapper;
 import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
+import com.soldesk.vo.PageBean;
 import com.soldesk.vo.PublicProfileVO;
 
 @Service
@@ -23,9 +27,11 @@ public class MemberService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${pagination.size}")
+    private int paginationSize;
+
     @Transactional
     public void registerMember(MemberVO member) { //회원가입
-
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberMapper.registerMember(member);
     }
@@ -130,6 +136,29 @@ public class MemberService {
     @Transactional
     public MemberVO getMemberById(Long memberId) {
         return memberMapper.getMemberById(memberId);
+    }
+    // 관리자 계정 목록 조회
+    @Transactional(readOnly = true)
+    public List<MemberVO> getAllMembers(int page, String search, String status, String role) {
+        int offset = Math.max(page - 1, 0) * paginationSize;
+        List<MemberVO> members = memberMapper.getAllMembers(search, status, role, paginationSize, offset);
+        for (MemberVO member : members) {
+            member.setPassword(null);
+            member.setPassword_confirm(null);
+            // mentor 테이블에 있으면 화면/필터 기준으로 MENTOR 역할로 표시
+            if (!"ADMIN".equalsIgnoreCase(member.getRole())
+                    && mentorMapper.selectMentorById(member.getMember_id()) > 0) {
+                member.setRole("MENTOR");
+            }
+        }
+        return members;
+    }
+
+    // 관리자 계정 목록 페이징
+    @Transactional(readOnly = true)
+    public PageBean getPageBean(int page, String search, String status, String role) {
+        int memberCount = memberMapper.getMemberCount(search, status, role);
+        return new PageBean(page, memberCount, paginationSize);
     }
 
     public PublicProfileVO findPublicProfile(int memberId) {

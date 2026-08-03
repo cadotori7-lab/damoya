@@ -248,6 +248,10 @@
         where project_id = #{projectId}
     </update>
 
+    <!-- 상태별 프로젝트 수 -->
+    <select id="countByStatus" resultType="long" parameterType="string">
+        SELECT COUNT(*) FROM project WHERE status = #{status}
+    </select>
     <!-- 추천순 게시글 3개 조회 -->
     <select id="getTop3RecommendedProjects" resultMap="projectResultMap">
         SELECT *

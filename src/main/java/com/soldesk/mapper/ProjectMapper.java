@@ -22,4 +22,6 @@ public interface ProjectMapper {
     List<ProjectVO> getFavoriteProjectsByMemberId(Long memberId);
     void increaseViewCount(Long projectId); //게시글 조회수 반환
     List<ProjectVO> getTop3RecommendedProjects(); // 추천순 게시글 3개 조회
+    long countByStatus(String status); // 상태별 프로젝트 수
+
 }
