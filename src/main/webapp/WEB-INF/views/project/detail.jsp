@@ -127,7 +127,11 @@
             <div class="bar"><span style="width:50%"></span></div>
               <div class="team-need mono" style="font-size:12px;color:var(--ink-soft)">팀원 ${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</div>            
               <div class="lead">
-              <div class="pic">${fn:substring(owner.name, 0, 1)}</div>
+              <div class="pic">
+                <a href="#" style="color:inherit;text-decoration:none" onclick="openProfile(${owner.member_id}); return false;">
+                  ${fn:substring(owner.name, 0, 1)}
+                </a>
+              </div>
               
               <!-- 접속자가 아닌 '글 작성자(owner)'의 정보가 뜨도록 수정 -->
               <div class="nm">${owner.name} <small>팀장 · ${owner.major} ${owner.grade} 학년</small></div>
