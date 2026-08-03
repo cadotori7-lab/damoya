@@ -102,6 +102,11 @@ public class TaskBoardController {
         );
 
         model.addAttribute(
+            "teamMembers",
+            participationService.selectTaskMembers(project_id)
+        );
+
+        model.addAttribute(
             "currentMemberId",
             loginMember != null
             ? loginMember.getMember_id()

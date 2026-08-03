@@ -36,6 +36,9 @@
         <result property="member_name"
                 column="member_name"/>
 
+        <result property="member_major"
+                column="member_major"/>
+
     </resultMap>
 
     <!-- 업무 담당자로 선택 가능한 프로젝트 참여자 -->
@@ -51,7 +54,8 @@
             p.succession_order,
             p.contribution,
             p.applied_at,
-            m.name AS member_name
+            m.name AS member_name,
+            m.major AS member_major
 
         FROM participation p
 

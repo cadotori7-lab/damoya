@@ -32,6 +32,15 @@ const TASKS = Array.from(
     .trim()
 }));
 
+const TEAM_MEMBERS = Array.from(
+  document.querySelectorAll("#teamMemberData .member-source")
+).map(element => ({
+  id: Number(element.dataset.memberId),
+  projectRole: element.dataset.projectRole,
+  name: element.querySelector(".member-name").textContent.trim(),
+  major: element.querySelector(".member-major").textContent.trim()
+}));
+
 const COLUMNS = [
   {
     status: "ONGOING",
@@ -73,7 +82,17 @@ const STATUS_CHIP = {
   APPROVED: "approve"
 };
 
+const MEMBER_COLORS = [
+  "#2b46c8",
+  "#0f9d8c",
+  "#8256e0",
+  "#c98a12",
+  "#d1435b",
+  "#2878b5"
+];
+
 let taskSearch = "";
+let activeTaskView = "all";
 const IS_LEADER =
   String(window.IS_LEADER).toLowerCase() === "true";
 
@@ -112,6 +131,41 @@ function getOriginalFileName(savedFileName) {
   );
 }
 
+function getMemberColor(memberId) {
+  const colorIndex = Math.abs(Number(memberId) || 0)
+    % MEMBER_COLORS.length;
+
+  return MEMBER_COLORS[colorIndex];
+}
+
+function getMemberInitial(name) {
+  return Array.from(String(name || "?").trim())[0] || "?";
+}
+
+function getMemberRoleLabel(member) {
+  const role = member.projectRole === "LEADER"
+    ? "팀장"
+    : "팀원";
+
+  return member.major
+    ? `${role} · ${member.major}`
+    : role;
+}
+
+function getAssigneeLabel(task) {
+  if (!task.assigneeId) {
+    return "담당자 미정";
+  }
+
+  const assignee = TEAM_MEMBERS.find(
+    member => member.id === Number(task.assigneeId)
+  );
+
+  return assignee && assignee.name
+    ? `${assignee.name}#${task.assigneeId}`
+    : `담당자 #${task.assigneeId}`;
+}
+
 function isDueSoon(date) {
   if (!date) {
     return false;
@@ -142,9 +196,15 @@ function matchesSearch(task, keyword) {
 function renderKanban() {
   const keyword = taskSearch.trim().toLowerCase();
 
-  const filteredTasks = TASKS.filter(task =>
-    matchesSearch(task, keyword)
-  );
+  const filteredTasks = TASKS.filter(task => {
+    const isMine =
+      Number(task.assigneeId) === Number(window.LOGIN_MEMBER_ID);
+
+    const matchesView =
+      activeTaskView !== "mine" || isMine;
+
+    return matchesView && matchesSearch(task, keyword);
+  });
 
   const kanban = document.getElementById("kanban");
 
@@ -168,7 +228,7 @@ function renderKanban() {
 
         <div class="task-foot">
           <span class="who-mini">
-            담당자 #${escapeHtml(task.assigneeId || "미정")}
+            ${escapeHtml(getAssigneeLabel(task))}
           </span>
 
           <span class="due${isDueSoon(task.dueDate) ? " soon" : ""}">
@@ -202,6 +262,235 @@ function renderKanban() {
       </div>
     `;
   }).join("");
+}
+
+function renderTeamPanel() {
+  const teamStats = document.getElementById("teamStats");
+  const teamMemberList = document.getElementById("teamMemberList");
+
+  if (!teamStats || !teamMemberList) {
+    return;
+  }
+
+  const countByStatus = status =>
+    TASKS.filter(task => task.status === status).length;
+
+  teamStats.innerHTML = `
+    <div class="mp-stat">
+      <div class="n mono" style="color:var(--accent)">
+        ${countByStatus("ONGOING")}
+      </div>
+      <div class="k">진행중</div>
+    </div>
+    <div class="mp-stat">
+      <div class="n mono" style="color:var(--wait)">
+        ${countByStatus("REVIEW")}
+      </div>
+      <div class="k">검수 대기</div>
+    </div>
+    <div class="mp-stat">
+      <div class="n mono" style="color:var(--reject)">
+        ${countByStatus("REJECTED")}
+      </div>
+      <div class="k">반려</div>
+    </div>
+    <div class="mp-stat">
+      <div class="n mono" style="color:var(--ok)">
+        ${countByStatus("APPROVED")}
+      </div>
+      <div class="k">승인 완료</div>
+    </div>
+  `;
+
+  if (TEAM_MEMBERS.length === 0) {
+    teamMemberList.innerHTML = `
+      <p class="team-member-empty">참여 중인 팀원이 없습니다.</p>
+    `;
+    return;
+  }
+
+  teamMemberList.innerHTML = TEAM_MEMBERS.map(member => {
+    const memberTasks = TASKS.filter(
+      task => Number(task.assigneeId) === member.id
+    );
+    const approvedCount = memberTasks.filter(
+      task => task.status === "APPROVED"
+    ).length;
+
+    return `
+      <div class="member-row clickable"
+           role="button"
+           tabindex="0"
+           onclick="openMember(${member.id})"
+           onkeydown="if(event.key === 'Enter') openMember(${member.id})">
+        <span class="pic"
+              style="background:${getMemberColor(member.id)}">
+          ${escapeHtml(getMemberInitial(member.name))}
+        </span>
+        <div class="mr-info">
+          <div class="nm">
+            ${escapeHtml(member.name || `팀원 #${member.id}`)}
+            <span class="role">
+              · ${escapeHtml(getMemberRoleLabel(member))}
+            </span>
+          </div>
+        </div>
+        <div class="mr-stat">
+          완료 <b>${approvedCount}</b> / 배정 ${memberTasks.length}
+        </div>
+        <svg class="chev" width="18" height="18"
+             viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" aria-hidden="true">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </div>
+    `;
+  }).join("");
+}
+
+function switchTaskView(view) {
+  if (!["all", "mine", "team"].includes(view)) {
+    return;
+  }
+
+  activeTaskView = view;
+
+  const isTeamView = view === "team";
+  const boardPanel = document.getElementById("boardPanel");
+  const teamPanel = document.getElementById("teamPanel");
+  const boardTools = document.getElementById("boardTools");
+  const searchInput = document.getElementById("taskSearch");
+
+  document
+    .querySelectorAll("#taskToggle button[data-p]")
+    .forEach(button => {
+      button.classList.toggle("on", button.dataset.p === view);
+    });
+
+  if (boardPanel) {
+    boardPanel.style.display = isTeamView ? "none" : "block";
+  }
+
+  if (teamPanel) {
+    teamPanel.style.display = isTeamView ? "block" : "none";
+  }
+
+  if (boardTools) {
+    boardTools.style.display = isTeamView ? "none" : "flex";
+  }
+
+  if (searchInput && !isTeamView) {
+    searchInput.placeholder = view === "mine"
+      ? "내 업무 검색 (업무명·설명)"
+      : "업무 검색 (업무명·설명)";
+  }
+
+  if (!isTeamView) {
+    renderKanban();
+  } else {
+    renderTeamPanel();
+  }
+}
+
+function openMember(memberId) {
+  const member = TEAM_MEMBERS.find(item => item.id === memberId);
+
+  if (!member) {
+    return;
+  }
+
+  const memberTasks = TASKS.filter(
+    task => Number(task.assigneeId) === member.id
+  );
+  const countByStatus = status =>
+    memberTasks.filter(task => task.status === status).length;
+
+  const memberModal = document.getElementById("memberModal");
+  const memberPicture = document.getElementById("mmPic");
+
+  document.getElementById("mmName").textContent =
+    member.name || `팀원 #${member.id}`;
+  document.getElementById("mmRole").textContent =
+    getMemberRoleLabel(member);
+
+  memberPicture.textContent = getMemberInitial(member.name);
+  memberPicture.style.background = getMemberColor(member.id);
+
+  document.getElementById("mmStats").innerHTML = `
+    <div class="ms">
+      <div class="n" style="color:var(--accent)">
+        ${countByStatus("ONGOING")}
+      </div>
+      <div class="k">진행중</div>
+    </div>
+    <div class="ms">
+      <div class="n" style="color:var(--wait)">
+        ${countByStatus("REVIEW")}
+      </div>
+      <div class="k">검수 대기</div>
+    </div>
+    <div class="ms">
+      <div class="n" style="color:var(--reject)">
+        ${countByStatus("REJECTED")}
+      </div>
+      <div class="k">반려</div>
+    </div>
+    <div class="ms">
+      <div class="n" style="color:var(--ok)">
+        ${countByStatus("APPROVED")}
+      </div>
+      <div class="k">승인 완료</div>
+    </div>
+  `;
+
+  const memberTaskList = document.getElementById("mmTasks");
+
+  memberTaskList.innerHTML = memberTasks.length === 0
+    ? `<p class="team-member-empty">배정된 업무가 없습니다.</p>`
+    : memberTasks.map(task => {
+      const column = COLUMNS.find(item => item.status === task.status);
+
+      return `
+        <div class="task-line clickable"
+             style="--cc:${column ? column.color : "var(--line)"}"
+             role="button"
+             tabindex="0"
+             onclick="openTaskFromMember(${task.id})"
+             onkeydown="if(event.key === 'Enter') openTaskFromMember(${task.id})">
+          <div class="tl-main">
+            <h4>${escapeHtml(task.name)}</h4>
+            <div class="tl-desc">
+              ${escapeHtml(task.description || "업무 설명이 없습니다.")}
+            </div>
+          </div>
+          <span class="chip ${STATUS_CHIP[task.status] || ""}">
+            ${escapeHtml(STATUS_LABEL[task.status] || task.status)}
+          </span>
+          <span class="due">
+            ~${escapeHtml(formatDueDate(task.dueDate))}
+          </span>
+        </div>
+      `;
+    }).join("");
+
+  memberModal.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMember() {
+  const memberModal = document.getElementById("memberModal");
+
+  if (memberModal) {
+    memberModal.classList.remove("on");
+  }
+
+  document.body.style.overflow = "";
+}
+
+function openTaskFromMember(taskId) {
+  closeMember();
+  openTask(taskId);
 }
 
 function openTask(taskId) {
@@ -328,7 +617,7 @@ function openTask(taskId) {
       </span>
 
       <span class="who-mini">
-        담당자 #${escapeHtml(task.assigneeId || "미정")}
+        ${escapeHtml(getAssigneeLabel(task))}
       </span>
 
       <span class="tm-sub mono">
@@ -469,12 +758,27 @@ window.onTaskSearch = value => {
   renderKanban();
 };
 
+const taskToggle = document.getElementById("taskToggle");
+
+if (taskToggle) {
+  taskToggle.addEventListener("click", event => {
+    const button = event.target.closest("button[data-p]");
+
+    if (button) {
+      switchTaskView(button.dataset.p);
+    }
+  });
+}
+
 window.openTask = openTask;
 window.closeTask = closeTask;
 window.openSubmit = openSubmit;
 window.closeSubmit = closeSubmit;
 window.openReject = openReject;
 window.closeReject = closeReject;
+window.openMember = openMember;
+window.closeMember = closeMember;
+window.openTaskFromMember = openTaskFromMember;
 
 const submitFileInput = document.getElementById("submitFile");
 const submitFileName = document.getElementById("submitFileName");
@@ -494,7 +798,8 @@ document.addEventListener("keydown", event => {
     closeTask();
     closeSubmit();
     closeReject();
+    closeMember();
   }
 });
 
-renderKanban();
+switchTaskView("all");

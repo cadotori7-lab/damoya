@@ -21,6 +21,7 @@ public class ParticipationVO {
 
     //join//
     private String member_name; // member 테이블 JOIN 조회용
+    private String member_major; // member 테이블 JOIN 조회용
 
     //get/set
     public Long getPart_id() {
@@ -93,5 +94,13 @@ public class ParticipationVO {
 
     public void setMember_name(String member_name) {
         this.member_name = member_name;
+    }
+
+    public String getMember_major() {
+        return member_major;
+    }
+
+    public void setMember_major(String member_major) {
+        this.member_major = member_major;
     }
 }

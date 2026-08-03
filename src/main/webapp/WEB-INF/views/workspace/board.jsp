@@ -35,9 +35,9 @@
     </c:if>
 
     <div class="seg-toggle" id="taskToggle">
-      <button class="on" data-p="all">전체 업무</button>
-      <button data-p="mine">내 업무</button>
-      <button data-p="team">팀 현황</button>
+      <button type="button" class="on" data-p="all">전체 업무</button>
+      <button type="button" data-p="mine">내 업무</button>
+      <button type="button" data-p="team">팀 현황</button>
     </div>
 
     <div class="proj-switch" id="boardTools" style="gap:10px">
@@ -94,37 +94,31 @@
   </c:forEach>
 </div>
 
+<!-- Controller에서 받은 실제 프로젝트 참여자 데이터 -->
+<div id="teamMemberData" hidden>
+  <c:forEach var="member" items="${teamMembers}">
+    <div class="member-source"
+         data-member-id="${member.member_id}"
+         data-project-role="${member.project_role}">
+      <span class="member-name">
+        <c:out value="${member.member_name}"/>
+      </span>
+      <span class="member-major">
+        <c:out value="${member.member_major}"/>
+      </span>
+    </div>
+  </c:forEach>
+</div>
+
 <div id="boardPanel">
   <div class="kanban" id="kanban"></div>
 </div>
 
-    <!-- 팀 현황 (팀장) -->
+    <!-- 팀 현황 -->
     <div id="teamPanel" style="display:none">
-      <div class="mp-stats">
-        <div class="mp-stat"><div class="n mono">12</div><div class="k">전체 업무</div></div>
-        <div class="mp-stat"><div class="n mono" style="color:var(--accent)">4</div><div class="k">진행중</div></div>
-        <div class="mp-stat"><div class="n mono" style="color:var(--wait)">1</div><div class="k">검수 대기</div></div>
-        <div class="mp-stat"><div class="n mono" style="color:var(--ok)">6</div><div class="k">승인 완료</div></div>
-      </div>
+      <div class="mp-stats" id="teamStats"></div>
       <div class="sec-label">팀원별 업무 현황 <span style="font-family:var(--sans);font-weight:500;color:var(--ink-soft);font-size:12px;text-transform:none;letter-spacing:0">· 이름을 누르면 담당 업무를 볼 수 있어요</span></div>
-      <div class="member-row clickable" onclick="openMember('이도현')" tabindex="0" onkeydown="if(event.key==='Enter')openMember('이도현')">
-        <span class="pic" style="background:#2b46c8">이</span>
-        <div class="mr-info"><div class="nm">이도현 <span class="role">· 백엔드</span></div></div>
-        <div class="mr-stat">완료 <b>3</b> / 배정 5</div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
-      <div class="member-row clickable" onclick="openMember('김민재')" tabindex="0" onkeydown="if(event.key==='Enter')openMember('김민재')">
-        <span class="pic" style="background:#2b46c8">민</span>
-        <div class="mr-info"><div class="nm">김민재 <span class="role">· 백엔드</span></div></div>
-        <div class="mr-stat">완료 <b>2</b> / 배정 4</div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
-      <div class="member-row clickable" onclick="openMember('서지우')" tabindex="0" onkeydown="if(event.key==='Enter')openMember('서지우')">
-        <span class="pic" style="background:#0f9d8c">서</span>
-        <div class="mr-info"><div class="nm">서지우 <span class="role">· 기획/디자인</span></div></div>
-        <div class="mr-stat">완료 <b>3</b> / 배정 3</div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
+      <div id="teamMemberList"></div>
     </div>
   </section>
   </main>
