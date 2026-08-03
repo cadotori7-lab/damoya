@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.NotificationMapper">
+
+    <resultMap id="notificationResultMap" type="com.soldesk.vo.NotificationVO">
+        <id property="noti_id" column="noti_id"/>
+        <result property="member_id" column="member_id"/>
+        <result property="kind" column="kind"/>
+        <result property="content" column="content"/>
+        <result property="is_read" column="is_read"/>
+        <result property="target_id" column="target_id"/>
+    </resultMap>
+
+    <!-- 알림 저장 -->
+    <insert id="insertNotification">
+        INSERT INTO notification (member_id, kind, content, is_read, target_id)
+        VALUES (#{param1}, #{param2}, #{param3}, FALSE, #{param4})
+    </insert>
+
+    <!-- 회원별 알림 조회 -->
+    <select id="selectNotificationsByMemberId" parameterType="java.lang.Long" resultMap="notificationResultMap">
+        SELECT * FROM notification WHERE member_id = #{member_id} ORDER BY noti_id DESC
+    </select>
+
+    <!-- 알림 읽음 처리 -->
+    <update id="updateNotificationReadStatus" parameterType="java.lang.Long">
+        UPDATE notification SET is_read = TRUE WHERE noti_id = #{noti_id}
+    </update>
+
+    <!-- 삭제 처리 -->
+    <delete id="deleteNotificationById" parameterType="java.lang.Long">
+        DELETE FROM notification WHERE noti_id = #{noti_id}
+    </delete>
+    <!-- 새 알림 수 조회 -->
+    <select id="countNotificationsByMemberId" parameterType="java.lang.Long" resultType="int">
+        SELECT COUNT(*) FROM notification WHERE member_id = #{member_id} AND is_read = FALSE
+    </select>
+
+</mapper>

@@ -28,7 +28,7 @@
     <div class="home-stats">
       <a class="hstat" href="${ctx}/project/my">
         <div class="ic a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-        <div><div class="n">3</div><div class="k">참여 중 프로젝트</div></div>
+        <div><div class="n">${participatingProjects.size()}</div><div class="k">참여 중 프로젝트</div></div>
       </a>
       <a class="hstat" href="${ctx}/workspace/overview">
         <div class="ic b"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
@@ -36,33 +36,31 @@
       </a>
       <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic c"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
-        <div><div class="n">2</div><div class="k">지원 진행 중</div></div>
+        <div><div class="n">${applicationProjects.size()}</div><div class="k">지원 진행 중</div></div>
       </a>
       <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-        <div><div class="n">3</div><div class="k">새 알림</div></div>
+        <div><div class="n">${notiCount}</div><div class="k">새 알림</div></div>
       </a>
     </div>
 
     <div class="ov-grid two">
       <!-- 이어서 할 프로젝트 -->
       <div class="ocard">
-        <div class="oc-head"><div class="t">이어서 할 프로젝트</div><button class="oc-more" onclick="go('myprojects')">전체 보기</button></div>
+        <div class="oc-head"><div class="t">이어서 할 프로젝트</div><a class="oc-more" href="${ctx}/project/my">전체 보기</a></div>
         <div class="psel-list">
-          <div class="psel-card" style="--c:var(--cat-contest);padding:16px 18px" onclick="go('overview')">
+        <c:if test="${participatingProjects.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">참여 중인 프로젝트가 없어요.</p>
+        </c:if>
+        <c:forEach var="project" items="${participatingProjects}">
+          <div class="psel-card" style="--c:var(--cat-${project.category});padding:16px 18px" onclick="location.href='${ctx}/workspace/${project.projectId}/overview'">
             <div class="psel-main">
-              <div class="psel-top"><span class="psel-cat">공모전</span><span class="psel-role lead">팀장</span></div>
-              <h3 style="font-size:15.5px">AI 헬스케어 웹서비스</h3>
+              <div class="psel-top"><span class="psel-cat">${project.category}</span><span class="psel-role ${project.projectRole}">${project.projectRole}</span></div>
+              <h3 style="font-size:15.5px">${project.title}</h3>
               <div class="psel-meta"><span>검수 대기 1건</span><span>D-24</span></div>
             </div>
           </div>
-          <div class="psel-card" style="--c:var(--cat-major);padding:16px 18px" onclick="go('overview')">
-            <div class="psel-main">
-              <div class="psel-top"><span class="psel-cat">학과</span><span class="psel-role member">팀원</span></div>
-              <h3 style="font-size:15.5px">데이터베이스 텀 프로젝트</h3>
-              <div class="psel-meta"><span>내 업무 2건</span><span>D-11</span></div>
-            </div>
-          </div>
+        </c:forEach>
         </div>
       </div>
 
@@ -85,41 +83,40 @@
     <div class="ov-grid two">
       <!-- 지원 현황 -->
       <div class="ocard">
-        <div class="oc-head"><div class="t">내 지원 현황</div><button class="oc-more" onclick="go('mypage')">전체 보기</button></div>
+        <div class="oc-head"><div class="t">내 지원 현황</div><a class="oc-more" href="${ctx}/mypage/index">전체 보기</a></div>
         <div class="home-appl">
-          <div class="ha">
-            <span class="rc-spine" style="width:4px;height:34px;border-radius:3px;background:var(--cat-club)"></span>
-            <div class="ha-main"><div class="tt">전국 대학생 연합 해커톤 참가팀</div><div class="ct">교내활동 · 지원 3일 전</div></div>
-            <span class="chip interview">면접 예정</span>
-          </div>
-          <div class="ha">
-            <span class="rc-spine" style="width:4px;height:34px;border-radius:3px;background:var(--cat-contest)"></span>
-            <div class="ha-main"><div class="tt">ESG 아이디어 공모전 파트너</div><div class="ct">공모전 · 지원 1일 전</div></div>
-            <span class="chip wait">승인 대기</span>
-          </div>
+          <c:if test="${applicationProjects.size() == 0}">
+            <p style="color:var(--ink-soft);padding:16px">지원 중인 프로젝트가 없어요.</p>
+          </c:if>
+          <c:forEach var="project" items="${applicationProjects}">
+            <c:choose>
+              <c:when test="${project.joinStatus == 'WAITING'}"><c:set var="statusClass" value="wait"/><c:set var="statusLabel" value="대기중"/></c:when>
+              <c:when test="${project.joinStatus == 'INTERVIEW'}"><c:set var="statusClass" value="interview"/><c:set var="statusLabel" value="면접중"/></c:when>
+              <c:when test="${project.joinStatus == 'JOINED'}"><c:set var="statusClass" value="approve"/><c:set var="statusLabel" value="참여중"/></c:when>
+              <c:when test="${project.joinStatus == 'REJECTED'}"><c:set var="statusClass" value="reject"/><c:set var="statusLabel" value="거절됨"/></c:when>
+              <c:otherwise><c:set var="statusClass" value="wait"/><c:set var="statusLabel" value="${project.joinStatus}"/></c:otherwise>
+            </c:choose>
+            <div class="ha" onclick="go('detail')">
+              <span class="rc-spine" style="width:4px;height:34px;border-radius:3px;background:var(--cat-${project.category})"></span>
+              <div class="ha-main"><div class="tt">${project.title}</div><div class="ct">${project.category}</div></div>
+              <span class="chip ${statusClass}">${statusLabel}</span>
+            </div>
+          </c:forEach>
         </div>
       </div>
-
       <!-- 추천 프로젝트 -->
       <div class="ocard">
-        <div class="oc-head"><div class="t">추천 공모</div><button class="oc-more" onclick="go('match')">더 보기</button></div>
-        <div class="home-reco">
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-major)"></span>
-            <div class="rc-main"><div class="tt">졸업작품 — Unity 게임 개발 팀원</div><div class="mt">학과 · 게임공학 · 2/3명 · D-3</div></div>
-            <span class="chip recruit">모집중</span>
+        <div class="oc-head"><div class="t">인기 프로젝트</div><button class="oc-more" onclick="go('match')">더 보기</button></div>
+        <c:if test="${top3RecommendedProjects.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">추천할 프로젝트가 없어요.</p>
+        </c:if>
+        <c:forEach var="project" items="${top3RecommendedProjects}">
+          <div class="reco-item" onclick="location.href='${ctx}/project/detail?id=${project.projectId}'">
+            <span class="rc-spine" style="--c:var(--cat-${project.category})"></span>
+            <div class="rc-main"><div class="tt">${project.title}</div><div class="mt">${project.category} · 정원 ${project.capacity}명</div></div>
+            <span class="chip ${project.status == 'RECRUITING' ? 'recruit' : 'done'}">${project.status == 'RECRUITING' ? '모집중' : '모집마감'}</span>
           </div>
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-contest)"></span>
-            <div class="rc-main"><div class="tt">교내 창업 아이디어톤 팀원 모집</div><div class="mt">공모전 · 무관 · 1/5명 · D-8</div></div>
-            <span class="chip recruit">모집중</span>
-          </div>
-          <div class="reco-item" onclick="go('detail')">
-            <span class="rc-spine" style="--c:var(--cat-liberal)"></span>
-            <div class="rc-main"><div class="tt">교양 발표 스터디 같이 해요</div><div class="mt">교양 · 전 학년 · 3/5명 · D-6</div></div>
-            <span class="chip recruit">모집중</span>
-          </div>
-        </div>
+        </c:forEach>
       </div>
     </div>
   </section>

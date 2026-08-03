@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.MentorMapper">
+
+    <resultMap id="mentorResultMap" type="com.soldesk.vo.MentorVO">
+        <id property="member_id" column="member_id"/>
+        <result property="career" column="career"/>
+        <result property="cert" column="cert"/>
+        <result property="field" column="field"/>
+    </resultMap>
+
+    <resultMap id="mentorDocumentResultMap" type="com.soldesk.vo.MentorDocument">
+        <id property="member_id" column="member_id"/>
+        <result property="login_id" column="login_id"/>
+        <result property="name" column="name"/>
+        <result property="dept_id" column="dept_id"/>
+        <result property="intro" column="intro"/>
+        <result property="account_status" column="account_status"/>
+        <result property="approved" column="approved"/>
+        <result property="profile_public" column="profile_public"/>
+        <result property="field" column="mentor_field"/>
+        <result property="career" column="career"/>
+        <result property="cert" column="cert"/>
+    </resultMap>
+
+    <!-- 멘토 회원가입 (member 테이블에 INSERT) -->
+    <insert id="insertMemberForMentor"
+            parameterType="com.soldesk.vo.MentorSignupVO"
+            useGeneratedKeys="true" keyProperty="member_id">
+        INSERT INTO member
+        (login_id, password, email, name, dept_id, intro,
+         role, account_status, approved)
+        VALUES
+        (#{login_id}, #{password}, #{email}, #{name}, #{dept_id}, #{intro},
+         'USER', 'Active', FALSE)
+    </insert>
+
+    <!-- 멘토 정보 INSERT -->
+    <insert id="insertMentor" parameterType="com.soldesk.vo.MentorSignupVO">
+        INSERT INTO mentor (member_id, career, cert, field)
+        VALUES (#{member_id}, #{career}, #{cert}, #{field})
+    </insert>
+
+    <!-- 멘토인지 확인 -->
+    <select id="selectMentorById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
+    </select>
+
+    <select id="findByMemberId" parameterType="int" resultMap="mentorResultMap">
+        SELECT member_id, career, cert, field
+        FROM mentor
+        WHERE member_id = #{member_id}
+    </select>
+
+    <!-- Elasticsearch 멘토 인덱싱용 전체 멘토 조회 -->
+    <select id="findAllMentors" resultMap="mentorDocumentResultMap">
+        SELECT
+            member.member_id,
+            member.login_id,
+            member.name,
+            member.dept_id,
+            member.intro,
+            member.account_status,
+            member.approved,
+            member.profile_public,
+            mentor.field AS mentor_field,
+            mentor.career,
+            mentor.cert
+        FROM member
+        INNER JOIN mentor ON mentor.member_id = member.member_id
+        ORDER BY member.member_id
+    </select>
+
+    <!-- 멘토링 중인 팀 수 -->
+    <select id="countMentoringTeams" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM participation
+        WHERE member_id = #{memberId}
+          AND project_role = 'MENTOR'
+          AND join_status = '참여'
+    </select>
+
+    <!-- 진행 중 프로젝트 수 -->
+    <select id="countActiveProjects" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM participation p
+        INNER JOIN project pr ON pr.project_id = p.project_id
+        WHERE p.member_id = #{memberId}
+          AND p.project_role = 'MENTOR'
+          AND p.join_status = '참여'
+          AND pr.status = 'RECRUITING'
+    </select>
+
+    <!-- 내가 남긴 피드백 수 -->
+    <select id="countFeedbacks" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM feedback
+        WHERE mentor_id = #{memberId}
+    </select>
+
+</mapper>

@@ -5,21 +5,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.soldesk.service.AdminService;
+import com.soldesk.service.AdminDashboardService;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final AdminService adminService;
+    private final AdminDashboardService adminDashboardService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public AdminController(AdminDashboardService adminDashboardService) {
+        this.adminDashboardService = adminDashboardService;
     }
 
+    // 대시보드 표시
     @GetMapping("/dashboard")
     public String admin(Model model) {
-        model.addAttribute("dashboard", adminService.getDashboardStats());
+        model.addAttribute("dashboard", adminDashboardService.getDashboardStats());
         return "admin/dashboard";
     }
     @GetMapping("/accounts")

@@ -1,5 +1,7 @@
 package com.soldesk.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -15,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.soldesk.service.MemberService;
+import com.soldesk.service.ParticipationService;
 import com.soldesk.service.PasswordChangeException;
+import com.soldesk.service.ProjectService;
 import com.soldesk.service.UnivService;
 import com.soldesk.vo.MemberVO;
+import com.soldesk.vo.ParticipationVO;
+import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.UnivVO;
 
 
@@ -33,15 +39,37 @@ public class MypageController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
+    @Autowired
+    private ParticipationService participationService;
+
+    @Autowired
+    private ProjectService projectService;
+
     @GetMapping("/index")
     public String index(Model model) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.findByLoginId(member_id);
         UnivVO univ = univService.getUnivByDeptId(member.getDept_id()); // 학생의 대학 이름과 학과 이름 조회
+        List<ParticipationVO> participationList = participationService.getParticipatingProjectsByMemberId(member.getMember_id(), 0); // 참여 중인 프로젝트 목록 조회 (0 = 전체 조회)
+        List<ParticipationVO> applicationList = participationService.getApplicationProjectsByMemberId(member.getMember_id(), 0); // 지원 중인 프로젝트 목록 조회 (0 = 전체 조회)
+        List<ProjectVO> likedList = projectService.getFavoriteProjects((long) member.getMember_id()); // 관심 등록한 프로젝트 목록 조회
+
+        // 상단 통계: 참여 중인 프로젝트를 진행중/완료로 나누고, 지원 현황 중 승인 대기(WAITING) 건수만 집계
+        long ongoingCount = participationList.stream().filter(p -> !"DONE".equals(p.getStatus())).count();
+        long doneCount = participationList.stream().filter(p -> "DONE".equals(p.getStatus())).count();
+        long pendingCount = applicationList.stream().filter(a -> "WAITING".equals(a.getJoinStatus())).count();
+
+        // isMentor / mentor는 GlobalModelAttributeAdvice가 모든 요청에 대해 채워준다.
         model.addAttribute("member", member);
         model.addAttribute("univList", univService.getAllUniv());
         model.addAttribute("univ", univ);
+        model.addAttribute("participationList", participationList);
+        model.addAttribute("applicationList", applicationList);
+        model.addAttribute("likedList", likedList);
+        model.addAttribute("ongoingCount", ongoingCount);
+        model.addAttribute("doneCount", doneCount);
+        model.addAttribute("pendingCount", pendingCount);
 
         return "mypage/index";
     }
@@ -49,7 +77,16 @@ public class MypageController {
     @PostMapping("/update")
     public String update(MemberVO member) {
         String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO originMember = memberService.findByLoginId(member_id);
         member.setLogin_id(member_id); // 로그인한 사용자의 ID를 설정
+        // 학과 선택값을 그대로 전공으로 저장 (학과 = 전공)
+        UnivVO dept = univService.getUnivByDeptId(member.getDept_id());
+        if (member.getName() == null || member.getName().trim().isEmpty()) {
+            member.setName(originMember.getName()); // 빈 값이 제출되면 기존 이름 유지
+        }
+        if (dept != null) {
+            member.setMajor(dept.getDept_name());
+        }
         memberService.updateMember(member); // 회원 정보 업데이트
         return "redirect:/mypage/index"; // 업데이트 후 마이페이지로 리다이렉트
     }
@@ -104,6 +141,14 @@ public class MypageController {
     private String backWithError(RedirectAttributes ra, String message) {
         ra.addFlashAttribute("passwordError", message);
         ra.addFlashAttribute("openPassword", true);
+        return "redirect:/mypage/index";
+    }
+    @PostMapping("/cancel-application")
+    public String cancelApplication(@RequestParam("projectId") Long projectId, RedirectAttributes ra) {
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
+        participationService.cancelApplication(projectId, (long) member.getMember_id());
+        ra.addFlashAttribute("cancelSuccess", "지원이 취소됐어요.");
         return "redirect:/mypage/index";
     }
 }

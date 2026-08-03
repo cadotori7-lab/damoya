@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="com.soldesk.mapper.MemberMapper">
     <!-- 회원 정보 resultMap: vo 객체와 DB 컬럼 매핑 -->
     <resultMap id="memberResultMap" type="com.soldesk.vo.MemberVO">
-        <id property="member_id" column="member_id"/>
-        
+        <id property="member_id" column="member_id" />
         <result property="login_id" column="login_id" />
         <result property="email" column="email" />
         <result property="password" column="password" />
@@ -44,26 +42,6 @@
     <select id="countByEmail" resultType="int">
         SELECT COUNT(*) FROM member WHERE email = #{email}
     </select>
-    <!-- 멘토 회원가입 (member 테이블에 INSERT) -->
-    <insert id="insertMemberForMentor"
-          parameterType="com.soldesk.vo.MentorSignupVO"
-          useGeneratedKeys="true" keyProperty="member_id">
-        INSERT INTO member
-        (login_id, password, email, name, dept_id, intro,
-        role, account_status, approved)
-        VALUES
-        (#{login_id}, #{password}, #{email}, #{name}, #{dept_id}, #{intro},
-        'USER', 'Active', FALSE)
-    </insert>
-    <!-- 멘토 정보 INSERT -->
-    <insert id="insertMentor" parameterType="com.soldesk.vo.MentorSignupVO">
-        INSERT INTO mentor (member_id, career, cert, field)
-        VALUES (#{member_id}, #{career}, #{cert}, #{field})
-    </insert>
-    <!-- 멘토인지 확인 -->
-    <select id="selectMentorById" parameterType="int" resultType="int">
-        SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
-    </select>
     <!-- 회원 정보 업데이트 -->
     <update id="updateMember" parameterType="com.soldesk.vo.MemberVO">
         UPDATE member
@@ -99,4 +77,9 @@
     <update id="updatePassword" parameterType="map">
         UPDATE member SET password = #{password} WHERE member_id = #{member_id}
     </update>
+
+    <!-- 고유번호(PK)로 회원 정보 조회 -->
+    <select id="getMemberById" resultType="com.soldesk.vo.MemberVO" parameterType="long">
+    SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
 </mapper>

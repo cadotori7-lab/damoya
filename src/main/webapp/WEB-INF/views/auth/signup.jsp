@@ -108,12 +108,10 @@
 
             <div class="frow">
               <div class="fld">
-                <label>주전공</label>
-                <input type="text" name="major" placeholder="예) 컴퓨터공학">
-              </div>
-              <div class="fld">
                 <label>복수전공 <span style="color:var(--ink-soft);font-weight:500">(선택)</span></label>
-                <input type="text" name="double_major" placeholder="없으면 비워두세요">
+                <select name="double_major" id="doubleMajorSelect">
+                  <option value="" selected>없음</option>
+                </select>
               </div>
             </div>
 

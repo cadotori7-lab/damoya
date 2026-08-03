@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.soldesk.mapper.MemberMapper;
+import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
 
@@ -14,6 +15,9 @@ public class MemberService {
 
     @Autowired
     private MemberMapper memberMapper;
+
+    @Autowired
+    private MentorMapper mentorMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -42,8 +46,8 @@ public class MemberService {
     @Transactional
     public void registerMentor(MentorSignupVO form) { 
         form.setPassword(passwordEncoder.encode(form.getPassword()));
-        memberMapper.insertMemberForMentor(form); 
-        memberMapper.insertMentor(form);
+        mentorMapper.insertMemberForMentor(form); 
+        mentorMapper.insertMentor(form);
     }
     // 회원 정보 업데이트
     @Transactional
@@ -119,6 +123,12 @@ public class MemberService {
         }
 
         updatePassword(member.getMember_id(), passwordEncoder.encode(newPassword));
+    }
+
+    // id로 회원 정보 조회
+    @Transactional
+    public MemberVO getMemberById(Long memberId) {
+    return memberMapper.getMemberById(memberId);
     }
 
 }

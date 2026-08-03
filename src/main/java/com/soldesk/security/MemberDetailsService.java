@@ -8,13 +8,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.soldesk.mapper.MemberMapper;
+import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MemberVO;
 
 @Service
 public class MemberDetailsService implements UserDetailsService {
 
     @Autowired
-    private MemberMapper memberMapper; 
+    private MemberMapper memberMapper;
+
+    @Autowired
+    private MentorMapper mentorMapper;
     
     @Override
     public UserDetails loadUserByUsername(String login_id) throws UsernameNotFoundException {
@@ -40,7 +44,7 @@ public class MemberDetailsService implements UserDetailsService {
         if("ADMIN".equalsIgnoreCase(member.getRole())){
             return "ADMIN";
         } else {
-            if (memberMapper.selectMentorById(member.getMember_id()) > 0) {
+            if (mentorMapper.selectMentorById(member.getMember_id()) > 0) {
                 return "MENTOR";
             }
             return "USER";
