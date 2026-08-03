@@ -140,6 +140,11 @@ public class MemberService {
         for (MemberVO member : members) {
             member.setPassword(null);
             member.setPassword_confirm(null);
+            // mentor 테이블에 있으면 화면/필터 기준으로 MENTOR 역할로 표시
+            if (!"ADMIN".equalsIgnoreCase(member.getRole())
+                    && memberMapper.selectMentorById(member.getMember_id()) > 0) {
+                member.setRole("MENTOR");
+            }
         }
         return members;
     }

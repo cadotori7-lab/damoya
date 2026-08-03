@@ -30,7 +30,7 @@
             <option value="ACTIVE" ${status eq 'ACTIVE' ? 'selected' : ''}>정상</option>
             <option value="SUSPENDED" ${status eq 'SUSPENDED' ? 'selected' : ''}>정지</option>
             <option value="WITHDRAWN" ${status eq 'WITHDRAWN' ? 'selected' : ''}>탈퇴</option>
-            <option value="PENDING" ${status eq 'PENDING' ? 'selected' : ''}>대기</option>
+            <option value="PENDING" ${status eq 'PENDING' ? 'selected' : ''}>승인대기</option>
           </select>
           <select name="role" id="role">
             <option value="all" ${role eq 'all' ? 'selected' : ''}>전체 역할</option>

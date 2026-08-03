@@ -154,9 +154,9 @@
         order by m.created_at desc
     </select>
 
-    <!-- 학교 인증 승인 -->
+    <!-- 학교 인증/멘토 승인 -->
     <update id="approveMember" parameterType="int">
-        UPDATE member SET approved = 1 WHERE member_id = #{memberId}
+        UPDATE member SET approved = 1, account_status = 'ACTIVE' WHERE member_id = #{memberId}
     </update>
     <!-- 학교 인증 반려 -->
     <update id="rejectMember" parameterType="int">
@@ -205,10 +205,43 @@
                 )
             </if>
             <if test="status != null and status != '' and status != 'all'">
-                AND UPPER(m.account_status) = UPPER(#{status})
+                <choose>
+                    <when test="status.equalsIgnoreCase('PENDING')">
+                        AND (
+                            UPPER(m.account_status) = 'PENDING'
+                            OR (
+                                m.approved = 0
+                                AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                                AND UPPER(IFNULL(m.account_status, '')) NOT IN ('SUSPENDED', 'WITHDRAWN')
+                            )
+                        )
+                    </when>
+                    <when test="status.equalsIgnoreCase('ACTIVE')">
+                        AND UPPER(m.account_status) = 'ACTIVE'
+                        AND NOT (
+                            m.approved = 0
+                            AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                        )
+                    </when>
+                    <otherwise>
+                        AND UPPER(m.account_status) = UPPER(#{status})
+                    </otherwise>
+                </choose>
             </if>
             <if test="role != null and role != '' and role != 'all'">
-                AND UPPER(m.role) = UPPER(#{role})
+                <choose>
+                    <when test="role.equalsIgnoreCase('MENTOR')">
+                        AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                        AND UPPER(IFNULL(m.role, 'USER')) != 'ADMIN'
+                    </when>
+                    <when test="role.equalsIgnoreCase('USER')">
+                        AND UPPER(IFNULL(m.role, 'USER')) = 'USER'
+                        AND NOT EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                    </when>
+                    <otherwise>
+                        AND UPPER(m.role) = UPPER(#{role})
+                    </otherwise>
+                </choose>
             </if>
         </where>
         ORDER BY m.member_id DESC
@@ -230,10 +263,43 @@
                 )
             </if>
             <if test="status != null and status != '' and status != 'all'">
-                AND UPPER(m.account_status) = UPPER(#{status})
+                <choose>
+                    <when test="status.equalsIgnoreCase('PENDING')">
+                        AND (
+                            UPPER(m.account_status) = 'PENDING'
+                            OR (
+                                m.approved = 0
+                                AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                                AND UPPER(IFNULL(m.account_status, '')) NOT IN ('SUSPENDED', 'WITHDRAWN')
+                            )
+                        )
+                    </when>
+                    <when test="status.equalsIgnoreCase('ACTIVE')">
+                        AND UPPER(m.account_status) = 'ACTIVE'
+                        AND NOT (
+                            m.approved = 0
+                            AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                        )
+                    </when>
+                    <otherwise>
+                        AND UPPER(m.account_status) = UPPER(#{status})
+                    </otherwise>
+                </choose>
             </if>
             <if test="role != null and role != '' and role != 'all'">
-                AND UPPER(m.role) = UPPER(#{role})
+                <choose>
+                    <when test="role.equalsIgnoreCase('MENTOR')">
+                        AND EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                        AND UPPER(IFNULL(m.role, 'USER')) != 'ADMIN'
+                    </when>
+                    <when test="role.equalsIgnoreCase('USER')">
+                        AND UPPER(IFNULL(m.role, 'USER')) = 'USER'
+                        AND NOT EXISTS (SELECT 1 FROM mentor mt WHERE mt.member_id = m.member_id)
+                    </when>
+                    <otherwise>
+                        AND UPPER(m.role) = UPPER(#{role})
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </select>

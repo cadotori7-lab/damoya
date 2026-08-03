@@ -91,6 +91,20 @@ public class AdminController {
         return "admin/accounts";
     }
 
+    // 멘토/학교 인증 승인 (계정 관리)
+    @PostMapping("/accounts/approve")
+    public String approveAccount(@RequestParam("memberId") int memberId,
+                                 @RequestParam(value = "page", defaultValue = "1") int page,
+                                 @RequestParam(value = "search", defaultValue = "") String search,
+                                 @RequestParam(value = "status", defaultValue = "all") String status,
+                                 @RequestParam(value = "role", defaultValue = "all") String role,
+                                 RedirectAttributes redirectAttributes) {
+        logger.info("계정 관리 승인 요청: memberId={}", memberId);
+        adminService.approveMember(memberId);
+        redirectAttributes.addFlashAttribute("msg", "승인했습니다.");
+        return "redirect:" + accountsRedirect(page, search, status, role);
+    }
+
     // 계정 정지
     @PostMapping("/accounts/suspend")
     public String suspendMember(@RequestParam("memberId") int memberId,
