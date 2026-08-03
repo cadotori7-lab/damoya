@@ -9,6 +9,7 @@ import com.soldesk.mapper.MemberMapper;
 import com.soldesk.mapper.MentorMapper;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorSignupVO;
+import com.soldesk.vo.PublicProfileVO;
 
 @Service
 public class MemberService {
@@ -128,7 +129,22 @@ public class MemberService {
     // id로 회원 정보 조회
     @Transactional
     public MemberVO getMemberById(Long memberId) {
-    return memberMapper.getMemberById(memberId);
+        return memberMapper.getMemberById(memberId);
+    }
+
+    public PublicProfileVO findPublicProfile(int memberId) {
+        PublicProfileVO p = memberMapper.selectPublicProfile(memberId);
+        if (p == null) return null;
+ 
+        // 비공개 회원이면 상세 필드를 서버에서 제거(널링)해 최소 정보만 남긴다.
+        // 프론트가 아니라 여기서 지우는 것이 핵심 — 응답 자체에 안 담긴다.
+        if (!p.isPublic()) {
+            p.setIntro(null);
+            p.setField(null);
+            p.setCareer(null);
+            p.setMajor(null);
+        }
+        return p;
     }
 
 }

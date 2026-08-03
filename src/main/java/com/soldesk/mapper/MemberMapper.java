@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.MentorDocument;
+import com.soldesk.vo.PublicProfileVO;
 
 public interface MemberMapper {
 
@@ -29,5 +30,7 @@ public interface MemberMapper {
     MemberVO findByEmail(@Param("email") String email);
     void insertOAuthMember(MemberVO member);
 
+    //프로필 조회용
+    PublicProfileVO selectPublicProfile(@Param("memberId") int memberId);
 
 }
