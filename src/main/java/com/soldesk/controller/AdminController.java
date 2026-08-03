@@ -20,8 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soldesk.service.AdminDashboardService;
 import com.soldesk.service.AdminService;
 import com.soldesk.service.MemberService;
+import com.soldesk.service.ProjectService;
+import com.soldesk.service.ReportService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
+import com.soldesk.vo.ReportVO;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,15 +34,21 @@ public class AdminController {
     private final AdminDashboardService adminDashboardService;
     private final AdminService adminService;
     private final MemberService memberService;
+    private final ReportService reportService;
+    private final ProjectService projectService;
     private final ObjectMapper objectMapper;
 
     public AdminController(AdminDashboardService adminDashboardService,
                            AdminService adminService,
                            MemberService memberService,
+                           ReportService reportService,
+                           ProjectService projectService,
                            ObjectMapper objectMapper) {
         this.adminDashboardService = adminDashboardService;
         this.adminService = adminService;
         this.memberService = memberService;
+        this.reportService = reportService;
+        this.projectService = projectService;
         this.objectMapper = objectMapper;
     }
 
@@ -143,7 +152,53 @@ public class AdminController {
     @GetMapping("/posts")
     public String posts(Model model) {
         logger.info("게시물 관리 요청");
+        List<ReportVO> projectReports = reportService.getReportsByTargetType("PROJECT");
+        // LocalDateTime JSON 직렬화 이슈 방지
+        for (ReportVO report : projectReports) {
+            report.setCreatedAt(null);
+        }
+
+        String reportsJson;
+        try {
+            reportsJson = objectMapper.writeValueAsString(projectReports);
+        } catch (JsonProcessingException e) {
+            logger.error("신고 JSON 변환 오류: {}", e.getMessage());
+            reportsJson = "[]";
+        }
+
+        model.addAttribute("reports", reportsJson);
         return "admin/posts";
+    }
+
+    // 게시물 숨김 (해당 프로젝트 신고 status → PROCESSED)
+    @PostMapping("/posts/hide")
+    public String hidePost(@RequestParam("projectId") Long projectId,
+                           RedirectAttributes redirectAttributes) {
+        logger.info("게시물 숨김 요청: projectId={}", projectId);
+        reportService.updateReportStatusByTarget("PROJECT", projectId, "PROCESSED");
+        redirectAttributes.addFlashAttribute("msg", "게시물을 숨김 처리했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 게시물 복원 (해당 프로젝트 신고 status → RECEIVED)
+    @PostMapping("/posts/restore")
+    public String restorePost(@RequestParam("projectId") Long projectId,
+                              RedirectAttributes redirectAttributes) {
+        logger.info("게시물 복원 요청: projectId={}", projectId);
+        reportService.updateReportStatusByTarget("PROJECT", projectId, "RECEIVED");
+        redirectAttributes.addFlashAttribute("msg", "게시물을 복원했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 게시물 완전 삭제 (신고 + 프로젝트)
+    @PostMapping("/posts/delete")
+    public String deletePost(@RequestParam("projectId") Long projectId,
+                             RedirectAttributes redirectAttributes) {
+        logger.info("게시물 완전 삭제 요청: projectId={}", projectId);
+        reportService.deleteReport("PROJECT", projectId);
+        projectService.deleteProject(projectId);
+        redirectAttributes.addFlashAttribute("msg", "게시물을 삭제했습니다.");
+        return "redirect:/admin/posts";
     }
 
     // 학교 인증 승인

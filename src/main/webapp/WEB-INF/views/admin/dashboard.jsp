@@ -100,15 +100,12 @@
                 </td>
                 <td>${report.reason}</td>
                 <c:choose>
-                  <c:when test="${report.status == 'received'}">
+                  <c:when test="${report.status == 'RECEIVED'}">
                     <td><span class="chip wait">접수</span></td>
                   </c:when>
-                  <c:when test="${report.status == 'processing'}">
-                    <td><span class="chip processing">처리중</span></td>
-                  </c:when>
-                  <c:when test="${report.status == 'completed'}">
-                    <td><span class="chip completed">처리완료</span></td>
-                  </c:when>
+                  <c:otherwise>
+                    <td><span class="chip processing">처리완료</span></td>
+                  </c:otherwise>
                 </c:choose>
               </tr>
 
