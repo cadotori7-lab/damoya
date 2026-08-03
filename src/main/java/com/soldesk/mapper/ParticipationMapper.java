@@ -7,26 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import com.soldesk.vo.ParticipationVO;
 
 public interface ParticipationMapper {
-<<<<<<< HEAD
-
-    // 업무 담당자로 선택할 수 있는 참여자 목록
-    List<ParticipationVO> selectTaskMembers(
-            @Param("project_id") long project_id
-    );
-
-    // 해당 사용자가 프로젝트 팀장인지 검사
-    int countLeader(
-            @Param("project_id") long project_id,
-            @Param("member_id") long member_id
-    );
-
-    // 해당 사용자가 업무 담당자로 선택 가능한지 검사
-    int countTaskMember(
-            @Param("project_id") long project_id,
-            @Param("member_id") long member_id
-    );
-}
-=======
     
     void insertApplication(ParticipationVO vo); //프로젝트 지원
     List<ParticipationVO> selectApplicationList(Long projectId); //지원서 목록
@@ -35,5 +15,17 @@ public interface ParticipationMapper {
     List<ParticipationVO> selectParticipationListByMemberId(@Param("memberId") int memberId, @Param("limit") int limit); //참여중인 프로젝트 목록 조회
     List<ParticipationVO> selectApplicationListByMemberId(@Param("memberId") int memberId, @Param("limit") int limit); //지원 진행 중인 프로젝트 목록 조회
     void deleteApplication(@Param("projectId") Long projectId, @Param("memberId") Long memberId); // 지원 취소
+     List<ParticipationVO> selectTaskMembers(
+            @Param("project_id") long project_id
+    );
+    // 해당 사용자가 프로젝트 팀장인지 검사
+    int countLeader(
+            @Param("project_id") long project_id,
+            @Param("member_id") long member_id
+    );
+    // 해당 사용자가 업무 담당자로 선택 가능한지 검사
+    int countTaskMember(
+            @Param("project_id") long project_id,
+            @Param("member_id") long member_id
+    );
 }
->>>>>>> main

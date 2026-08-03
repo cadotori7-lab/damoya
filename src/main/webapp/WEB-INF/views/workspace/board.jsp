@@ -49,7 +49,7 @@
       <c:if test="${isLeader}">
         <a class="btn pri sm"
           style="margin-left:auto"
-          href="${ctx}/workspace/${project_id}/taskform">
+          href="${ctx}/workspace/${projectId}/taskform">
           + 업무 등록
         </a>
       </c:if>
@@ -98,13 +98,13 @@
 <div id="teamMemberData" hidden>
   <c:forEach var="member" items="${teamMembers}">
     <div class="member-source"
-         data-member-id="${member.member_id}"
-         data-project-role="${member.project_role}">
+         data-member-id="${member.memberId}"
+         data-project-role="${member.projectRole}">
       <span class="member-name">
-        <c:out value="${member.member_name}"/>
+        <c:out value="${member.memberName}"/>
       </span>
       <span class="member-major">
-        <c:out value="${member.member_major}"/>
+        <c:out value="${member.memberMajor}"/>
       </span>
     </div>
   </c:forEach>
@@ -280,7 +280,7 @@
   <jsp:include page="../includes/footer.jsp" />
   <script>
     window.APP_CONTEXT = '${ctx}';
-    window.PROJECT_ID = Number('${project_id}');
+    window.PROJECT_ID = Number('${projectId}');
     window.LOGIN_MEMBER_ID = Number('${currentMemberId}');
     window.IS_LEADER = '${isLeader}';
     window.CSRF_PARAMETER = '${_csrf.parameterName}';

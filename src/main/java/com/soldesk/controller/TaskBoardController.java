@@ -36,7 +36,7 @@ import com.soldesk.service.MemberService;
 import com.soldesk.vo.MemberVO;
 
 @Controller
-@RequestMapping("/workspace/{project_id}")
+@RequestMapping("/workspace/{projectId}")
 public class TaskBoardController {
 
     private static final long MAX_SUBMIT_FILE_SIZE = 20L * 1024L * 1024L;
@@ -75,7 +75,7 @@ public class TaskBoardController {
     // 업무 보드
     @GetMapping("/board")
     public String board(
-        @PathVariable("project_id") long project_id,
+        @PathVariable("projectId") long project_id,
         Principal principal,
         Model model) {
 
@@ -119,7 +119,7 @@ public class TaskBoardController {
     // 업무 등록 화면
     @GetMapping("/taskform")
     public String taskForm(
-        @PathVariable("project_id") long project_id,
+        @PathVariable("projectId") long project_id,
         Principal principal,
         Model model,
         RedirectAttributes redirectAttributes) {
@@ -164,7 +164,7 @@ public class TaskBoardController {
     // 업무 등록
     @PostMapping("/tasks")
     public String insertTask(
-        @PathVariable("project_id") long project_id,
+        @PathVariable("projectId") long project_id,
         @ModelAttribute("task") TaskVO task,
         Principal principal,
         Model model,
@@ -227,10 +227,10 @@ public class TaskBoardController {
             + "/board";
     }
 
-    @GetMapping("/tasks/{task_id}") //업무 상세 조회
+    @GetMapping("/tasks/{taskId}") //업무 상세 조회
     public String taskDetail(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         Model model) {
 
         TaskVO task = taskService.selectTaskById(
@@ -251,10 +251,10 @@ public class TaskBoardController {
     }
 
     //업무제출
-    @PostMapping("/tasks/{task_id}/submit")
+    @PostMapping("/tasks/{taskId}/submit")
     public String submitTask(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         @ModelAttribute TaskVO task,
         @RequestParam(value = "submitFile", required = false)
         MultipartFile submitFile,
@@ -388,10 +388,10 @@ public class TaskBoardController {
     }
 
     // 팀장의 업무 검수 승인
-    @PostMapping("/tasks/{task_id}/approve")
+    @PostMapping("/tasks/{taskId}/approve")
     public String approveTask(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         Principal principal,
         RedirectAttributes redirectAttributes) {
 
@@ -430,10 +430,10 @@ public class TaskBoardController {
     }
 
     // 팀장의 업무 검수 반려
-    @PostMapping("/tasks/{task_id}/reject")
+    @PostMapping("/tasks/{taskId}/reject")
     public String rejectTask(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         @RequestParam(
             value = "reject_reason",
             required = false
@@ -502,10 +502,10 @@ public class TaskBoardController {
     }
 
     // 담당자가 반려 사유를 확인한 뒤 다시 진행
-    @PostMapping("/tasks/{task_id}/acknowledge-rejection")
+    @PostMapping("/tasks/{taskId}/acknowledge-rejection")
     public String acknowledgeRejection(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         Principal principal,
         RedirectAttributes redirectAttributes) {
 
@@ -544,10 +544,10 @@ public class TaskBoardController {
     }
 
     // 팀장의 업무 삭제
-    @PostMapping("/tasks/{task_id}/delete")
+    @PostMapping("/tasks/{taskId}/delete")
     public String deleteTask(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         Principal principal,
         RedirectAttributes redirectAttributes) {
 
@@ -595,10 +595,10 @@ public class TaskBoardController {
     }
 
     // 제출 파일 다운로드
-    @GetMapping("/tasks/{task_id}/file")
+    @GetMapping("/tasks/{taskId}/file")
     public ResponseEntity<Resource> downloadSubmitFile(
-        @PathVariable("project_id") long project_id,
-        @PathVariable("task_id") long task_id,
+        @PathVariable("projectId") long project_id,
+        @PathVariable("taskId") long task_id,
         Principal principal) throws IOException {
 
         if (principal == null) {

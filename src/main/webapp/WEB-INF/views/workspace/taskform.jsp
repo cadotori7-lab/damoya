@@ -73,10 +73,10 @@
               </option>
 
               <c:forEach var="member" items="${projectMembers}">
-                <option value="${member.member_id}">
-                  <c:out value="${member.member_name}"/>
+                <option value="${member.memberId}">
+                  <c:out value="${member.memberName}"/>
 
-                  <c:if test="${member.project_role eq 'LEADER'}">
+                  <c:if test="${member.projectRole eq 'LEADER'}">
                     (팀장)
                   </c:if>
                 </option>
