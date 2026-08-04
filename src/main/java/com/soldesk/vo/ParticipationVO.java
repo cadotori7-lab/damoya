@@ -16,6 +16,7 @@ public class ParticipationVO {
     private String experience; // 경험/경력
     private String motive; // 지원동기
     private String memberName; // 지원자 이름
+    private String contactEmail; //연락처 이메일
 
     public Long getPartId() {
         return partId;
@@ -23,6 +24,14 @@ public class ParticipationVO {
 
     public Long getPostId() {
         return postId;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 
     public void setPostId(Long postId) {

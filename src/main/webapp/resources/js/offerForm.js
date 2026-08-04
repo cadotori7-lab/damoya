@@ -4,10 +4,13 @@ let targetMemberId = "";
 
 // 제의 모달 열기
 function openOffer(name, field, memberId) {
+    const memberIdInput = document.getElementById('offerMemberId');
+    if(memberIdInput) memberIdInput.value = memberId;
+    
     targetName = name;
     targetMemberId = memberId;
     
-    // 모달 상단 텍스트 및 기본값 세팅 (요소가 화면에 있을 때만)
+    // 모달 상단 텍스트 및 기본값 세팅
     const offerWho = document.getElementById('offerWho');
     if (offerWho) offerWho.textContent = name + " 님에게 초대를 보내요";
     
@@ -31,55 +34,27 @@ function closeOffer() {
     document.getElementById('offerModal').classList.remove('on');
     document.body.style.overflow = '';
     
-    // 폼 초기화 (요소가 있을 때만)
+    // 폼 초기화
     const offerForm = document.getElementById('offerForm');
     if (offerForm) offerForm.reset();
 }
 
-// 제의 보내기 처리 (프로젝트가 있을 때만 작동함)
-function sendOffer() {
-    const projId = document.getElementById('offerProj').value;
-    const email = document.getElementById('offerEmail').value.trim();
-    const role = document.getElementById('offerRole').value.trim();
-    const message = document.getElementById('offerMessage').value.trim();
-
-    if (!projId) {
-        alert("선택된 프로젝트가 없습니다.");
-        return;
+// 폼이 제출되기 직전, 이메일과 메시지를 합쳐서 hidden input에 넣는 함수
+function prepareOfferSubmit() {
+    // 체크박스 중 하나라도 체크되었는지 확인
+    const checkboxes = document.querySelectorAll('input[name="projectIds"]:checked');
+    if (checkboxes.length === 0) {
+        alert("초대할 프로젝트를 최소 1개 이상 선택해주세요!");
+        return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
-        document.getElementById('offerEmail').focus();
-        return;
-    }
-
-    const combinedMotive = "[연락처: " + email + "] \n" + message;
-
-    // 백엔드로 전송 (AJAX)
-    fetch(ctx + '/talent/offer/send', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            // 스프링 시큐리티 쓰시는 경우 CSRF 토큰 추가 필요할 수 있음
-        },
-        body: JSON.stringify({
-            projectId: projId,
-            memberId: targetMemberId, // 💡 인재풀 작성자의 member_id
-            wantPosition: role,
-            motive: combinedMotive
-        })
-    }).then(res => {
-        if(res.ok) {
-            document.getElementById('offerForm').style.display = 'none'; 
-            document.getElementById('offerSuccess').style.display = 'block'; 
-            document.getElementById('offerSuccessText').innerHTML = 
-                `<b>${targetName}</b> 님에게 함께하기 제의가 전달됐어요.<br>상대가 <b>수락</b>하면 팀원으로 합류해요.`;
-        } else {
-            alert("제의 전송에 실패했습니다.");
-        }
-    });
+    var email = document.getElementById('offerEmail').value.trim();
+    var msg = document.getElementById('offerMessage').value.trim();
+    
+    var combined = "[연락처: " + email + "]\n\n" + msg;
+    document.getElementById('realMotive').value = combined;
+    
+    return true;
 }
 
 // 모달이 열려있을 때 ESC 키를 누르면 닫히는 기능

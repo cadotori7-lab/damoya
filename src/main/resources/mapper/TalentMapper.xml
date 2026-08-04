@@ -5,6 +5,7 @@
     <resultMap id="talentResultMap" type="com.soldesk.vo.TalentVO">
         <id column="post_id" property="postId"/>
         <result column="member_id" property="memberId"/>
+        <result column="project_id" property="projectId"/>
         <result column="kind" property="kind"/>
         <result column="title" property="title"/>
         <result column="content" property="content"/>
@@ -95,20 +96,26 @@
 
     <!-- 팀장으로 있는 프로젝트 목록 조회-->
     <select id="getLeaderProjectsByMemberId" resultType="com.soldesk.vo.ProjectVO">
-        select p.project_id, p.title
-        from project p
-        join participation part on p.project_id = part.project_id
-        where part.member_id = #{memberId}
-            and part.project_role = 'LEADER'
+        select p.project_id as projectId, p.title 
+        from project p 
+        join participation part on p.project_id = part.project_id 
+        where part.member_id = #{memberId} and part.project_role = 'LEADER'
     </select>
 
     <!-- 제의하기-->
     <insert id="insertOffer" parameterType="com.soldesk.vo.ParticipationVO">
         insert into participation(
-            project_id, member_id, project_role, join_status, want_position, motive
+            project_id, member_id, project_role, join_status, want_position, motive, contact_email
         ) values (
-            #{projectId}, #{memberId}, #{projectRole}, #{joinStatus}, #{wantPosition}, #{motive}
+            #{projectId}, #{memberId}, #{projectRole}, #{joinStatus}, #{wantPosition}, #{motive}, #{contactEmail}
         )
     </insert>
 
+    <!-- 이미 제의한 프로젝트 ID 찾기 -->
+    <select id="getAlreadyOfferedProjectIds" resultType="Long">
+    select project_id 
+    from participation 
+    where member_id = #{memberId}
+    </select>
+    
 </mapper>

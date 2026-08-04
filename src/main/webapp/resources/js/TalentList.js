@@ -23,3 +23,9 @@ function changeScope(scope, btnElement) {
             doSearch();
         }
     }
+    
+// 비로그인 유저가 접근할 때 호출되는 함수
+function requireLogin() {
+    alert("로그인 후 이용할 수 있어요!");
+    location.href = ctx + "/auth/login"; 
+}

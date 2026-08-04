@@ -1,8 +1,6 @@
 package com.soldesk.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +20,6 @@ public class TalentService {
 
     @Autowired 
     private TalentMapper talentMapper;
-
-    @Autowired
-    private ParticipationMapper participationMapper;
 
 
     TalentService(CommentService commentService) {
@@ -79,6 +74,12 @@ public class TalentService {
     @Transactional
     public void insertOffer(ParticipationVO participationVO){
         talentMapper.insertOffer(participationVO);
+    }
+
+    // 특정 인재에게 이미 제의를 보낸 프로젝트 ID 목록 조회
+    @Transactional
+    public List<Long> getAlreadyOfferedProjectIds(Long memberId) {
+        return talentMapper.getAlreadyOfferedProjectIds(memberId);
     }
     
 

@@ -17,20 +17,15 @@
     <jsp:include page="../includes/header.jsp" />
     
   <main>
-  <!-- ========== 인재 상세 ========== -->
   <section id="v-talentdetail" style="max-width: 1200px; margin: 0 auto; padding: 32px 16px;">
-    <!-- 목록으로 돌아가기 (이전 필터 상태 유지) -->
     <a class="back" href="${ctx}/talent/list${pageContext.request.queryString != null ? '?' : ''}${pageContext.request.queryString}">← 목록으로</a>
     
     <div class="detail" style="display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; margin-top: 24px;">
       
-      <!-- 좌측 영역 (프로필 정보 + 수정/삭제 버튼 + 댓글) 묶음 -->
       <div class="left-column">
         
-        <!-- 프로필 카드 -->
         <div class="panel" style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 32px; margin-bottom: 24px;">
           
-          <!-- 프로필 사진, 이름, 전공, 역할 -->
           <div class="tc-head" style="display:flex; align-items:center; gap:20px; margin-bottom: 0;">
             <span class="pic ${talent.kind == 'MENTOR' ? 'mentor' : 'member'}" 
                   style="width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:26px; flex: none;
@@ -54,7 +49,6 @@
           
           <hr style="border:0; border-bottom:1px solid #eaeaea; margin:28px 0;">
           
-          <!-- 희망 분야, 가능 시간, 카테고리 -->
           <div class="d-meta" style="display:flex; gap:48px; margin-top:0;">
             <div>
                 <div class="k" style="font-size:12px; color:var(--ink-soft); margin-bottom:6px;">희망 분야</div>
@@ -72,11 +66,9 @@
           
           <hr style="border:0; border-bottom:1px solid #eaeaea; margin:28px 0;">
           
-          <!-- 자기소개 본문 -->
           <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--ink);">${talent.title}</h3>
           <div class="prose" style="font-size:15.5px; color:#4E5968; line-height:1.7; white-space: pre-wrap;">${talent.content}</div>
           
-          <!-- 기술 태그 -->
           <div class="tc-tags" style="margin-top:24px; display:flex; gap:8px; flex-wrap:wrap;">
             <c:if test="${not empty talent.tags}">
                 <c:forEach var="tag" items="${fn:split(talent.tags, ',')}">
@@ -87,7 +79,6 @@
             </c:if>
           </div>
 
-          <!-- 수정 및 삭제 버튼 영역 (작성자 본인일 경우에만 노출) -->
           <c:if test="${isOwner}">
               <div style="display: flex; gap: 8px; margin-top: 32px; padding-top: 20px; border-top: 1px solid #eaeaea;">
                   <a class="btn ghost sm" href="${ctx}/talent/edit?id=${talent.postId}">수정하기</a>
@@ -97,7 +88,6 @@
 
         </div>
 
-        <!-- 댓글 영역 -->
         <div class="panel" style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 32px;">
             <h5 style="font-size:16px;font-weight:800;margin-bottom:4px">댓글 <span class="mono" style="color:var(--ink-soft);font-size:14px">${fn:length(commentList)}</span></h5>
             <c:forEach var="comment" items="${commentList}">
@@ -136,36 +126,64 @@
 
       </div>
       
-      <!-- 우측 액션 사이드바 영역 -->
-      <div class="side">
-        <div class="apply-card" style="position:sticky; top:86px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:24px;">
-          <div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px; font-weight:600;">팀장이라면</div>
-          <p style="font-size:14px; color:var(--ink-soft); line-height:1.5; margin-bottom:20px;">
-              내 프로젝트에 이 분을 초대할 수 있어요. 제의를 보내면 상대가 수락/거절해요.
-          </p>
-          <button class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="openOffer('${talent.memberName}', '${talent.field}')">함께하기 제의</button>
-          <button class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb;">♥ 관심 표시</button>
-        </div>
+    <div class="side">
+      <div class="apply-card" style="position:sticky; top:86px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:24px;">
+        
+        <c:choose>
+          <c:when test="${isOwner}">
+            <div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px; font-weight:600;">내 프로필</div>
+            <p style="font-size:14px; color:var(--ink-soft); line-height:1.5; margin-bottom:20px;">
+                회원님이 직접 등록하신 인재풀 게시글입니다. 멋진 제의가 오기를 기다려보세요!
+            </p>
+            <button class="btn" style="width:100%; justify-content:center; padding:12px; font-size:15px; background:#f3f4f6; color:#9ca3af; border:1px solid #e5e7eb; cursor:not-allowed;" disabled>
+                내가 등록한 게시글이에요!
+            </button>
+          </c:when>
+
+          <c:otherwise>
+            <div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px; font-weight:600;">팀장이라면</div>
+            <p style="font-size:14px; color:var(--ink-soft); line-height:1.5; margin-bottom:20px;">
+                내 프로젝트에 이 분을 초대할 수 있어요. 제의를 보내면 상대가 수락/거절해요.
+            </p>
+            
+            <c:choose>
+                <c:when test="${empty member}">
+                    <button class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="requireLogin()">
+                        함께하기 제의
+                    </button>
+                    <button class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb;" onclick="requireLogin()">
+                        ♥ 관심 표시
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <button class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="openOffer('${talent.memberName}', '', ${talent.memberId})">
+                        함께하기 제의
+                    </button>
+                    <button class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb;">
+                        ♥ 관심 표시
+                    </button>
+                </c:otherwise>
+            </c:choose>
+
+          </c:otherwise>
+        </c:choose>
+
       </div>
+    </div>
       
     </div>
   </section>
   </main>
 
-  <!-- 함께하기 제의 모달 include -->
   <jsp:include page="offer_form.jsp" />
-
   <jsp:include page="../includes/footer.jsp" />
-    <script>
+
+  <script>
       const ctx = '${pageContext.request.contextPath}';
+      
       <c:if test="${not empty msg}">
           alert("${msg}");
       </c:if>
-      function deleteTalent(postId) {
-          if (confirm("정말 이 게시글을 삭제하시겠습니까?")) {
-              location.href = ctx + "/talent/delete?id=" + postId;
-          }
-      }
   </script>
   <script src="${ctx}/resources/js/common.js"></script>
   <script src="${ctx}/resources/js/offerForm.js"></script>

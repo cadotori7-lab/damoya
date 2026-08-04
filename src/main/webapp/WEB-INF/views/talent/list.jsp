@@ -84,7 +84,16 @@
                             <a class="btn ghost sm" href="${ctx}/talent/list?view=favorite">⭐ 내 관심등록</a>
                         </c:otherwise>
                     </c:choose>
-                    <a class="btn dark sm" href="${ctx}/talent/form">✏️ 글쓰기</a>
+                    <c:choose>
+                        <c:when test="${pageContext.request.userPrincipal == null}">
+                            <!-- 비로그인 상태 -->
+                            <a href="javascript:void(0);" class="btn dark sm" onclick="requireLogin()">✏️ 글쓰기</a>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- 로그인 상태 -->
+                            <a class="btn dark sm" href="${ctx}/talent/form">✏️ 글쓰기</a>
+                        </c:otherwise>
+                    </c:choose>                
                 </div>
             </div>
 
@@ -198,6 +207,7 @@
                 </div>
             </c:if>
             <script>
+                const ctx = '${pageContext.request.contextPath}';
                 function goPage(pageNum) {
                     var url = new URL(window.location.href);
                     url.searchParams.set('page', pageNum);

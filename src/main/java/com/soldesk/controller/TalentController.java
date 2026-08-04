@@ -64,6 +64,7 @@ public class TalentController {
         boolean isOwner = false;
         MemberVO loginUser = null;
         List<ProjectVO> leaderProjects = null;
+        List<Long> offeredProjectIds = null;    // 이미 제의한 프로젝트 ID 목록
 
         if(principal != null ){
             String loginId = principal.getName();
@@ -76,23 +77,35 @@ public class TalentController {
                 }
                 // 내가 팀장인 프로젝트 목록 가져오기
                 leaderProjects = talentService.getLeaderProjectsByMemberId((long) loginUser.getMember_id());
+                // 이미 제의한 프로젝트 ID 목록 가져오기
+                offeredProjectIds = talentService.getAlreadyOfferedProjectIds(talent.getMemberId());
             }
         }
         model.addAttribute("leaderProjects", leaderProjects);
+        model.addAttribute("offeredProjectIds", offeredProjectIds);
         model.addAttribute("talent", talent);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("member", loginUser);
         
         return "talent/detail";
     }
-    // 함께하기 제의
+
+   // 함께하기 제의
     @PostMapping("/offer/send")
     public String sendOffer(ParticipationVO participationVO,
                             @RequestParam("postId") Long postId,
+                            @RequestParam("projectIds") Long[] projectIds,
                             Principal principal,
                             RedirectAttributes rttr) {
-        //로그인 체크
+
+        if (projectIds == null || projectIds.length == 0) {
+        rttr.addFlashAttribute("msg", "초대할 프로젝트를 하나 이상 선택해주세요.");
+        return "redirect:/talent/detail?id=" + postId;
+        }
+
+        // 로그인 체크
         if(principal == null){
+            System.out.println(">>> 에러: 로그인 정보가 없습니다.");
             rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
             return "redirect:/auth/login";
         }
@@ -102,22 +115,36 @@ public class TalentController {
         MemberVO loginUser = memberService.findByLoginId(loginId);
 
         if(loginUser == null){
+            System.out.println(">>> 에러: 로그인 유저 정보를 찾을 수 없습니다.");
             rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
             return "redirect:/auth/login";
         }
 
-        // Offer로 고정 / 역할은 Member로
+        // Offer로 고정 역할은 Member로
         participationVO.setJoinStatus("OFFER");
-        participationVO.setProjectRole("Member");
+        participationVO.setProjectRole("MEMBER");
+        
+        int successCount = 0;
         
         try {
-            talentService.insertOffer(participationVO);
-            rttr.addFlashAttribute("msg", "성공적으로 제의를 보냈습니다!");
-
-        } catch (Exception e) {
-            rttr.addFlashAttribute("msg", "제의를 보내는 중에 오류가 발생했습니다.");
+            for (Long projectId : projectIds) {
+            participationVO.setProjectId(projectId);
+                try{
+                    talentService.insertOffer(participationVO);
+                    successCount++;
+                } catch (org.springframework.dao.DuplicateKeyException e) {
+                    System.out.println(">>> 중복 제의: 이미 해당 프로젝트에 제의를 보냈거나 참여 중인 인재입니다! (Project ID: " + projectId + ")");
+                }
+            }
+        if(successCount > 0){
+            rttr.addFlashAttribute("msg", successCount + "개의 프로젝트에 제의가 성공적으로 전송되었습니다.");
+        } else {
+            rttr.addFlashAttribute("msg", "모든 프로젝트에 대한 제의가 실패했습니다. 이미 제의를 보냈거나 참여 중인 인재일 수 있습니다.");
         }
-
+        } catch (Exception e) {
+            System.out.println(">>> 에러: 제의 전송 중 문제가 발생했습니다. " + e.getMessage());
+            rttr.addFlashAttribute("msg", "제의 전송 중 문제가 발생했습니다. 다시 시도해주세요.");
+        }
         return "redirect:/talent/detail?id=" + postId;
     }
 
