@@ -57,6 +57,10 @@ public class ParticipationService {
     public void cancelApplication(Long projectId, Long memberId){
         participationMapper.deleteApplication(projectId, memberId);
     }
+    @Transactional
+    public List<ParticipationVO> getDoneParticipatingProjectsByMemberId(int memberId, int limit){
+        return participationMapper.selectDoneParticipationListByMemberId(memberId, limit);
+    }
         // 업무 담당자로 선택 가능한 참여자 목록
     @Transactional(readOnly = true)
     public List<ParticipationVO> selectTaskMembers(long project_id) {

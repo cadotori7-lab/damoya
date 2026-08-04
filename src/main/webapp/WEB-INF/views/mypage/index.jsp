@@ -65,6 +65,7 @@
       <button data-t="applied">내 지원 현황</button>
       <button data-t="offers">받은 제의</button>
       <button data-t="liked">관심 목록</button>
+      <button data-t="done">참여 완료 프로젝트</button>
     </div>
 
     <!-- 참여 중인 프로젝트 -->
@@ -145,6 +146,27 @@
               </div>
               <div class="m-right">
                 <button class="btn sm ghost">보기</button>
+              </div>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </div>
+    <!-- 참여 완료된 프로젝트 -->
+    <div class="mp-list" data-tab="done" style="display:none">
+      <c:choose>
+        <c:when test="${empty doneParticipationList}">
+          <p style="color:var(--ink-soft);padding:16px">참여 완료된 프로젝트가 없어요.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="p" items="${doneParticipationList}">
+            <div class="mp-item" style="--c:var(--cat-${p.category})" onclick="location.href='${ctx}/workspace/${p.projectId}/overview'">
+              <div class="m-main">
+                <div class="m-cat">${p.category}</div>
+                <h4>${p.title}</h4>
+              </div>
+              <div class="m-right">
+                <span class="role-tag ${p.projectRole == 'LEADER' ? 'lead' : 'member'}">${p.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
               </div>
             </div>
           </c:forEach>
