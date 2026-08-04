@@ -5,6 +5,7 @@
     <resultMap id="participationMap" type="com.soldesk.vo.ParticipationVO">
         <id property="partId" column="part_id"/>
         <result property="projectId" column="project_id"/>
+        <result property="postId" column="post_id"/>
         <result property="memberId" column="member_id"/>
         <result property="memberName" column="member_name"/>
         <result property="projectRole" column="project_role"/>

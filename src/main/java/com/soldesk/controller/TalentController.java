@@ -2,6 +2,7 @@ package com.soldesk.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,16 +54,16 @@ public class TalentController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("id") Long id, 
-                        Model model, Principal principal,
-                        TalentVO talent = talentService.getTalentById(id);) {
+                        Model model, Principal principal){
+    
         
-        //  DB에서 해당 id의 게시글 데이터를 가져오기
+        // 해당 게시글 데이터 가져오기
         TalentVO talent = talentService.getTalentById(id);
 
         // 작성자 본인이 맞는지 확인
         boolean isOwner = false;
         MemberVO loginUser = null;
-        List<Map<String,Object>> leaderProjects = null;
+        List<ProjectVO> leaderProjects = null;
 
         if(principal != null ){
             String loginId = principal.getName();
@@ -74,10 +75,10 @@ public class TalentController {
                     isOwner = true;
                 }
                 // 내가 팀장인 프로젝트 목록 가져오기
-                leaderProjects = participationService.getLeaderProjects(loginUser.getMember_id());
+                leaderProjects = talentService.getLeaderProjectsByMemberId((long) loginUser.getMember_id());
             }
         }
-        model.addAttribute("leaderProject", leaderProjects);
+        model.addAttribute("leaderProjects", leaderProjects);
         model.addAttribute("talent", talent);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("member", loginUser);
@@ -85,7 +86,7 @@ public class TalentController {
         return "talent/detail";
     }
     // 함께하기 제의
-    @PostMapping("/offer/submit")
+    @PostMapping("/offer/send")
     public String sendOffer(ParticipationVO participationVO,
                             @RequestParam("postId") Long postId,
                             Principal principal,
@@ -105,16 +106,15 @@ public class TalentController {
             return "redirect:/auth/login";
         }
 
-        // Offer로 고정 역할은 Member로
+        // Offer로 고정 / 역할은 Member로
         participationVO.setJoinStatus("OFFER");
         participationVO.setProjectRole("Member");
-        Long loginMemberId = (long) loginUser.getMember_id();
         
         try {
-            participationService.sendOffer(participationVO);
+            talentService.insertOffer(participationVO);
             rttr.addFlashAttribute("msg", "성공적으로 제의를 보냈습니다!");
 
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             rttr.addFlashAttribute("msg", "제의를 보내는 중에 오류가 발생했습니다.");
         }
 

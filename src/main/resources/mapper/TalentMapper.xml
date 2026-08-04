@@ -103,11 +103,12 @@
     </select>
 
     <!-- 제의하기-->
-    <insert id="insertOffer">
+    <insert id="insertOffer" parameterType="com.soldesk.vo.ParticipationVO">
         insert into participation(
-            poject_id, member_id, project_role, join_status, wnat_position, moive)
-            values(
-                
+            project_id, member_id, project_role, join_status, want_position, motive
+        ) values (
+            #{projectId}, #{memberId}, #{projectRole}, #{joinStatus}, #{wantPosition}, #{motive}
+        )
     </insert>
 
 </mapper>
