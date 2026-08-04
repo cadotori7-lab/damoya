@@ -45,6 +45,18 @@
                     <span class="tc-kind" style="padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; background:#f0f4ff; color:#2b46c8;">팀원 지원</span>
                 </c:otherwise>
             </c:choose>
+
+            <!-- 신고 (작성자 본인이 아닐 때만 노출) -->
+            <c:if test="${not isOwner}">
+                <c:choose>
+                    <c:when test="${not empty member}">
+                        <button type="button" style="color:var(--ink-soft);font-size:12px;background:none;border:none;cursor:pointer;padding:0;margin-left:12px;flex:none;" onclick="openModal('reportModal')">신고</button>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${ctx}/auth/login" style="color:var(--ink-soft);font-size:12px;margin-left:12px;flex:none;" onclick="alert('로그인이 필요한 서비스입니다.');">신고</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
           </div>
           
           <hr style="border:0; border-bottom:1px solid #eaeaea; margin:28px 0;">
@@ -95,7 +107,16 @@
                 <div class="pic" style="background:linear-gradient(135deg,#2b46c8,#5b45c8)">${comment.memberName.substring(0, 1)}</div>
                 <div class="body">
                   <div class="nm">
-                    ${comment.memberName} <span>${comment.created_at}</span>
+                    ${comment.memberName} <span>${comment.created_at}</span> 
+                    <c:if test="${not empty member and member.member_id == comment.member_id}">
+                      <button type="button" class="cmt-edit-btn" onclick="openCommentEditModal(this)">수정</button>
+                      <form method="post" action="${ctx}/talent/comment/delete" style="display:inline" onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                        <input type="hidden" name="commentId" value="${comment.comment_id}" />
+                        <input type="hidden" name="postId" value="${talent.postId}" />
+                        <button type="submit" class="cmt-edit-btn cmt-delete-btn">삭제</button>
+                      </form>
+                    </c:if>
                   </div>
                   <p class="cmt-content"><c:out value="${comment.content}" /></p>
                 </div>
@@ -108,7 +129,7 @@
                   <div class="pic">${member.name.substring(0, 1)}</div>
                   <form id="commentform" method="post" action="${ctx}/talent/comment/add">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                    <input type="hidden" name="postId" value="${talent.postId}" />
+                    <input type="hidden" name="post_id" value="${talent.postId}" />
                     <div class="cf-input">
                       <textarea id="cmtInput" name="content" placeholder="응원이나 문의 메시지를 남겨보세요."></textarea>
                       <div class="cf-foot"><button class="btn pri sm" type="submit">댓글 등록</button></div>
@@ -174,6 +195,63 @@
     </div>
   </section>
   </main>
+  <!-- 댓글 수정 모달 -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="editCommentTitle">
+      <div class="modal-head">
+        <div class="mh-info">
+          <h3 id="editCommentTitle">댓글 수정</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('editModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="modal-body" method="post" action="${ctx}/talent/comment/update">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        <input type="hidden" name="post_id" value="${talent.postId}" />
+        <input type="hidden" name="comment_id" id="editCommentId" value="" />
+        <div class="fld one">
+          <textarea name="content" id="editCommentContent" style="min-height:110px" required maxlength="1000"></textarea>
+        </div>
+        <div class="form-foot">
+          <button type="button" class="btn ghost" onclick="closeModal('editModal')">취소</button>
+          <button type="submit" class="btn pri">수정 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 게시글 신고 모달 -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="modal-head">
+        <div class="mh-info">
+          <h3 id="reportTitle">신고</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('reportModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="modal-body" method="post" action="${ctx}/talent/report">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        <input type="hidden" name="targetId" value="${talent.postId}" />
+        <div class="fld one">
+          <select name="reason" required>
+            <option value="" disabled selected>신고 사유를 선택해주세요</option>
+            <option value="부적절한 내용">부적절한 내용</option>
+            <option value="욕설/비방">욕설/비방</option>
+            <option value="스팸/광고">스팸/광고</option>
+            <option value="저작권 침해">저작권 침해</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-foot">
+          <button type="button" class="btn ghost" onclick="closeModal('reportModal')">취소</button>
+          <button type="submit" class="btn pri">신고하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <jsp:include page="offer_form.jsp" />
   <jsp:include page="../includes/footer.jsp" />

@@ -12,4 +12,7 @@ public interface CommentMapper {
     void updateComment(CommentVO comment);
     void deleteComment(Long comment_id);
     void deleteCommentsByProjectId(Long projectId);
+    void addTalentComment(CommentVO comment);
+    void deleteTalentCommentsByPostId(Long postId);
+    List<CommentVO> getCommentsByPostId(Long postId);
 }

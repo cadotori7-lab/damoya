@@ -47,5 +47,17 @@ public class CommentService {
     public void deleteCommentsByProjectId(Long projectId) {
         commentMapper.deleteCommentsByProjectId(projectId);
     }
+    @Transactional
+    public void addTalentComment(CommentVO comment) {
+        commentMapper.addTalentComment(comment);
+    }
+    @Transactional
+    public void deleteTalentCommentsByPostId(Long postId) {
+        commentMapper.deleteTalentCommentsByPostId(postId);
+    }
+    @Transactional
+    public List<CommentVO> getCommentsByPostId(Long postId) {
+        return commentMapper.getCommentsByPostId(postId);
+    }
 
 }

@@ -1,6 +1,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
+=======
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\config\ElasticSearchConfig.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\config\SecurityConfig.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\AdminController.java
@@ -9,6 +12,7 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\HomeController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\LoginController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MeetingController.java
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MentorController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MypageController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\NotificationController.java
@@ -19,10 +23,19 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ScheduleController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TalentController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TaskBoardController.java
+=======
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MypageController.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\OAuthController.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ParticipationController.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ProjectController.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ScheduleController.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TalentController.java
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TestController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TestRestController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\WorkspaceController.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\GlobalModelAttributeAdvice.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\StompAuthChannelInterceptor.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\WebSocketConfig.java
@@ -31,28 +44,47 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MentorMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\NotificationMapper.java
+=======
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\CommentMapper.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MeetingMapper.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ParticipationMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ProjectMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ReportMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ScheduleMapper.java
+<<<<<<< HEAD
+=======
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\TalentMapper.java
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\TaskMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\security\MemberDetailsService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\AdminDashboardService.java
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\AdminService.java
+=======
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CalendarService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CertVerifyService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CommentService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ElasticSearchService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MeetingService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MemberService.java
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MentorService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\NotificationService.java
+=======
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\OAuthService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ParticipationService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\PasswordChangeException.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ProjectService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ReportService.java
+<<<<<<< HEAD
+=======
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\TalentService.java
+>>>>>>> feature/comment2
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\TaskService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\UnivService.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\validation\MemberValidation.java
@@ -64,6 +96,7 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MeetingVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MemberDocument.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MemberVO.java
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDashboardStatsVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDocument.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
@@ -222,3 +255,15 @@ C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\TaskVO.jav
 C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\TestVO.java
 C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\UnivVO.java
 >>>>>>> feature/match2
+=======
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDocument.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\PageBean.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ParticipationVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ProjectVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ReportVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TalentVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TaskVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TestVO.java
+C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java
+>>>>>>> feature/comment2

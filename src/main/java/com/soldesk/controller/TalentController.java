@@ -20,10 +20,12 @@ import com.soldesk.service.MemberService;
 import com.soldesk.service.ParticipationService;
 import com.soldesk.service.ReportService;
 import com.soldesk.service.TalentService;
+import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
 import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
+import com.soldesk.vo.ReportVO;
 import com.soldesk.vo.TalentVO;
 
 @Controller
@@ -59,6 +61,8 @@ public class TalentController {
         
         // 해당 게시글 데이터 가져오기
         TalentVO talent = talentService.getTalentById(id);
+        // 해당 게시글의 댓글 가져오기
+        List<CommentVO> comments = commentService.getCommentsByPostId(id);
 
         // 작성자 본인이 맞는지 확인
         boolean isOwner = false;
@@ -86,6 +90,7 @@ public class TalentController {
         model.addAttribute("talent", talent);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("member", loginUser);
+        model.addAttribute("commentList", comments);
         
         return "talent/detail";
     }
@@ -276,6 +281,98 @@ public class TalentController {
         rttr.addFlashAttribute("msg", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/talent/list";
     }
+    @PostMapping("/comment/add")
+    public String addComment(@ModelAttribute CommentVO commentVO,
+                             RedirectAttributes rttr,
+                             Principal principal) {
+        if (principal == null) {
+            rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+            return "redirect:/auth/login";
+        }
 
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+
+        if (loginUser == null) {
+            rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+        commentVO.setMember_id(loginUser.getMember_id());
+        commentService.addTalentComment(commentVO);
+        rttr.addFlashAttribute("msg", "댓글이 성공적으로 등록되었습니다.");
+        return "redirect:/talent/detail?id=" + commentVO.getPost_id();
+    }
+    @PostMapping("/comment/delete")
+    public String deleteComment(@RequestParam("commentId") Long commentId,
+                                @RequestParam("postId") Long postId,
+                                RedirectAttributes rttr,
+                                Principal principal) {
+        if (principal == null) {
+            rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+            return "redirect:/auth/login";
+        }
+
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+
+        if (loginUser == null) {
+            rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        // 댓글 삭제
+        commentService.deleteComment(commentId);
+        rttr.addFlashAttribute("msg", "댓글이 성공적으로 삭제되었습니다.");
+        return "redirect:/talent/detail?id=" + postId;
+    }
+    @PostMapping("/comment/update")
+    public String updateComment(@ModelAttribute CommentVO commentVO,
+                                RedirectAttributes rttr,
+                                Principal principal) {
+        if (principal == null) {
+            rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+            return "redirect:/auth/login";
+        }
+
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+
+        if (loginUser == null) {
+            rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        // 댓글 수정 (본인 댓글만 수정되도록 로그인 유저 id로 채움)
+        commentVO.setMember_id(loginUser.getMember_id());
+        commentService.updateComment(commentVO);
+        rttr.addFlashAttribute("msg", "댓글이 성공적으로 수정되었습니다.");
+        return "redirect:/talent/detail?id=" + commentVO.getPost_id();
+    }
+
+    // 인재풀 게시글 신고
+    @PostMapping("/report")
+    public String reportTalent(@RequestParam("targetId") Long targetId,
+                                @RequestParam("reason") String reason,
+                                RedirectAttributes rttr,
+                                Principal principal) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return "redirect:/auth/login";
+        }
+
+        ReportVO reportVO = new ReportVO();
+        reportVO.setTargetId(targetId);
+        reportVO.setReporterId(loginUser.getMember_id());
+        reportVO.setReason(reason);
+        reportVO.setTargetType("POST");
+
+        reportService.addReport(reportVO);
+
+        rttr.addFlashAttribute("msg", "게시글이 성공적으로 신고되었습니다.");
+        return "redirect:/talent/detail?id=" + targetId;
+    }
 
 }

@@ -18,6 +18,11 @@
         INSERT INTO comment (project_id, member_id, content, created_at)
         VALUES (#{project_id}, #{member_id}, #{content}, NOW())
     </insert>
+    <!-- 인재풀 댓글 등록 -->
+    <insert id="addTalentComment" parameterType="com.soldesk.vo.CommentVO">
+        INSERT INTO comment (post_id, member_id, content, created_at)
+        VALUES (#{post_id}, #{member_id}, #{content}, NOW())
+    </insert>
 
     <!-- 프로젝트별 댓글 조회 -->
     <select id="getCommentsByProjectId" parameterType="java.lang.Long" resultMap="commentResultMap">
@@ -27,9 +32,15 @@
         WHERE c.project_id = #{project_id}
         ORDER BY c.created_at DESC
     </select>
+    <!-- 인재풀 댓글 조회 -->
+    <select id="getCommentsByPostId" parameterType="java.lang.Long" resultMap="commentResultMap">
+        SELECT c.*, m.name AS memberName
+        FROM comment c
+        JOIN member m ON c.member_id = m.member_id
+        WHERE c.post_id = #{post_id}
+        ORDER BY c.created_at DESC
+    </select>
 
-
-    
     <!-- 댓글 수정 (본인 댓글만 수정 가능) -->
     <update id="updateComment" parameterType="com.soldesk.vo.CommentVO">
         UPDATE comment
@@ -40,7 +51,12 @@
     <delete id="deleteComment" parameterType="java.lang.Long">
         DELETE FROM comment WHERE comment_id = #{comment_id}
     </delete>
+    <!-- 프로젝트별 댓글 삭제 -->
     <delete id="deleteCommentsByProjectId" parameterType="java.lang.Long">
         DELETE FROM comment WHERE project_id = #{project_id}
+    </delete>
+    <!-- 인재풀 댓글 삭제 -->
+    <delete id="deleteTalentCommentsByPostId" parameterType="java.lang.Long">
+        DELETE FROM comment WHERE post_id = #{post_id}
     </delete>
 </mapper>

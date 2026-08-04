@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.soldesk.mapper.CommentMapper;
 import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.mapper.TalentMapper;
 import com.soldesk.vo.ParticipationVO;
@@ -20,6 +21,12 @@ public class TalentService {
 
     @Autowired 
     private TalentMapper talentMapper;
+
+    @Autowired
+    private ParticipationMapper participationMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
 
     TalentService(CommentService commentService) {
@@ -60,7 +67,7 @@ public class TalentService {
     // 인재풀 게시글 삭제
     @Transactional
     public void deleteTalent(Long postId){
-        // commentService.deleteCommentsByProjectId(postId); 이건 나중에
+        commentMapper.deleteTalentCommentsByPostId(postId); // 댓글 삭제
         talentMapper.deleteTalent(postId);
     }
 
