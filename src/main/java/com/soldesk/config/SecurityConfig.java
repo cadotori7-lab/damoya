@@ -50,6 +50,7 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/project/form"),
                     new AntPathRequestMatcher("/talent/form"),
                     new AntPathRequestMatcher("/project/favorite/toggle"),
+                    new AntPathRequestMatcher("/talent/favorite/toggle"),
                     new AntPathRequestMatcher("/mypage/**"),
                     new AntPathRequestMatcher("/workspace/**"))
                 .access(new WebExpressionAuthorizationManager("isAuthenticated() and !hasRole('ADMIN')")) // 어드민은 일반 페이지 접근 불가

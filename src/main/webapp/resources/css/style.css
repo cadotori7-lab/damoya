@@ -91,8 +91,8 @@
 .searchbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 
 /* 좌측 필터 박스 디자인 (스크롤 시 고정되도록 sticky 적용) */
-.filters{position:sticky;top:86px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
-.filters h3{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:20px 0 10px}
+/* 좌측 필터 박스 디자인 (sticky를 제거하여 겹침 현상 방지) */
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}.filters h3{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:20px 0 10px}
 .filters h3:first-child{margin-top:0}
 .scope{display:flex;background:var(--paper);border-radius:10px;padding:4px;gap:4px}
 .scope button{flex:1;padding:7px;border-radius:7px;font-size:13px;font-weight:700;color:var(--ink-soft);background:transparent;border:none;cursor:pointer;transition:.15s}
@@ -1047,6 +1047,20 @@
   .talent-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .tc-tags{display:flex;gap:6px;flex-wrap:wrap}
   .tc-foot{display:flex;align-items:center;gap:12px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--ink-soft)}
+  .talent-stats { display: flex; gap: 12px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); }
+  .tc-head .pic.mentor { background: linear-gradient(135deg, #e07a45, #c98a12); } 
+  .tc-head .pic.member { background: linear-gradient(135deg, #2b46c8, #5b45c8); } 
+  .form-group { margin-bottom: 24px; }
+  .form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+  .form-control { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
+  .form-control:focus { outline: none; border-color: #2b46c8; }
+  .checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; }
+  .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 15px; cursor: pointer; }
+  .error-msg { color: #d32f2f; font-size: 13px; margin-top: 6px; display: none; }
+  .tc-head .pic.mentor { background: linear-gradient(135deg, #e07a45, #c98a12); } 
+  .tc-head .pic.member { background: linear-gradient(135deg, #2b46c8, #5b45c8); } 
+  .talent-stats span { display: flex; align-items: center; gap: 4px; }
+  
   /* 제의 모달 */
   .offer-proj{background:var(--paper);border-radius:11px;padding:12px 14px;margin-bottom:16px}
   .offer-proj .k{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px}

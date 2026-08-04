@@ -20,7 +20,9 @@
   
   <main>
     <section id="v-detail">
-      <a class="back" href="${ctx}/project/list">← 목록으로</a>
+      <!-- ← 목록으로' 링크 (이전 필터/페이지 조건 유지) -->
+      <a class="back" href="${ctx}/project/list${pageContext.request.queryString != null ? '?' : ''}${pageContext.request.queryString}">← 목록으로</a>
+      
       <div class="detail">
         
         <!-- 좌측 상세 내용 영역 -->
@@ -69,7 +71,8 @@
                     <button type="button" class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center; color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
                     <a class="btn pri sm" href="${ctx}/project/mentor-recommend?id=${project.projectId}">멘토 AI 추천</a>
                 </c:if>
-                <a class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center;" href="${ctx}/project/list">목록으로</a>
+                <!--   목록으로 -->
+                <a class="back" style="margin: 0; padding: 6px 12px;" href="${ctx}/project/list${pageContext.request.queryString != null ? '?' : ''}${pageContext.request.queryString}">← 목록으로</a>
             </div>
           </div>
 
@@ -201,7 +204,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </section>
   </main>
