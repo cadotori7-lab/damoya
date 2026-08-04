@@ -49,7 +49,7 @@
           <div class="k" style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">초대할 프로젝트</div>
           <select id="offerProj" name="projectId" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
             <c:forEach var="proj" items="${leaderProjects}">
-                <option value="${proj.project_id}">${proj.title}</option>
+                <option value="${proj.projectId}">${proj.title}</option>
             </c:forEach>
           </select>
         </div>
