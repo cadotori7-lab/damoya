@@ -586,4 +586,29 @@ public class ProjectController {
         rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 신고되었습니다.");
         return "redirect:/project/detail?id=" + targetId;
     }
+
+    // 댓글 신고 (댓글 옆 신고 버튼에서 fetch()로 호출)
+    @PostMapping("/comment/report")
+    @ResponseBody
+    public ResponseEntity<?> reportComment(@RequestParam("comment_id") int commentId,
+                                            @RequestParam("reason") String reason,
+                                            Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        ReportVO reportVO = new ReportVO();
+        reportVO.setTargetId((long) commentId);
+        reportVO.setReporterId(loginUser.getMember_id());
+        reportVO.setReason(reason);
+        reportVO.setTargetType("COMMENT");
+
+        reportService.addReport(reportVO);
+
+        return ResponseEntity.ok().build();
+    }
 }

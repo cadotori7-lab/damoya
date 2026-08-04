@@ -92,6 +92,9 @@
                         <button type="submit" class="cmt-edit-btn cmt-delete-btn">삭제</button>
                       </form>
                     </c:if>
+                    <c:if test="${not empty member and member.member_id != comment.member_id}">
+                      <button type="button" class="cmt-edit-btn" onclick="openCommentReportModal(${comment.comment_id})">신고</button>
+                    </c:if>
                   </div>
                   <p class="cmt-content"><c:out value="${comment.content}" /></p>
                 </div>
@@ -258,6 +261,36 @@
           <button type="submit" class="btn pri">신고하기</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 댓글 신고 모달 -->
+  <div class="modal-overlay" id="commentReportModal">
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="commentReportTitle">
+      <div class="modal-head">
+        <div class="mh-info">
+          <h3 id="commentReportTitle">댓글 신고</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('commentReportModal')" aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="fld one">
+          <select id="commentReportReason" required>
+            <option value="" disabled selected>신고 사유를 선택해주세요</option>
+            <option value="부적절한 내용">부적절한 내용</option>
+            <option value="욕설/비방">욕설/비방</option>
+            <option value="스팸/광고">스팸/광고</option>
+            <option value="저작권 침해">저작권 침해</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-foot">
+          <button type="button" class="btn ghost" onclick="closeModal('commentReportModal')">취소</button>
+          <button type="button" class="btn pri" onclick="submitCommentReport()">신고하기</button>
+        </div>
+      </div>
     </div>
   </div>
 

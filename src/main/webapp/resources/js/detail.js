@@ -36,6 +36,51 @@ function openCommentEditModal(btn) {
     openModal('editModal');
 }
 window.openCommentEditModal = openCommentEditModal;
+
+// 댓글 신고 모달 열기 (신고 대상 댓글 id를 기억해둔다)
+let pendingReportCommentId = null;
+function openCommentReportModal(commentId) {
+    pendingReportCommentId = commentId;
+    document.getElementById('commentReportReason').value = '';
+    openModal('commentReportModal');
+}
+window.openCommentReportModal = openCommentReportModal;
+
+// 댓글 신고 전송
+function submitCommentReport() {
+    if (!pendingReportCommentId) return;
+
+    const reason = document.getElementById('commentReportReason').value;
+    if (!reason) {
+        alert('신고 사유를 선택해주세요.');
+        return;
+    }
+
+    const body = new URLSearchParams();
+    body.set('comment_id', pendingReportCommentId);
+    body.set('reason', reason);
+
+    fetch(`${ctx}/project/comment/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+    })
+        .then(res => {
+            if (res.status === 401) throw new Error('unauthorized');
+            if (!res.ok) throw new Error('failed');
+            alert('댓글을 신고했습니다.');
+            closeModal('commentReportModal');
+        })
+        .catch(err => {
+            if (err.message === 'unauthorized') {
+                alert('로그인이 필요한 서비스입니다.');
+            } else {
+                alert('신고 처리 중 오류가 발생했습니다.');
+            }
+        });
+}
+window.submitCommentReport = submitCommentReport;
+
 document.addEventListener("DOMContentLoaded", function() {
     const endDateDiv = document.getElementById("projectEndDate");
     if (!endDateDiv) return;

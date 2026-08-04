@@ -57,13 +57,13 @@ document.addEventListener('click', function (e) {
 });
 
 var PV_CTX = (typeof window.CTX !== 'undefined') ? window.CTX : '';
- 
+
 function openProfile(memberId) {
   // 로딩 상태로 모달 먼저 연다 (반응 빠르게)
   document.getElementById('pvLoading').style.display = '';
   document.getElementById('pvContent').style.display = 'none';
   openModal('profileViewModal');
- 
+
   fetch(PV_CTX + '/members/' + memberId + '/profile')
     .then(function (res) {
       if (!res.ok) throw new Error('not found');
@@ -137,5 +137,5 @@ function fillProfile(m) {
   document.getElementById('pvLoading').style.display = 'none';
   document.getElementById('pvContent').style.display = '';
 }
- 
+
 window.openProfile = openProfile;
