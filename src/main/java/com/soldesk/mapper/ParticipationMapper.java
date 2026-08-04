@@ -28,4 +28,55 @@ public interface ParticipationMapper {
             @Param("project_id") long project_id,
             @Param("member_id") long member_id
     );
+
+    String selectJoinedProjectRole( //역할 조회
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
+
+    List<ParticipationVO> selectJoinedTeamMembers(
+            @Param("projectId") long projectId
+    );
+
+    List<ParticipationVO> selectWaitingApplicants(
+            @Param("projectId") long projectId
+    );
+
+    int selectNextSuccessionOrder(@Param("projectId") long projectId);
+
+    int approveWaitingApplicant(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId,
+            @Param("successionOrder") int successionOrder
+    );
+
+    int rejectWaitingApplicant(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
+
+    int kickJoinedMember(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
+
+    List<ParticipationVO> selectSuccessionMembersForUpdate(
+            @Param("projectId") long projectId
+    );
+
+    int updateSuccessionOrder(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId,
+            @Param("successionOrder") int successionOrder
+    );
+
+    int leaveJoinedLeader(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
+
+    int promoteMemberToLeader(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
 }

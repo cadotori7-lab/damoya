@@ -55,6 +55,13 @@
         where project_id = #{projectId}
      </update>
 
+    <!-- 팀장 승계 시 프로젝트 소유자 변경 -->
+    <update id="updateProjectOwner">
+        UPDATE project
+        SET owner_id = #{ownerId}
+        WHERE project_id = #{projectId}
+    </update>
+
     <!-- 프로젝트 모집 삭제-->
      <delete id="deleteProject" parameterType="long">
         delete from project

@@ -3,6 +3,8 @@ package com.soldesk.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.soldesk.vo.ProjectVO;
 
 public interface ProjectMapper {
@@ -22,4 +24,6 @@ public interface ProjectMapper {
     List<ProjectVO> getFavoriteProjectsByMemberId(Long memberId);
     void increaseViewCount(Long projectId); //게시글 조회수 반환
     List<ProjectVO> getTop3RecommendedProjects(); // 추천순 게시글 3개 조회
+    int updateProjectOwner(@Param("projectId") long projectId,
+                           @Param("ownerId") long ownerId);
 }

@@ -16,6 +16,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\Proj
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TalentController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TaskBoardController.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TeamManagementController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestRestController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
@@ -50,6 +51,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\Passwor
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ProjectService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ReportService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TaskService.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TeamManagementService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\UnivService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java

@@ -78,4 +78,14 @@ public class ParticipationService {
                 member_id
         ) > 0;
     }
+
+    @Transactional(readOnly = true)
+    public String getProjectRole(long projectId, long memberId) {
+        return participationMapper.selectJoinedProjectRole(projectId, memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean canReadProject(long projectId, long memberId) {
+        return getProjectRole(projectId, memberId) != null;
+    }
 }
