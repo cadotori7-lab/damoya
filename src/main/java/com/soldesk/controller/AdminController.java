@@ -153,20 +153,36 @@ public class AdminController {
     public String posts(Model model) {
         logger.info("게시물 관리 요청");
         List<ReportVO> projectReports = reportService.getReportsByTargetType("PROJECT");
+        List<ReportVO> postReports = reportService.getReportsByTargetType("POST");
+        List<ReportVO> commentReports = reportService.getReportsByTargetType("COMMENT");
         // LocalDateTime JSON 직렬화 이슈 방지
         for (ReportVO report : projectReports) {
             report.setCreatedAt(null);
         }
+        for (ReportVO report : postReports) {
+            report.setCreatedAt(null);
+        }
+        for (ReportVO report : commentReports) {
+            report.setCreatedAt(null);
+        }
 
         String reportsJson;
+        String reportsJson2;
+        String reportsJson3;
         try {
             reportsJson = objectMapper.writeValueAsString(projectReports);
+            reportsJson2 = objectMapper.writeValueAsString(postReports);
+            reportsJson3 = objectMapper.writeValueAsString(commentReports);
         } catch (JsonProcessingException e) {
             logger.error("신고 JSON 변환 오류: {}", e.getMessage());
             reportsJson = "[]";
+            reportsJson2 = "[]";
+            reportsJson3 = "[]";
         }
 
         model.addAttribute("reports", reportsJson);
+        model.addAttribute("postReports", reportsJson2);
+        model.addAttribute("commentReports", reportsJson3);
         return "admin/posts";
     }
 
