@@ -215,3 +215,196 @@ if (searchInput) {
 }
 
 renderPosts();
+
+// ----- 댓글 신고 관리 테이블 -----
+const COMMENT_PAGE_SIZE = 10;
+
+function isCommentProcessed(status) {
+  return String(status || '').toUpperCase() === 'PROCESSED';
+}
+
+// report(targetType=COMMENT) → 댓글 단위로 집계
+const commentMap = new Map();
+(commentReports || []).forEach(report => {
+  const commentId = report.targetId;
+  if (commentId == null) return;
+
+  if (!commentMap.has(commentId)) {
+    commentMap.set(commentId, {
+      commentId,
+      content: report.commentContent || '(삭제된 댓글)',
+      projectTitle: report.projectTitle || '(삭제된 게시물)',
+      author: report.memberName || '—',
+      date: formatPostDate(report.commentCreatedAt),
+      reports: 0,
+      processedCount: 0
+    });
+  }
+  const comment = commentMap.get(commentId);
+  comment.reports += 1;
+  if (isCommentProcessed(report.status)) {
+    comment.processedCount += 1;
+  }
+});
+
+const commentRows = Array.from(commentMap.values()).map(c => ({
+  ...c,
+  status: c.processedCount > 0 && c.processedCount === c.reports ? '처리완료' : '미처리'
+}));
+
+let commentFilter = 'all';
+let commentSearch = '';
+let commentPage = 1;
+
+function commentActionForm(action, commentId, label, btnClass, confirmMsg, btnStyle) {
+  const onsubmit = confirmMsg
+    ? ` onsubmit="return confirm('${confirmMsg}')"`
+    : '';
+  const styleAttr = btnStyle ? ` style="${btnStyle}"` : '';
+  return `<form action="${ctx}/admin/comments/${action}" method="post" style="display:inline"${onsubmit}>
+    <input type="hidden" name="${escapeHtml(csrfParameter)}" value="${escapeHtml(csrfToken)}"/>
+    <input type="hidden" name="commentId" value="${escapeHtml(commentId)}"/>
+    <button type="submit" class="btn sm ${btnClass}"${styleAttr}>${label}</button>
+  </form>`;
+}
+
+function commentActions(c) {
+  const deleteBtn = commentActionForm('delete', c.commentId, '삭제', 'ghost', '댓글을 완전히 삭제할까요?', 'color:var(--reject)');
+  if (c.status === '처리완료') {
+    return commentActionForm('reopen', c.commentId, '재검토', 'pri') + deleteBtn;
+  }
+  return commentActionForm('resolve', c.commentId, '처리완료', 'ghost') + deleteBtn;
+}
+
+function matchesCommentSearch(c) {
+  if (!commentSearch) return true;
+  const q = commentSearch.toLowerCase();
+  return (c.content || '').toLowerCase().includes(q)
+    || (c.author || '').toLowerCase().includes(q);
+}
+
+function getFilteredComments() {
+  return commentRows.filter(c => {
+    if (!matchesCommentSearch(c)) return false;
+    if (commentFilter === 'all') return true;
+    if (commentFilter === 'reported') return c.reports > 0 && c.status === '미처리';
+    return c.status === '처리완료';
+  });
+}
+
+function renderCommentPagination(totalCount) {
+  const nav = document.getElementById('commentPagination');
+  if (!nav) return;
+
+  const pageCnt = Math.max(1, Math.ceil(totalCount / COMMENT_PAGE_SIZE));
+  if (commentPage > pageCnt) commentPage = pageCnt;
+  if (commentPage < 1) commentPage = 1;
+
+  if (totalCount === 0) {
+    nav.innerHTML = '';
+    return;
+  }
+
+  const blockSize = 10;
+  const min = Math.floor((commentPage - 1) / blockSize) * blockSize + 1;
+  let max = min + blockSize - 1;
+  if (max > pageCnt) max = pageCnt;
+
+  let html = '';
+  if (min > 1) {
+    html += `<li class="page-item"><a data-page="${min - 1}" style="${pageLinkStyle(false)}">이전</a></li>`;
+  }
+  for (let pageNum = min; pageNum <= max; pageNum++) {
+    html += `<li class="page-item${pageNum === commentPage ? ' active' : ''}">
+      <a data-page="${pageNum}" style="${pageLinkStyle(pageNum === commentPage)}">${pageNum}</a>
+    </li>`;
+  }
+  if (max < pageCnt) {
+    html += `<li class="page-item"><a data-page="${max + 1}" style="${pageLinkStyle(false)}">다음</a></li>`;
+  }
+  nav.innerHTML = html;
+
+  nav.querySelectorAll('a[data-page]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      commentPage = Number(a.dataset.page) || 1;
+      renderComments();
+    });
+  });
+}
+
+function renderComments() {
+  const filtered = getFilteredComments();
+  const pageCnt = Math.max(1, Math.ceil(filtered.length / COMMENT_PAGE_SIZE));
+  if (commentPage > pageCnt) commentPage = pageCnt;
+
+  const start = (commentPage - 1) * COMMENT_PAGE_SIZE;
+  const rows = filtered.slice(start, start + COMMENT_PAGE_SIZE);
+
+  const table = document.getElementById('commentTable');
+  if (!table) return;
+  if (!filtered.length) {
+    table.innerHTML =
+      '<tr><th>댓글</th><th>작성자</th><th>작성일</th><th>신고</th><th>상태</th><th>관리</th></tr>' +
+      '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink-soft)">조건에 맞는 댓글이 없습니다.</td></tr>';
+  } else {
+    table.innerHTML =
+      '<tr><th>댓글</th><th>작성자</th><th>작성일</th><th>신고</th><th>상태</th><th>관리</th></tr>' +
+      rows.map(c => {
+        const content = escapeHtml(c.content);
+        const projectTitle = escapeHtml(c.projectTitle);
+        const author = escapeHtml(c.author);
+        const date = escapeHtml(c.date);
+        const status = escapeHtml(c.status);
+        return `<tr${c.status === '처리완료' ? ' style="opacity:.65"' : ''}>
+        <td><div class="nm">${content}</div><div class="mono" style="font-size:11px;color:var(--ink-soft)">${projectTitle}</div></td>
+        <td><div class="mono">${author}</div></td>
+        <td><div class="mono">${date}</div></td>
+        <td>${c.reports > 0 ? `<span class="chip reject">${c.reports}</span>` : '<span style="color:var(--ink-soft)">—</span>'}</td>
+        <td><span class="chip ${status === '처리완료' ? 'approve' : 'wait'}">${status}</span></td>
+        <td><div class="act-btns">${commentActions(c)}</div></td>
+      </tr>`;
+      }).join('');
+  }
+
+  renderCommentPagination(filtered.length);
+
+  const cAll = commentRows.filter(matchesCommentSearch).length;
+  const cRep = commentRows.filter(c => matchesCommentSearch(c) && c.reports > 0 && c.status === '미처리').length;
+  const cDone = commentRows.filter(c => matchesCommentSearch(c) && c.status === '처리완료').length;
+  const tb = document.querySelectorAll('#commentTabs button');
+  if (tb[0]) tb[0].querySelector('.mono').textContent = cAll;
+  if (tb[1]) tb[1].querySelector('.mono').textContent = cRep;
+  if (tb[2]) tb[2].querySelector('.mono').textContent = cDone;
+}
+
+document.querySelectorAll('#commentTabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#commentTabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    commentFilter = b.dataset.f;
+    commentPage = 1;
+    renderComments();
+  };
+});
+
+const commentSearchInput = document.getElementById('commentSearch');
+if (commentSearchInput) {
+  commentSearchInput.addEventListener('input', () => {
+    commentSearch = commentSearchInput.value.trim();
+    commentPage = 1;
+    renderComments();
+  });
+}
+
+renderComments();
+
+// ----- 게시물/댓글 신고 유형 전환 탭 -----
+document.querySelectorAll('#reportTypeTabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#reportTypeTabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('postSection').style.display = b.dataset.type === 'post' ? '' : 'none';
+    document.getElementById('commentSection').style.display = b.dataset.type === 'comment' ? '' : 'none';
+  };
+});

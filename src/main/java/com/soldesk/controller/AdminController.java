@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soldesk.service.AdminDashboardService;
 import com.soldesk.service.AdminService;
+import com.soldesk.service.CommentService;
 import com.soldesk.service.MemberService;
 import com.soldesk.service.ProjectService;
 import com.soldesk.service.ReportService;
@@ -36,6 +37,7 @@ public class AdminController {
     private final MemberService memberService;
     private final ReportService reportService;
     private final ProjectService projectService;
+    private final CommentService commentService;
     private final ObjectMapper objectMapper;
 
     public AdminController(AdminDashboardService adminDashboardService,
@@ -43,12 +45,14 @@ public class AdminController {
                            MemberService memberService,
                            ReportService reportService,
                            ProjectService projectService,
+                           CommentService commentService,
                            ObjectMapper objectMapper) {
         this.adminDashboardService = adminDashboardService;
         this.adminService = adminService;
         this.memberService = memberService;
         this.reportService = reportService;
         this.projectService = projectService;
+        this.commentService = commentService;
         this.objectMapper = objectMapper;
     }
 
@@ -152,38 +156,25 @@ public class AdminController {
     @GetMapping("/posts")
     public String posts(Model model) {
         logger.info("게시물 관리 요청");
-        List<ReportVO> projectReports = reportService.getReportsByTargetType("PROJECT");
-        List<ReportVO> postReports = reportService.getReportsByTargetType("POST");
-        List<ReportVO> commentReports = reportService.getReportsByTargetType("COMMENT");
-        // LocalDateTime JSON 직렬화 이슈 방지
-        for (ReportVO report : projectReports) {
-            report.setCreatedAt(null);
-        }
-        for (ReportVO report : postReports) {
-            report.setCreatedAt(null);
-        }
-        for (ReportVO report : commentReports) {
-            report.setCreatedAt(null);
-        }
+        model.addAttribute("reports", toReportsJson("PROJECT"));
+        // POST 신고: 게시판 기능이 별도 브랜치에서 아직 병합 전이라 항상 빈 배열
+        model.addAttribute("postReports", toReportsJson("POST"));
+        model.addAttribute("commentReports", toReportsJson("COMMENT"));
+        return "admin/posts";
+    }
 
-        String reportsJson;
-        String reportsJson2;
-        String reportsJson3;
+    private String toReportsJson(String targetType) {
+        List<ReportVO> reports = reportService.getReportsByTargetType(targetType);
+        // LocalDateTime JSON 직렬화 이슈 방지 (날짜는 이미 포맷된 projectCreatedAt/commentCreatedAt으로 노출)
+        for (ReportVO report : reports) {
+            report.setCreatedAt(null);
+        }
         try {
-            reportsJson = objectMapper.writeValueAsString(projectReports);
-            reportsJson2 = objectMapper.writeValueAsString(postReports);
-            reportsJson3 = objectMapper.writeValueAsString(commentReports);
+            return objectMapper.writeValueAsString(reports);
         } catch (JsonProcessingException e) {
             logger.error("신고 JSON 변환 오류: {}", e.getMessage());
-            reportsJson = "[]";
-            reportsJson2 = "[]";
-            reportsJson3 = "[]";
+            return "[]";
         }
-
-        model.addAttribute("reports", reportsJson);
-        model.addAttribute("postReports", reportsJson2);
-        model.addAttribute("commentReports", reportsJson3);
-        return "admin/posts";
     }
 
     // 게시물 숨김 (해당 프로젝트 신고 status → PROCESSED)
@@ -214,6 +205,37 @@ public class AdminController {
         reportService.deleteReport("PROJECT", projectId);
         projectService.deleteProject(projectId);
         redirectAttributes.addFlashAttribute("msg", "게시물을 삭제했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 댓글 신고 처리 완료 (댓글은 유지하고 신고만 처리 상태로 변경)
+    @PostMapping("/comments/resolve")
+    public String resolveCommentReport(@RequestParam("commentId") Long commentId,
+                                       RedirectAttributes redirectAttributes) {
+        logger.info("댓글 신고 처리 요청: commentId={}", commentId);
+        reportService.updateReportStatusByTarget("COMMENT", commentId, "PROCESSED");
+        redirectAttributes.addFlashAttribute("msg", "댓글 신고를 처리 완료로 표시했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 댓글 신고 재검토 (처리 완료 → 미처리로 되돌림)
+    @PostMapping("/comments/reopen")
+    public String reopenCommentReport(@RequestParam("commentId") Long commentId,
+                                      RedirectAttributes redirectAttributes) {
+        logger.info("댓글 신고 재검토 요청: commentId={}", commentId);
+        reportService.updateReportStatusByTarget("COMMENT", commentId, "RECEIVED");
+        redirectAttributes.addFlashAttribute("msg", "댓글 신고를 미처리로 되돌렸습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 댓글 완전 삭제 (신고 + 댓글)
+    @PostMapping("/comments/delete")
+    public String deleteCommentReport(@RequestParam("commentId") Long commentId,
+                                      RedirectAttributes redirectAttributes) {
+        logger.info("댓글 완전 삭제 요청: commentId={}", commentId);
+        reportService.deleteReport("COMMENT", commentId);
+        commentService.deleteComment(commentId);
+        redirectAttributes.addFlashAttribute("msg", "댓글을 삭제했습니다.");
         return "redirect:/admin/posts";
     }
 

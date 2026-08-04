@@ -20,31 +20,60 @@
     <a class="back" href="${ctx}/admin/dashboard">← 관리자 대시보드</a>
     <div class="eyebrow">Post management</div>
     <h1 class="page"><em>게시물 관리</em></h1>
-    <p class="sub">공모 게시물을 확인하고, 신고·규정 위반 게시물을 숨기거나 삭제할 수 있어요.</p>
+    <p class="sub">공모 게시물과 댓글을 확인하고, 신고·규정 위반 콘텐츠를 숨기거나 삭제할 수 있어요.</p>
 
-    <div class="acc-toolbar">
-      <input type="text" id="postSearch" placeholder="제목·작성자로 검색">
-    </div>
-    <div class="appl-tabs" id="postTabs">
-      <button class="on" data-f="all">전체 <span class="mono">0</span></button>
-      <button data-f="reported">신고 있음 <span class="mono">0</span></button>
-      <button data-f="hidden">숨김·삭제 <span class="mono">0</span></button>
+    <div class="appl-tabs" id="reportTypeTabs">
+      <button class="on" data-type="post">게시물 신고</button>
+      <button data-type="comment">댓글 신고</button>
     </div>
 
-    <div class="tbl-wrap">
-      <table id="postTable"></table>
+    <div id="postSection">
+      <div class="acc-toolbar">
+        <input type="text" id="postSearch" placeholder="제목·작성자로 검색">
+      </div>
+      <div class="appl-tabs" id="postTabs">
+        <button class="on" data-f="all">전체 <span class="mono">0</span></button>
+        <button data-f="reported">신고 있음 <span class="mono">0</span></button>
+        <button data-f="hidden">숨김·삭제 <span class="mono">0</span></button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table id="postTable"></table>
+      </div>
+
+      <nav aria-label="page" style="margin-top: 32px;">
+        <ul class="pagination" id="postPagination"
+            style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;"></ul>
+      </nav>
     </div>
 
-    <nav aria-label="page" style="margin-top: 32px;">
-      <ul class="pagination" id="postPagination"
-          style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;"></ul>
-    </nav>
+    <div id="commentSection" style="display:none">
+      <div class="acc-toolbar">
+        <input type="text" id="commentSearch" placeholder="댓글 내용·작성자로 검색">
+      </div>
+      <div class="appl-tabs" id="commentTabs">
+        <button class="on" data-f="all">전체 <span class="mono">0</span></button>
+        <button data-f="reported">신고 있음 <span class="mono">0</span></button>
+        <button data-f="processed">처리 완료 <span class="mono">0</span></button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table id="commentTable"></table>
+      </div>
+
+      <nav aria-label="page" style="margin-top: 32px;">
+        <ul class="pagination" id="commentPagination"
+            style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;"></ul>
+      </nav>
+    </div>
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
   <script type="application/json" id="reports-data"><c:out value="${reports}" escapeXml="false"/></script>
+  <script type="application/json" id="comment-reports-data"><c:out value="${commentReports}" escapeXml="false"/></script>
   <script>
     const reports = JSON.parse(document.getElementById('reports-data').textContent || '[]');
+    const commentReports = JSON.parse(document.getElementById('comment-reports-data').textContent || '[]');
     const ctx = '${pageContext.request.contextPath}';
     const csrfParameter = '${_csrf.parameterName}';
     const csrfToken = '${_csrf.token}';

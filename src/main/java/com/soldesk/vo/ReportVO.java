@@ -17,6 +17,9 @@ public class ReportVO{
     private String projectStatus;
     private String projectCreatedAt;
 
+    private String commentContent;
+    private String commentCreatedAt;
+
     public Long getReportId() {
         return reportId;
     }
@@ -111,6 +114,22 @@ public class ReportVO{
 
     public void setProjectCreatedAt(String projectCreatedAt) {
         this.projectCreatedAt = projectCreatedAt;
+    }
+
+    public String getCommentContent() {
+        return commentContent;
+    }
+
+    public void setCommentContent(String commentContent) {
+        this.commentContent = commentContent;
+    }
+
+    public String getCommentCreatedAt() {
+        return commentCreatedAt;
+    }
+
+    public void setCommentCreatedAt(String commentCreatedAt) {
+        this.commentCreatedAt = commentCreatedAt;
     }
 
 }
