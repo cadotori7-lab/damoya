@@ -29,7 +29,7 @@ public class ProjectVO {
     private List<String> gradeList;    // 다중 학년 체크박스 값
     private boolean liked; // 현재 로그인한 유저가 좋아요를 눌렀는지 여부
     private int commentCount; //댓글 수 
-
+    private int currentNum; //현재 참여 중인 인원수
 
     // offset 자동 계산 메서드
     public void calcOffset() {
@@ -231,5 +231,13 @@ public class ProjectVO {
 
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public int getCurrentNum() {
+        return currentNum;
+    }
+
+    public void setCurrentNum(int currentNum) {
+        this.currentNum = currentNum;
     }
 }
