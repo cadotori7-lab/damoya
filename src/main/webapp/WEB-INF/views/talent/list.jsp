@@ -40,14 +40,14 @@
                 <button type="button" onclick="setRole('MENTOR')">멘토</button>
             </div>
 
-            <!--  매칭 범위 필터 -->
+            <!-- 매칭 범위 필터 -->
             <h3>매칭 범위</h3>
             <div class="scope" style="margin-bottom: 24px;" id="scopeFilterBtns">
                 <button type="button" class="on" onclick="changeScope('교내', this)">교내</button>
                 <button type="button" onclick="changeScope('전국', this)">전국</button>
             </div>
 
-            <!--  카테고리 필터 -->
+            <!-- 카테고리 필터 -->
             <h3>카테고리</h3>
             <div class="flt" style="margin-bottom: 24px;" id="categoryFilterContainer">
                 <input type="checkbox" id="c1" value="CONTEST" checked><label for="c1">공모전</label>
@@ -55,23 +55,13 @@
                 <input type="checkbox" id="c3" value="LIBERAL"><label for="c3">교양</label>
                 <input type="checkbox" id="c4" value="CLUB"><label for="c4">교내활동</label>
             </div>
-
-            <!--  대상 학년 필터 -->
-            <h3>대상 학년</h3>
-            <div class="flt">
-                <input type="checkbox" id="g_all" value="all" checked><label for="g_all">학년 무관</label>
-                <input type="checkbox" id="g1" value="1"><label for="g1">1학년</label>
-                <input type="checkbox" id="g2" value="2"><label for="g2">2학년</label>
-                <input type="checkbox" id="g3" value="3"><label for="g3">3학년</label>
-                <input type="checkbox" id="g4" value="4"><label for="g4">4학년</label>
-            </div>
         </aside>
 
         <!-- 우측 리스트 영역 -->
         <div class="list-section">
             
             <div class="searchbar" style="margin-bottom: 24px;">
-                <form action="javascript:void(0);" onsubmit="doSearch();" style="display: flex; width: 100%; gap: 10px;">
+                <form action="javascript:void(0);" onsubmit="if(typeof doSearch === 'function') doSearch();" style="display: flex; width: 100%; gap: 10px;">
                     <input type="text" id="searchInput" placeholder="관심 분야·기술·소개로 검색 (예: Spring, 디자인)" style="flex: 1;">
                     <button type="submit" class="btn pri">검색</button>
                 </form>
@@ -80,9 +70,9 @@
             <div class="list-sort-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 24px;">
                 
                 <div class="list-sort">
-                    <button type="button" class="sort-btn active" onclick="setSort('latest')">최신순</button>
-                    <button type="button" class="sort-btn" onclick="setSort('views')">조회순</button>
-                    <button type="button" class="sort-btn" onclick="setSort('likes')">좋아요순</button>
+                    <button type="button" class="sort-btn active" onclick="if(typeof setSort === 'function') setSort('latest')">최신순</button>
+                    <button type="button" class="sort-btn" onclick="if(typeof setSort === 'function') setSort('views')">조회순</button>
+                    <button type="button" class="sort-btn" onclick="if(typeof setSort === 'function') setSort('likes')">좋아요순</button>
                 </div>
 
                 <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
@@ -158,18 +148,17 @@
                                 <div class="tc-foot" style="margin-top: auto; padding-top:14px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:13px; color:var(--ink-soft);">
                                     <div class="talent-stats" style="display:flex; gap:16px;">
                                         <span style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${t.viewCount != null ? t.viewCount : 0}
+                                            <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${t.viewCount}
                                         </span>
                                         <span style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> <span class="fav-count">${t.favoriteCount != null ? t.favoriteCount : 0}</span>
+                                            <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> <span class="fav-count">${t.favoriteCount}</span>
                                         </span>
                                         <span style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> ${t.commentCount != null ? t.commentCount : 0}
+                                            <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> ${t.commentCount}
                                         </span>
                                     </div>
                                     <span style="font-weight: 500;">
-                                        ${fn:substring(t.createdAt, 0, 10)}
-                                    </span>
+                                        ${fn:substring(t.createdAt, 0, 10)}                                    </span>
                                 </div>
 
                             </div>
@@ -183,6 +172,38 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <c:if test="${pageBean.pageCnt > 0}">
+                <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 40px; padding: 20px;">
+                    
+                    <!-- 이전 페이지 그룹 -->
+                    <c:if test="${pageBean.min > 1}">
+                        <button type="button" class="btn ghost sm" onclick="goPage(${pageBean.prevPage})">◀ 이전</button>
+                    </c:if>
+
+                    <!-- 페이지 번호 반복 (min ~ max) -->
+                    <c:forEach var="p" begin="${pageBean.min}" end="${pageBean.max}">
+                        <button type="button" class="btn sm ${p == pageBean.currentPage ? 'pri' : 'ghost'}" 
+                                onclick="goPage(${p})"
+                                style="${p == pageBean.currentPage ? 'background-color: var(--ink); color: #fff; border-color: var(--ink);' : 'background: #fff; color: #333; border: 1px solid #ccc;'}">
+                            ${p}
+                        </button>
+                    </c:forEach>
+
+                    <!-- 다음 페이지 그룹 -->
+                    <c:if test="${pageBean.pageCnt > pageBean.max}">
+                        <button type="button" class="btn ghost sm" onclick="goPage(${pageBean.nextPage})">다음 ▶</button>
+                    </c:if>
+                    
+                </div>
+            </c:if>
+            <script>
+                function goPage(pageNum) {
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('page', pageNum);
+                    window.location.href = url.toString();
+                }
+            </script>
 
         </div>
       </div>

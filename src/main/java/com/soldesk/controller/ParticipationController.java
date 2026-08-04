@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.soldesk.service.MemberService; // ★ MemberService 주입 필요
+import com.soldesk.service.MemberService;
 import com.soldesk.service.ParticipationService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ParticipationVO;

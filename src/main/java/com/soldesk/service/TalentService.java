@@ -6,15 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.mapper.TalentMapper;
 import com.soldesk.vo.TalentVO;
 
 @Service
 public class TalentService {
 
+    @Autowired
     private final CommentService commentService;
+
     @Autowired 
     private TalentMapper talentMapper;
+
+    @Autowired
+    private ParticipationMapper participationMapper;
+
 
     TalentService(CommentService commentService) {
         this.commentService = commentService;
@@ -57,6 +64,26 @@ public class TalentService {
         // commentService.deleteCommentsByProjectId(postId); 이건 나중에
         talentMapper.deleteTalent(postId);
     }
+
+    // 내가 팀장인 프로젝트 목록 조회
+    @Transactional
+    public List<TalentVO> getLeaderProjectsByMemberId(Long memberId){
+        return talentMapper.getLeaderProjectsByMemberId(memberId);
+    }
+
+    // 함께하기 제의 저장
+    @Transactional
+    public void insertOffer(Long projectId, Long talentId, Long memberId){
+        // 제안 데이터를 Map으로 생성
+        Map<String,Object> offerData = new HashMap<>();
+        offerData.put("projectId", projectId);
+        offerData.put("talentId", talentId);
+        offerData.put("memberId", memberId);
+
+        // Mapper를 통해 제안 데이터 저장
+        talentMapper.insertOffer(offerData);
+    }
     
+
 
 }

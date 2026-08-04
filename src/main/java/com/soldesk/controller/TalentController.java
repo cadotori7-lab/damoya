@@ -21,6 +21,8 @@ import com.soldesk.service.ReportService;
 import com.soldesk.service.TalentService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
+import com.soldesk.vo.ParticipationVO;
+import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.TalentVO;
 
 @Controller
@@ -51,7 +53,8 @@ public class TalentController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("id") Long id, 
-                        Model model, Principal principal) {
+                        Model model, Principal principal,
+                        TalentVO talent = talentService.getTalentById(id);) {
         
         //  DB에서 해당 id의 게시글 데이터를 가져오기
         TalentVO talent = talentService.getTalentById(id);
@@ -59,6 +62,7 @@ public class TalentController {
         // 작성자 본인이 맞는지 확인
         boolean isOwner = false;
         MemberVO loginUser = null;
+        List<Map<String,Object>> leaderProjects = null;
 
         if(principal != null ){
             String loginId = principal.getName();
@@ -69,13 +73,52 @@ public class TalentController {
                 if (talent.getMemberId() == loginUser.getMember_id()) {
                     isOwner = true;
                 }
+                // 내가 팀장인 프로젝트 목록 가져오기
+                leaderProjects = participationService.getLeaderProjects(loginUser.getMember_id());
             }
         }
+        model.addAttribute("leaderProject", leaderProjects);
         model.addAttribute("talent", talent);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("member", loginUser);
         
         return "talent/detail";
+    }
+    // 함께하기 제의
+    @PostMapping("/offer/submit")
+    public String sendOffer(ParticipationVO participationVO,
+                            @RequestParam("postId") Long postId,
+                            Principal principal,
+                            RedirectAttributes rttr) {
+        //로그인 체크
+        if(principal == null){
+            rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+            return "redirect:/auth/login";
+        }
+
+        // 회원 정보 조회
+        String loginId = principal.getName();
+        MemberVO loginUser = memberService.findByLoginId(loginId);
+
+        if(loginUser == null){
+            rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        // Offer로 고정 역할은 Member로
+        participationVO.setJoinStatus("OFFER");
+        participationVO.setProjectRole("Member");
+        Long loginMemberId = (long) loginUser.getMember_id();
+        
+        try {
+            participationService.sendOffer(participationVO);
+            rttr.addFlashAttribute("msg", "성공적으로 제의를 보냈습니다!");
+
+        } catch (IllegalStateException e) {
+            rttr.addFlashAttribute("msg", "제의를 보내는 중에 오류가 발생했습니다.");
+        }
+
+        return "redirect:/talent/detail?id=" + postId;
     }
 
     @GetMapping("/form")
@@ -86,8 +129,8 @@ public class TalentController {
     // 인재풀 등록
     @PostMapping("/register")
     public String registerTalent(@ModelAttribute TalentVO talentVO,
-                                 RedirectAttributes rrtr,
-                                 Principal principal){
+                               RedirectAttributes rrtr,
+                               Principal principal){
         
         if(principal == null){
             return "redirect:/auth/login";
@@ -98,7 +141,7 @@ public class TalentController {
 
         if(loginUser == null){
             return "redirect:/auth/login";
-        } // 💡 누락되었던 닫는 중괄호 추가 완료
+        } 
 
         // 다중 체크된 카테고리 리스트를 콤마(,)로 연결하여 문자열로 변환
         if (talentVO.getCategoryList() != null && !talentVO.getCategoryList().isEmpty()) {
@@ -117,7 +160,13 @@ public class TalentController {
     public String getTalentList(
             @ModelAttribute TalentVO vo,
             Model model, Principal principal) {
-
+            
+            if (vo.getKind() == null || vo.getKind().trim().isEmpty() || vo.getKind().equals("all")) {
+                vo.setKind(null);
+            }
+            
+            vo.setAmount(6);
+            
             // 페이지가 1 미만으로 내려가지 않게 처리
             if(vo.getPage() < 1){
                 vo.setPage(1);
@@ -140,9 +189,9 @@ public class TalentController {
     // 수정 페이지 
     @GetMapping("/edit")
     public String editForm(@RequestParam("id") Long postId,
-                            Model model,
-                            Principal principal,
-                            RedirectAttributes rttr){
+                           Model model,
+                           Principal principal,
+                           RedirectAttributes rttr){
     //로그인 확인
     if(principal == null){
         return "redirect:/auth/login";
@@ -174,7 +223,7 @@ public class TalentController {
         talentService.updateTalent(talentVO);
 
         rttr.addFlashAttribute("msg", "게시글이 성공적으로 수정되었습니다. ");
-        return "redirect:/talent/detail" + talentVO.getPostId();
+        return "redirect:/talent/detail?id=" + talentVO.getPostId();
     }
 
     // 삭제 처리
@@ -200,5 +249,6 @@ public class TalentController {
         rttr.addFlashAttribute("msg", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/talent/list";
     }
+
 
 }

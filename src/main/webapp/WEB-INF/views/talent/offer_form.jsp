@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <!-- 모달 스타일 -->
@@ -30,45 +31,73 @@
     </div>
     
     <div class="modal-body" id="offerBody">
-      
-      <!-- 💡 1. 입력 폼 영역 (초기화하기 쉽도록 form 태그 사용) -->
-      <form id="offerForm">
-          <div class="offer-proj" style="margin-bottom: 16px;">
-            <div class="k" style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">초대할 프로젝트</div>
-            <select id="offerProj" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
-              <option>AI 헬스케어 웹서비스 (팀장)</option>
-              <option>데이터베이스 텀 프로젝트</option>
-            </select>
-          </div>
-          
-          <div class="fld one" style="margin-bottom: 16px;">
-              <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">맡아줬으면 하는 역할</label>
-              <input type="text" id="offerRole" placeholder="예: 백엔드 · 인증/권한" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
-          </div>
-          
-          <div class="fld one">
-              <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">제의 메시지</label>
-              <textarea placeholder="왜 함께하고 싶은지, 어떤 점이 좋았는지 적어주세요." style="min-height:90px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);"></textarea>
-          </div>
-          
-          <div class="form-foot" style="margin-top: 24px; display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" class="btn ghost" onclick="closeOffer()">취소</button>
-            <button type="button" class="btn pri" onclick="sendOffer()">제의 보내기</button>
-          </div>
-      </form>
+      <c:choose>
+          <%-- 💡 조건 1: 팀장으로 있는 프로젝트가 1개라도 있을 경우 (정상 입력 폼 출력) --%>
+          <c:when test="${not empty leaderProjects and fn:length(leaderProjects) > 0}">
+              
+              <form id="offerForm">
+                  <div class="offer-proj" style="margin-bottom: 16px;">
+                    <div class="k" style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">초대할 프로젝트</div>
+                    <select id="offerProj" name="projectId" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
+                      <c:forEach var="proj" items="${leaderProjects}">
+                          <option value="${proj.project_id}">${proj.title}</option>
+                      </c:forEach>
+                    </select>
+                  </div>
+                  
+                  <div class="fld one" style="margin-bottom: 16px;">
+                      <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">맡아줬으면 하는 역할</label>
+                      <input type="text" id="offerRole" name="wantPosition" placeholder="예: 백엔드 · 인증/권한" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
+                  </div>
+        
+                  <div class="fld one" style="margin-bottom: 16px;">
+                      <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">회신 받을 연락처 (이메일 필수) <span style="color: red;">*</span></label>
+                      <input type="email" id="offerEmail" placeholder="example@email.com" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
+                  </div>
+                  
+                  <div class="fld one">
+                      <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">제의 메시지</label>
+                      <textarea id="offerMessage" placeholder="왜 함께하고 싶은지, 어떤 점이 좋았는지 적어주세요." style="min-height:90px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);"></textarea>
+                  </div>
+                  
+                  <div class="form-foot" style="margin-top: 24px; display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" class="btn ghost" onclick="closeOffer()">취소</button>
+                    <button type="button" class="btn pri" onclick="sendOffer()">제의 보내기</button>
+                  </div>
+              </form>
+        
+              <!-- 성공 메시지 영역 (처음엔 display: none) -->
+              <div id="offerSuccess" class="submit-success" style="display: none; text-align:center; padding: 20px 0;">
+                <div style="color: #2b46c8; margin-bottom:16px;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3 style="margin-bottom:12px; font-size:20px;">제의를 보냈어요!</h3>
+                <p id="offerSuccessText" style="color:var(--ink-soft); font-size:14px; line-height:1.6; margin-bottom:24px;"></p>
+                <button type="button" class="btn pri" style="width:100%; justify-content:center; padding:12px;" onclick="closeOffer()">확인</button>
+              </div>
 
-      <!-- 💡 2. 성공 메시지 영역 (처음엔 display: none으로 숨김) -->
-      <div id="offerSuccess" class="submit-success" style="display: none; text-align:center; padding: 20px 0;">
-        <div style="color: #2b46c8; margin-bottom:16px;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <h3 style="margin-bottom:12px; font-size:20px;">제의를 보냈어요!</h3>
-        <p id="offerSuccessText" style="color:var(--ink-soft); font-size:14px; line-height:1.6; margin-bottom:24px;">
-            <!-- JS에서 이름이 동적으로 들어갑니다 -->
-        </p>
-        <button type="button" class="btn pri" style="width:100%; justify-content:center; padding:12px;" onclick="closeOffer()">확인</button>
-      </div>
+          </c:when>
 
+          <%-- 💡 조건 2: 팀장으로 있는 프로젝트가 없을 경우 (안내문 폼 출력) --%>
+          <c:otherwise>
+              <div id="noProjectForm" style="text-align:center; padding: 30px 10px 10px;">
+                  <!-- 깨지지 않는 인라인 SVG 아이콘 적용 -->
+                  <div style="margin-bottom: 16px; color: #9ca3af;">
+                      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="9" y1="13" x2="15" y2="13"></line></svg>
+                  </div>
+                  <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 12px;">아직 팀장으로 등록된 프로젝트가 없어요!</h3>
+                  <p style="font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px;">
+                      팀원에게 제의를 보내려면 먼저 프로젝트를 생성해야 합니다.<br>지금 새로운 프로젝트를 만들러 갈까요?
+                  </p>
+                  <div style="display: flex; gap: 8px;">
+                      <button type="button" class="btn ghost" style="flex: 1; padding: 12px;" onclick="closeOffer()">아니요</button>
+                      <!-- 프로젝트 목록이나 생성 페이지로 이동 -->
+                      <button type="button" class="btn pri" style="flex: 1; padding: 12px;" onclick="location.href='${ctx}/project/list'">네</button>
+                  </div>
+              </div>
+          </c:otherwise>
+      </c:choose>
     </div>
+    
   </div>
 </div>

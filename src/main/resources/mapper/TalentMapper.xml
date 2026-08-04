@@ -26,18 +26,18 @@
     <insert id="insertTalent" parameterType="com.soldesk.vo.TalentVO"
             useGeneratedKeys="true" keyProperty="postId">
         INSERT INTO intro_post (
-            member_id, title, kind, category, content, match_scope, tags, field
+            member_id, title, kind, category, content, match_scope, tags, field, available_time
         )
         VALUES (
-            #{memberId}, #{title}, #{kind}, #{category}, #{content},  #{matchScope}, #{tags}, #{field}
+            #{memberId}, #{title}, #{kind}, #{category}, #{content}, #{matchScope}, #{tags}, #{field}, #{availableTime}
         )
     </insert>
 
-    <!--  전체 데이터 개수 구하기 -->
+    <!-- 전체 데이터 개수 구하기 (안전하게 전체 행 개수 카운트) -->
     <select id="getTotalCount" parameterType="com.soldesk.vo.TalentVO" resultType="int">
         select count(*) from intro_post
         <where>
-            <if test="kind != null and kind != 'all'">
+            <if test="kind != null and kind != '' and kind != 'all'">
                 AND kind = #{kind}
             </if>
         </where>
@@ -51,15 +51,15 @@
                 m.major as member_major,
                 m.grade as member_grade
             from intro_post i
-            left join member m on  i.member_id = m.member_id
+            left join member m on i.member_id = m.member_id
             <where>
-                <if test="kind != null and kind != 'all'">
+                <if test="kind != null and kind != '' and kind != 'all'">
                     AND i.kind = #{kind}
                 </if>
             </where>
             order by i.created_at desc
             limit #{amount} offset #{offset}
-        </select>
+    </select>
 
     <!-- 인재풀 상세 조회 -->
     <select id="getTalentById" parameterType="long" resultMap="talentResultMap">
@@ -92,5 +92,22 @@
             field = #{field}
         where post_id = #{postId}        
     </update>
+
+    <!-- 팀장으로 있는 프로젝트 목록 조회-->
+    <select id="getLeaderProjectsByMemberId" resultType="com.soldesk.vo.ProjectVO">
+        select p.project_id, p.title
+        from project p
+        join participation part on p.project_id = part.project_id
+        where part.member_id = #{memberId}
+            and part.project_role = 'LEADER'
+    </select>
+
+    <!-- 제의하기-->
+    <insert id="insertOffer">
+        insert into participation(
+            poject_id, member_id, project_role, join_status, wnat_position, moive)
+            values(
+                
+    </insert>
 
 </mapper>

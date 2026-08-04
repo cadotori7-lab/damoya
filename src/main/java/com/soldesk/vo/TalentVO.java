@@ -21,7 +21,7 @@ public class TalentVO {
     private int favoriteCount; // 관심 등록 수 
     private int page = 1;            // 현재 페이지 (기본값 1)
     private int amount = 6;          // 페이지당 보여줄 개수 (기본값 6)
-    private int offset;              // DB 쿼리용 시작 위치
+    private int offset = 0;              // DB 쿼리용 시작 위치
     private String keyword;          // 검색어
     private String tab;              // 상단 탭 상태 (all, RECRUITING, CLOSED)
     private String sort;             // 정렬 기준

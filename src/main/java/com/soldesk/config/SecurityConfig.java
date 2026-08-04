@@ -41,6 +41,7 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/project/form"),
                     new AntPathRequestMatcher("/talent/form"),
                     new AntPathRequestMatcher("/project/favorite/toggle"),
+                    new AntPathRequestMatcher("/talent/favorite/toggle"),
                     new AntPathRequestMatcher("/mypage/**"),
                     new AntPathRequestMatcher("/workspace/**"))
                 .authenticated()
