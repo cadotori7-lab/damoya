@@ -6,7 +6,9 @@
     <button><a href="${ctx}/workspace/${project_id}/board">업무 보드</a></button>
     <button><a href="${ctx}/workspace/${project_id}/schedule">일정</a></button>
     <button><a href="${ctx}/workspace/${project_id}/meetings">회의</a></button>
-    <button><a href="${ctx}/workspace/${project_id}/members">팀원 관리</a></button>
+    <c:if test="${canViewTeamManagement}">
+        <button><a href="${ctx}/workspace/${project_id}/members">팀원 관리</a></button>
+    </c:if>
     <button><a href="${ctx}/workspace/${project_id}/results">결과물</a></button>
     <button><a href="${ctx}/workspace/${project_id}/complete">완료</a></button>
 </div>

@@ -610,7 +610,7 @@ public class TaskBoardController {
         );
 
         if (loginMember == null
-                || !participationService.isTaskMember(
+                || !participationService.canReadProject(
                     project_id,
                     (long) loginMember.getMember_id())) {
 

@@ -1,12 +1,9 @@
 package com.soldesk.controller;
 
 import java.security.Principal; // ★ Principal 임포트 추가
-import java.util.List;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,12 +66,7 @@ public class ParticipationController {
 
     // 지원자 목록 보기
     @GetMapping("/{projectId}/applicants")
-    public String viewApplicants(@PathVariable("projectId") Long projectId,
-                                 Model model,
-                                 HttpSession session) {
-        List<ParticipationVO> applicantList = participationService.getApplicants(projectId);
-        model.addAttribute("applicantsList", applicantList);                                
-        
-        return "project/applicant_list"; 
+    public String viewApplicants(@PathVariable("projectId") Long projectId) {
+        return "redirect:/workspace/" + projectId + "/applicants";
     }
 }

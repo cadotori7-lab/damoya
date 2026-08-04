@@ -6,7 +6,7 @@ public class ParticipationVO {
     private Long partId; //참여ID
     private Long projectId;
     private Long memberId;
-    private String projectRole; //참여역할(LEADER,MEMBER.MENTOR)
+    private String projectRole; //참여역할(LEADER, MEMBER, MENTOR)
     private String joinStatus; // 참여여부(대기/면접/참여)
     private int successionOrder; // 승계 우선순위(팀원)
     private LocalDateTime  appliedAt; //지원 
@@ -16,6 +16,7 @@ public class ParticipationVO {
     private String motive; //지원동기 
     private String memberName; // 지원자 이름
     private String memberMajor; // member 테이블 JOIN 조회용
+    private int memberGrade; // member 테이블 JOIN 조회용
     private String title; // 프로젝트 제목
     private String category; // 프로젝트 카테고리
     private String status; // 프로젝트 상태
@@ -117,6 +118,18 @@ public class ParticipationVO {
 
     public void setMember_major(String memberMajor) {
         this.memberMajor = memberMajor;
+    }
+
+    public void setMemberMajor(String memberMajor) {
+        this.memberMajor = memberMajor;
+    }
+
+    public int getMemberGrade() {
+        return memberGrade;
+    }
+
+    public void setMemberGrade(int memberGrade) {
+        this.memberGrade = memberGrade;
     }
 
 }

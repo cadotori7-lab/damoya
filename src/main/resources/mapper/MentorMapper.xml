@@ -78,7 +78,7 @@
         FROM participation
         WHERE member_id = #{memberId}
           AND project_role = 'MENTOR'
-          AND join_status = '참여'
+          AND join_status = 'JOINED'
     </select>
 
     <!-- 진행 중 프로젝트 수 -->
@@ -88,7 +88,7 @@
         INNER JOIN project pr ON pr.project_id = p.project_id
         WHERE p.member_id = #{memberId}
           AND p.project_role = 'MENTOR'
-          AND p.join_status = '참여'
+          AND p.join_status = 'JOINED'
           AND pr.status = 'RECRUITING'
     </select>
 

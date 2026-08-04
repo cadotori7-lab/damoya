@@ -21,6 +21,10 @@
     <h1 class="page"><em>내 프로젝트</em></h1>
     <p class="sub">참여 중인 프로젝트예요. 눌러서 들어가면 개요·업무·회의를 관리할 수 있어요.</p>
 
+    <c:if test="${not empty msg}">
+      <div class="panel" style="margin-bottom:16px;color:var(--ok);font-weight:700"><c:out value="${msg}"/></div>
+    </c:if>
+
     <c:choose>
       <c:when test="${empty project}">
         <div style="text-align:center;padding:60px 24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)">
