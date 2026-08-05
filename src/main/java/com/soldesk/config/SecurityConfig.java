@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.soldesk.security.MemberDetailsService;
@@ -53,8 +52,8 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/talent/favorite/toggle"),
                     new AntPathRequestMatcher("/mypage/**"),
                     new AntPathRequestMatcher("/workspace/**"))
-                .access(new WebExpressionAuthorizationManager("isAuthenticated() and !hasRole('ADMIN')")) // 어드민은 일반 페이지 접근 불가
-                .anyRequest().access(new WebExpressionAuthorizationManager("!hasRole('ADMIN')"))) // 어드민이 아니면 그대로 허용(비로그인 포함), 어드민은 /admin/** 외 전부 차단
+                .authenticated() // 위 경로들은 로그인한 사용자만 접근 가능
+                .anyRequest().permitAll())
             .formLogin(form -> form
                 .loginPage("/auth/login") // 커스텀 로그인 페이지 경로 설정
                 .loginProcessingUrl("/auth/login") // 로그인 처리 URL 설정
