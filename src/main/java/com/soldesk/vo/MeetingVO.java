@@ -64,6 +64,18 @@ public class MeetingVO {
                 : meet_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 
+    // 날짜만 표시 (예: 07.29 (수))
+    public String getMeetDateOnly() {
+        return meet_date == null ? ""
+                : meet_date.format(DateTimeFormatter.ofPattern("MM.dd (E)", Locale.KOREAN));
+    }
+
+    // 시간만 표시 (예: 13:59)
+    public String getMeetTimeOnly() {
+        return meet_date == null ? ""
+                : meet_date.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
     public String getSummary() {
         return summary;
     }

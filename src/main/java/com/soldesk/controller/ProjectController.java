@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.service.CommentService;
 import com.soldesk.service.MemberService;
+import com.soldesk.service.ParticipationService;
 import com.soldesk.service.ProjectService;
 import com.soldesk.service.ReportService;
 import com.soldesk.vo.CommentVO;
@@ -71,6 +73,9 @@ public class ProjectController {
 
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private ParticipationService participationService;
 
 
     ProjectController(ProjectService projectService) {
@@ -492,6 +497,30 @@ public class ProjectController {
                 "ok", false,
                 "error", "Python 서버에 연결할 수 없습니다. localhost:8501 서버를 확인하세요."
             ));
+        }
+    }
+
+    // AI 추천 멘토에게 참여 제안 (프로젝트 팀장만 가능)
+    @PostMapping("/mentor-recommend/offer")
+    @ResponseBody
+    public ResponseEntity<?> offerMentor(@RequestParam("projectId") Long projectId,
+                                          @RequestParam("mentorMemberId") Long mentorMemberId,
+                                          Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body(Map.of("ok", false, "error", "로그인이 필요합니다."));
+        }
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if (loginUser == null) {
+            return ResponseEntity.status(401).body(Map.of("ok", false, "error", "회원 정보를 찾을 수 없습니다."));
+        }
+
+        try {
+            participationService.offerMentor(projectId, loginUser.getMember_id(), mentorMemberId);
+            return ResponseEntity.ok(Map.of("ok", true));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(Map.of("ok", false, "error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("ok", false, "error", e.getMessage()));
         }
     }
 

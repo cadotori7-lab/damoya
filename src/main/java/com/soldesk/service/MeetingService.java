@@ -30,5 +30,7 @@ public class MeetingService {
     public List<MeetingVO> selectMeetingsByProjectId(Long project_id) {
         return meetingMapper.selectMeetingsByProjectId(project_id);
     }
-    
+    public List<MeetingVO> selectUpcomingMeetingsByMemberId(Long member_id) {
+        return meetingMapper.selectUpcomingMeetingsByMemberId(member_id);
+    }
 }

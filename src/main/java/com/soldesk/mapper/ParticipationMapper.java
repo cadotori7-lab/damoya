@@ -80,4 +80,23 @@ public interface ParticipationMapper {
             @Param("projectId") long projectId,
             @Param("memberId") long memberId
     );
+    List<ParticipationVO> selectOfferedProjectsByMemberId(
+            @Param("memberId") int memberId,
+            @Param("limit") int limit
+    );
+    int acceptOfferedProject(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId,
+            @Param("successionOrder") int successionOrder
+    );
+
+    int rejectOfferedProject(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
+
+    void insertMentorOffer(
+            @Param("projectId") long projectId,
+            @Param("memberId") long memberId
+    );
 }

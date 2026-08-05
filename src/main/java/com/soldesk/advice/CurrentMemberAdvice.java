@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +46,7 @@ public class CurrentMemberAdvice {
         return member;
     }
 
-    /** 모든 워크스페이스 탭에서 팀원 관리 메뉴의 노출 권한을 일관되게 제공한다. */
+    /** 모든 워크스페이스 탭에서 팀원 관리 메뉴의 노출 권한을 일관되게 제공하고, 프로젝트 참여자가 아니면 접근을 막는다. */
     @ModelAttribute
     public void workspacePermissions(HttpServletRequest request, Model model) {
         Matcher matcher = WORKSPACE_PATH.matcher(request.getRequestURI());
@@ -57,12 +58,14 @@ public class CurrentMemberAdvice {
         model.addAttribute("project_id", projectId);
         MemberVO member = currentMember();
         if (member == null) {
-            model.addAttribute("canViewTeamManagement", false);
-            return;
+            throw new AccessDeniedException("로그인이 필요합니다.");
         }
 
         String role = teamManagementService.getProjectRole(
                 projectId, member.getMember_id());
+        if (role == null) {
+            throw new AccessDeniedException("프로젝트 참여자만 접근할 수 있습니다.");
+        }
         boolean isLeader = TeamManagementService.LEADER.equals(role);
         boolean isMentor = TeamManagementService.MENTOR.equals(role);
         model.addAttribute("workspaceProjectRole", role);

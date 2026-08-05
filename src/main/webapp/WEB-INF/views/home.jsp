@@ -28,15 +28,15 @@
     <div class="home-stats">
       <a class="hstat" href="${ctx}/project/my">
         <div class="ic a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-        <div><div class="n">${participatingProjects.size()}</div><div class="k">참여 중 프로젝트</div></div>
+        <div><div class="n">${participatingCount}</div><div class="k">참여 중 프로젝트</div></div>
       </a>
       <a class="hstat" href="${ctx}/workspace/overview">
         <div class="ic b"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-        <div><div class="n">2</div><div class="k">진행 중 내 업무</div></div>
+        <div><div class="n">${assigneeTaskCount}</div><div class="k">진행 중 내 업무</div></div>
       </a>
       <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic c"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
-        <div><div class="n">${applicationProjects.size()}</div><div class="k">지원 진행 중</div></div>
+        <div><div class="n">${applicationCount}</div><div class="k">지원 진행 중</div></div>
       </a>
       <a class="hstat" href="${ctx}/mypage/index">
         <div class="ic d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
@@ -67,16 +67,25 @@
       <!-- 오늘/이번 주 할 일 -->
       <div class="ocard">
         <div class="oc-head"><div class="t">이번 주 할 일</div><button class="oc-more" onclick="go('tasks')">내 업무</button></div>
-        <div class="task-line" style="--cc:var(--accent);margin-bottom:9px">
-          <div class="tl-main"><h4>매칭 검색 필터 구현</h4><div class="tl-desc">AI 헬스케어 · 진행중</div></div>
-          <span class="due soon">~08.15</span>
-          <button class="btn sm pri" onclick="openSubmit('매칭 검색 필터 구현','08.15')">제출</button>
-        </div>
-        <div class="task-line" style="--cc:var(--wait);margin-bottom:9px">
-          <div class="tl-main"><h4>ERD 정규화 보완</h4><div class="tl-desc">데이터베이스 텀 · 진행중</div></div>
-          <span class="due">~08.18</span>
-        </div>
-        <div class="sch-item" style="border-top:1px solid var(--line);padding-top:12px"><span class="dt">08.17 (월)</span><span class="tt">중간 점검 회의 · 19:00</span></div>
+        <c:if test="${assigneeTasks.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">담당 중인 업무가 없어요.</p>
+        </c:if>
+        <c:forEach var="task" items="${assigneeTasks}">
+          <div class="task-line" style="--cc:var(--accent);margin-bottom:9px" onclick="location.href='${ctx}/workspace/${task.project_id}/board'">
+            <div class="tl-main"><h4>${task.task_name}</h4><div class="tl-desc">${task.project_title} · ${task.status}</div></div>
+            <span class="due soon">~${task.due_date}</span>
+          </div>
+        </c:forEach>
+        <div class="oc-head"><div class="t">이번 주 회의</div></div>
+        <c:if test="${upcomingMeetings.size() == 0}">
+          <p style="color:var(--ink-soft);padding:16px">다가오는 회의가 없어요.</p>
+        </c:if>
+        <c:forEach var="meeting" items="${upcomingMeetings}">
+          <div class="sch-item" style="border-top:1px solid var(--line);padding-top:12px" onclick="location.href='${ctx}/workspace/${meeting.project_id}/meetings'">
+            <span class="dt">${meeting.meetDateOnly}</span>
+            <span class="tt">${meeting.title} · ${meeting.meetTimeOnly}</span>
+          </div>
+        </c:forEach>
       </div>
     </div>
 

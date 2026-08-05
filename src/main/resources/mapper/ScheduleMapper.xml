@@ -29,7 +29,7 @@
      WHERE m.project_id = #{projectId}
        AND m.meet_date BETWEEN #{start} AND #{end}
     
-    
   </select>
+  
  
 </mapper>

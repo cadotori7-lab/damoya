@@ -25,6 +25,7 @@
     <div class="appl-tabs" id="reportTypeTabs">
       <button class="on" data-type="post">게시물 신고</button>
       <button data-type="comment">댓글 신고</button>
+      <button data-type="talent">인재풀 신고</button>
     </div>
 
     <div id="postSection">
@@ -66,14 +67,36 @@
             style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;"></ul>
       </nav>
     </div>
+
+    <div id="talentSection" style="display:none">
+      <div class="acc-toolbar">
+        <input type="text" id="talentSearch" placeholder="제목·작성자로 검색">
+      </div>
+      <div class="appl-tabs" id="talentTabs">
+        <button class="on" data-f="all">전체 <span class="mono">0</span></button>
+        <button data-f="reported">신고 있음 <span class="mono">0</span></button>
+        <button data-f="processed">처리 완료 <span class="mono">0</span></button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table id="talentTable"></table>
+      </div>
+
+      <nav aria-label="page" style="margin-top: 32px;">
+        <ul class="pagination" id="talentPagination"
+            style="display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0;"></ul>
+      </nav>
+    </div>
   </section>
   </main>
   <jsp:include page="../includes/footer.jsp" />
   <script type="application/json" id="reports-data"><c:out value="${reports}" escapeXml="false"/></script>
   <script type="application/json" id="comment-reports-data"><c:out value="${commentReports}" escapeXml="false"/></script>
+  <script type="application/json" id="talent-reports-data"><c:out value="${postReports}" escapeXml="false"/></script>
   <script>
     const reports = JSON.parse(document.getElementById('reports-data').textContent || '[]');
     const commentReports = JSON.parse(document.getElementById('comment-reports-data').textContent || '[]');
+    const talentReports = JSON.parse(document.getElementById('talent-reports-data').textContent || '[]');
     const ctx = '${pageContext.request.contextPath}';
     const csrfParameter = '${_csrf.parameterName}';
     const csrfToken = '${_csrf.token}';
