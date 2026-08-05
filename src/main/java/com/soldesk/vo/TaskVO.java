@@ -24,6 +24,7 @@ public class TaskVO {
 
     private LocalDateTime submitted_at; //제출시간
 
+    private String project_title; //프로젝트 제목(조회용, task 테이블 컬럼 아님)
 
     //get/set
     public Long getTask_id() {
@@ -98,5 +99,11 @@ public class TaskVO {
     public void setSubmitted_at(LocalDateTime submitted_at) {
         this.submitted_at = submitted_at;
     }
-    
+    public String getProject_title() {
+        return project_title;
+    }
+    public void setProject_title(String project_title) {
+        this.project_title = project_title;
+    }
+
 }

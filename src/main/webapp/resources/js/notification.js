@@ -15,6 +15,9 @@
     if (kind === 'COMMENT1') return '프로젝트 댓글';
     if (kind === 'COMMENT2') return '인재풀 댓글';
     if (kind === 'APPLY') return '지원';
+    if (kind === 'APPLY_APPROVED') return '지원 승인';
+    if (kind === 'OFFER_RECEIVED') return '제안';
+    if (kind === 'OFFER_ACCEPTED') return '제안 수락';
     return kind || '알림';
   }
 
@@ -24,7 +27,12 @@
     if (n.kind === 'COMMENT1') return ctx + '/project/detail?id=' + n.target_id;
     if (n.kind === 'COMMENT2') return ctx + '/talent/detail?id=' + n.target_id;
     if (n.kind === 'APPLY') return ctx + '/workspace/' + n.target_id + '/applicants';
-    if (n.kind === 'OFFER') return ctx + '/workspace/' + n.target_id + '/applicants';
+    // 승인되는 순간 팀원(JOINED)이 되므로 워크스페이스로 바로 이동해도 된다.
+    if (n.kind === 'APPLY_APPROVED') return ctx + '/workspace/' + n.target_id + '/overview';
+    // 제안을 받은 사람은 아직 그 프로젝트 팀원이 아니라 워크스페이스 접근 권한이 없으므로 마이페이지로 보낸다.
+    if (n.kind === 'OFFER_RECEIVED') return ctx + '/mypage/index';
+    // 제안 수락 알림은 팀장(이미 팀원)에게 가므로 지원자 관리 페이지로 보낸다.
+    if (n.kind === 'OFFER_ACCEPTED') return ctx + '/workspace/' + n.target_id + '/applicants';
     return null;
   }
 
@@ -48,8 +56,12 @@
       contentEl.textContent = "(" + n.content + ") 인재풀 게시글에 댓글이 작성되었습니다.";
     } else if(n.kind === 'APPLY') {
       contentEl.textContent = "프로젝트 지원 알림: " + n.content;
-    } else if(n.kind === 'OFFER') {
+    } else if(n.kind === 'APPLY_APPROVED') {
+      contentEl.textContent = "지원 승인 알림: " + n.content;
+    } else if(n.kind === 'OFFER_RECEIVED') {
       contentEl.textContent = "제안 알림: " + n.content;
+    } else if(n.kind === 'OFFER_ACCEPTED') {
+      contentEl.textContent = "제안 수락 알림: " + n.content;
     }
 
     mainEl.appendChild(kindEl);

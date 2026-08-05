@@ -51,4 +51,7 @@ public interface TaskMapper {
         @Param("task_id") long task_id,
         @Param("assignee_id") long assignee_id
     );
+    List<TaskVO> selectTasksByAssignee(
+        @Param("assignee_id") long assignee_id
+    );
 }

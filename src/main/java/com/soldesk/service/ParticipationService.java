@@ -7,7 +7,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.soldesk.mapper.MemberMapper;
 import com.soldesk.mapper.ParticipationMapper;
+import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 
@@ -22,6 +24,9 @@ public class ParticipationService {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     // 프로젝트 지원하기
     @Transactional
@@ -102,6 +107,9 @@ public class ParticipationService {
     @Transactional
     public void acceptOfferedProject(long projectId, long memberId){
         int nextOrder = participationMapper.selectNextSuccessionOrder(projectId);
+        int ownerId = projectService.getProjectById(projectId).getOwnerId().intValue();
+        MemberVO member = memberMapper.selectMemberById((int)memberId);
+        notificationService.toMessage(projectId, ownerId, "OFFER_ACCEPTED", "제안 수락: " + projectService.getProjectById(projectId).getTitle() + " (" + member.getName() + ") 님이 제안을 수락했습니다.");
         if (participationMapper.acceptOfferedProject(projectId, memberId, nextOrder) != 1) {
             throw new IllegalStateException("수락할 수 있는 제의를 찾을 수 없습니다.");
         }
@@ -124,6 +132,7 @@ public class ParticipationService {
         if (participationMapper.countByProjectAndMember(projectId, mentorMemberId) > 0) {
             throw new IllegalStateException("이미 참여했거나 제안한 멘토입니다.");
         }
+        notificationService.toMessage(projectId, (int) mentorMemberId, "OFFER_RECEIVED", "멘토 제안: " + projectService.getProjectById(projectId).getTitle());
         participationMapper.insertMentorOffer(projectId, mentorMemberId);
     }
 }
