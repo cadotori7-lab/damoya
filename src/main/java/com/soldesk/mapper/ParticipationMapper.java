@@ -43,6 +43,10 @@ public interface ParticipationMapper {
             @Param("projectId") long projectId
     );
 
+    List<ParticipationVO> selectOfferedMembers(
+            @Param("projectId") long projectId
+    );
+
     int selectNextSuccessionOrder(@Param("projectId") long projectId);
 
     int approveWaitingApplicant(

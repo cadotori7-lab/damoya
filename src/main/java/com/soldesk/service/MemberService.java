@@ -27,7 +27,7 @@ public class MemberService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${pagination.size}")
+    @Value("${pagination.size:10}")
     private int paginationSize;
 
     @Transactional

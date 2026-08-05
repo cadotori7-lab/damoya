@@ -59,18 +59,27 @@ public class TeamManagementController {
             model.addAttribute("waitingApplicantCount",
                     teamManagementService.getWaitingApplicants(
                             projectId, actor.getMember_id()).size());
+            model.addAttribute("offeredMemberCount",
+                    teamManagementService.getOfferedMembers(
+                            projectId, actor.getMember_id()).size());
         }
         return "workspace/members";
     }
 
     @GetMapping("/applicants")
     public String applicants(@PathVariable("projectId") long projectId,
+                             @RequestParam(value = "tab", defaultValue = "applicants") String tab,
                              Principal principal, Model model) {
         MemberVO actor = requireLoginMember(principal);
+        List<ParticipationVO> applicants = teamManagementService.getWaitingApplicants(
+                projectId, actor.getMember_id());
+        List<ParticipationVO> offeredMembers = teamManagementService.getOfferedMembers(
+                projectId, actor.getMember_id());
         model.addAttribute("project_id", projectId);
         model.addAttribute("project", projectService.getProjectById(projectId));
-        model.addAttribute("applicants", teamManagementService.getWaitingApplicants(
-                projectId, actor.getMember_id()));
+        model.addAttribute("applicants", applicants);
+        model.addAttribute("offeredMembers", offeredMembers);
+        model.addAttribute("activeTab", "offers".equals(tab) ? "offers" : "applicants");
         return "workspace/applicants";
     }
 

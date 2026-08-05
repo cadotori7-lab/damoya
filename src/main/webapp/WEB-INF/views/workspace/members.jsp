@@ -36,8 +36,11 @@
         <a class="tm-row" style="cursor:pointer" href="${ctx}/workspace/${project_id}/applicants">
           <span class="pic" style="background:var(--accent-soft);color:var(--accent)">지원</span>
           <div class="tm-info">
-            <div class="nm">대기 중인 지원자 확인</div>
-            <div class="role">대기 중인 지원자 <b style="color:var(--reject)">${waitingApplicantCount}명</b></div>
+            <div class="nm">대기 중인 지원자 및 제의 팀원 확인</div>
+            <div class="role">
+              대기 중인 지원자 <b style="color:var(--reject)">${waitingApplicantCount}명</b>
+              · 제의 응답 대기 <b style="color:var(--accent)">${offeredMemberCount}명</b>
+            </div>
           </div>
           <span class="btn sm pri" style="pointer-events:none">지원자 관리 →</span>
         </a>
