@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soldesk.mapper.CommentMapper;
 import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.ProjectVO;
+import com.soldesk.vo.TalentVO;
 
 @Service
 public class CommentService {
@@ -20,6 +21,9 @@ public class CommentService {
     private NotificationService notificationService;
 
     @Autowired
+    private TalentService talentService;
+
+    @Autowired
     private ProjectService projectService;
 
     @Transactional
@@ -27,7 +31,7 @@ public class CommentService {
         ProjectVO project = projectService.getProjectById(comment.getProject_id());
         if (project != null) {
             int ownerId = project.getOwnerId().intValue();
-            notificationService.toMessage(comment.getProject_id(), ownerId, "SYSTEM", project.getTitle());
+            notificationService.toMessage(comment.getProject_id(), ownerId, "COMMENT1", project.getTitle());
         }
         commentMapper.addComment(comment);
     }
@@ -49,6 +53,11 @@ public class CommentService {
     }
     @Transactional
     public void addTalentComment(CommentVO comment) {
+        TalentVO talent = talentService.getTalentById(comment.getPost_id());
+        if (talent != null) {
+            int ownerId = (int)talent.getMemberId();
+            notificationService.toMessage(comment.getPost_id(), ownerId, "COMMENT2", talent.getTitle());
+        }
         commentMapper.addTalentComment(comment);
     }
     @Transactional

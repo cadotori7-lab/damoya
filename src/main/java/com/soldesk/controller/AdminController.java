@@ -23,6 +23,7 @@ import com.soldesk.service.CommentService;
 import com.soldesk.service.MemberService;
 import com.soldesk.service.ProjectService;
 import com.soldesk.service.ReportService;
+import com.soldesk.service.TalentService;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
 import com.soldesk.vo.ReportVO;
@@ -38,6 +39,7 @@ public class AdminController {
     private final ReportService reportService;
     private final ProjectService projectService;
     private final CommentService commentService;
+    private final TalentService talentService;
     private final ObjectMapper objectMapper;
 
     public AdminController(AdminDashboardService adminDashboardService,
@@ -46,6 +48,7 @@ public class AdminController {
                            ReportService reportService,
                            ProjectService projectService,
                            CommentService commentService,
+                           TalentService talentService,
                            ObjectMapper objectMapper) {
         this.adminDashboardService = adminDashboardService;
         this.adminService = adminService;
@@ -53,6 +56,7 @@ public class AdminController {
         this.reportService = reportService;
         this.projectService = projectService;
         this.commentService = commentService;
+        this.talentService = talentService;
         this.objectMapper = objectMapper;
     }
 
@@ -157,7 +161,6 @@ public class AdminController {
     public String posts(Model model) {
         logger.info("게시물 관리 요청");
         model.addAttribute("reports", toReportsJson("PROJECT"));
-        // POST 신고: 게시판 기능이 별도 브랜치에서 아직 병합 전이라 항상 빈 배열
         model.addAttribute("postReports", toReportsJson("POST"));
         model.addAttribute("commentReports", toReportsJson("COMMENT"));
         return "admin/posts";
@@ -236,6 +239,37 @@ public class AdminController {
         reportService.deleteReport("COMMENT", commentId);
         commentService.deleteComment(commentId);
         redirectAttributes.addFlashAttribute("msg", "댓글을 삭제했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 인재풀 게시글 신고 처리 완료 (게시글은 유지하고 신고만 처리 상태로 변경)
+    @PostMapping("/talents/resolve")
+    public String resolveTalentReport(@RequestParam("postId") Long postId,
+                                      RedirectAttributes redirectAttributes) {
+        logger.info("인재풀 신고 처리 요청: postId={}", postId);
+        reportService.updateReportStatusByTarget("POST", postId, "PROCESSED");
+        redirectAttributes.addFlashAttribute("msg", "인재풀 게시글 신고를 처리 완료로 표시했습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 인재풀 게시글 신고 재검토 (처리 완료 → 미처리로 되돌림)
+    @PostMapping("/talents/reopen")
+    public String reopenTalentReport(@RequestParam("postId") Long postId,
+                                     RedirectAttributes redirectAttributes) {
+        logger.info("인재풀 신고 재검토 요청: postId={}", postId);
+        reportService.updateReportStatusByTarget("POST", postId, "RECEIVED");
+        redirectAttributes.addFlashAttribute("msg", "인재풀 게시글 신고를 미처리로 되돌렸습니다.");
+        return "redirect:/admin/posts";
+    }
+
+    // 인재풀 게시글 완전 삭제 (신고 + 게시글)
+    @PostMapping("/talents/delete")
+    public String deleteTalentReport(@RequestParam("postId") Long postId,
+                                     RedirectAttributes redirectAttributes) {
+        logger.info("인재풀 게시글 완전 삭제 요청: postId={}", postId);
+        reportService.deleteReport("POST", postId);
+        talentService.deleteTalent(postId);
+        redirectAttributes.addFlashAttribute("msg", "인재풀 게시글을 삭제했습니다.");
         return "redirect:/admin/posts";
     }
 

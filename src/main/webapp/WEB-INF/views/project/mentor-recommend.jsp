@@ -210,8 +210,50 @@
             +     '<p style="margin:0 0 4px;font-size:13px;color:var(--ink-soft);">추천 이유</p>'
             +     '<p style="margin:0;">' + escapeHtml(mentor.reason) + '</p>'
             +   '</div>'
+            +   '<div style="margin-top:14px;display:flex;justify-content:flex-end;">'
+            +     '<button type="button" class="btn pri sm offer-mentor-btn" data-member-id="' + escapeHtml(mentor.memberId) + '" data-member-name="' + escapeHtml(mentor.name) + '">제안하기</button>'
+            +   '</div>'
             + '</article>';
         }).join('');
+
+        resultList.querySelectorAll('.offer-mentor-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () { offerMentor(btn); });
+        });
+      }
+
+      var csrfMeta = document.querySelector('meta[name="_csrf"]');
+      var csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+
+      function offerMentor(btn) {
+        var mentorMemberId = btn.dataset.memberId;
+        var mentorName = btn.dataset.memberName;
+        if (!confirm(mentorName + ' 멘토에게 프로젝트 참여를 제안하시겠습니까?')) return;
+
+        btn.disabled = true;
+        var headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        if (csrfMeta && csrfHeaderMeta) headers[csrfHeaderMeta.content] = csrfMeta.content;
+
+        fetch(ctx + '/project/mentor-recommend/offer', {
+          method: 'POST',
+          headers: headers,
+          credentials: 'same-origin',
+          body: 'projectId=' + encodeURIComponent(projectId) + '&mentorMemberId=' + encodeURIComponent(mentorMemberId)
+        })
+          .then(function (res) {
+            return res.json().then(function (data) { return { okHttp: res.ok, data: data }; });
+          })
+          .then(function (payload) {
+            if (payload.okHttp && payload.data && payload.data.ok) {
+              btn.textContent = '제안 완료';
+            } else {
+              btn.disabled = false;
+              alert((payload.data && payload.data.error) || '제안에 실패했습니다.');
+            }
+          })
+          .catch(function () {
+            btn.disabled = false;
+            alert('제안 요청 중 오류가 발생했습니다.');
+          });
       }
 
       function requestMatch() {

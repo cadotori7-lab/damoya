@@ -125,9 +125,33 @@
       </c:choose>
     </div>
 
-    <!-- 받은 제의 (기능 준비 중) -->
+    <!-- 받은 제의 -->
     <div class="mp-list" data-tab="offers" style="display:none">
-      <p style="color:var(--ink-soft);padding:16px">받은 제의가 없어요.</p>
+      <c:choose>
+        <c:when test="${not empty offeredProjects}">
+          <c:forEach var="o" items="${offeredProjects}">
+            <form action="accept-offer" method="post">
+              <input type="hidden" name="projectId" value="${o.projectId}" />
+              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+              <div class="mp-item" style="--c:var(--cat-${o.category})">
+                <div class="m-main" onclick="location.href='${ctx}/project/detail?id=${o.projectId}'">
+                  <div class="m-cat">${o.category}</div>
+                  <h4>${o.title}</h4>
+                  <div class="m-meta"><span>제의일 ${fn:substring(o.appliedAt, 0, 10)}</span></div>
+                </div>
+                <div class="m-right">
+                  <span class="role-tag ${o.projectRole == 'LEADER' ? 'lead' : 'member'}">${o.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
+                  <button type="submit" formaction="reject-offer" class="btn sm ghost" onclick="return confirm('이 프로젝트 제의를 거절하시겠습니까?')">거절</button>
+                  <button type="submit" formaction="accept-offer" class="btn sm pri" onclick="return confirm('이 프로젝트 제의를 수락하시겠습니까?')">수락</button>
+                </div>
+              </div>
+            </form>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <p style="color:var(--ink-soft);padding:16px">받은 제의가 없어요.</p>
+        </c:otherwise>
+      </c:choose>
     </div>
 
     <!-- 관심 목록 -->
