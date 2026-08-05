@@ -11,5 +11,6 @@
     <a href="${pageContext.request.contextPath}/test/mentor/register">멘토 등록</a>
     <a href="${pageContext.request.contextPath}/test/chat">챗봇 테스트</a>
     <a href="${pageContext.request.contextPath}/test/project/register">더미 프로젝트 테스트</a>
+    <a href="${pageContext.request.contextPath}/gitTest/">GitHub AI 리포트 테스트</a>
 </body>
 </html>

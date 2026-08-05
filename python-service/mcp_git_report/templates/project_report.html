@@ -4,155 +4,83 @@
   <meta charset="UTF-8">
   <style>
     :root {
-      --ink: #16233f;
-      --ink-soft: #596581;
-      --accent: #2b46c8;
-      --accent-soft: #e9edff;
-      --surface: #ffffff;
-      --paper: #f4f6fb;
-      --line: #e2e7f1;
-      --ok: #137f58;
-      --ok-soft: #e6f5ee;
-      --risk: #b63a52;
-      --risk-soft: #fbe9ed;
-      --warn: #a66d08;
-      --warn-soft: #fbf1d9;
+      --ink: #17233d;
+      --muted: #5d6880;
+      --accent: #3154d5;
+      --accent-soft: #edf1ff;
+      --paper: #f6f8fc;
+      --line: #dfe5f0;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
       color: var(--ink);
-      background: var(--surface);
+      background: #fff;
       font-family: {{ font_family | safe }};
       font-size: 10.5pt;
       line-height: 1.62;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .cover {
-      min-height: 238mm;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      padding: 11mm 10mm;
-      border: 1px solid var(--line);
-      border-radius: 6mm;
-      background:
-        radial-gradient(circle at 88% 9%, rgba(255, 210, 74, .38), transparent 24%),
-        linear-gradient(145deg, #fff 0%, #f5f7ff 62%, #eef2ff 100%);
-      break-after: page;
-      overflow: hidden;
-    }
-    .cover::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3mm;
-      background: var(--accent);
+    header {
+      margin-bottom: 8mm;
+      padding: 9mm;
+      border-radius: 5mm;
+      color: #fff;
+      background: linear-gradient(135deg, #17233d, #3154d5);
     }
     .brand {
-      color: var(--accent);
-      font-family: Arial, sans-serif;
-      font-size: 8.5pt;
-      font-weight: 800;
-      letter-spacing: 1.8px;
+      font: 800 8pt/1 Arial, sans-serif;
+      letter-spacing: 1.4px;
+      color: #cbd5ff;
     }
-    .cover-main { margin-top: 42mm; }
-    .cover h1 {
-      max-width: 155mm;
-      margin: 0 0 7mm;
-      font-size: 29pt;
-      line-height: 1.18;
-      letter-spacing: -1.2px;
+    h1 {
+      margin: 4mm 0 2mm;
+      font-size: 25pt;
+      line-height: 1.2;
+      letter-spacing: -.6px;
     }
-    .repo-url {
-      max-width: 150mm;
-      color: var(--ink-soft);
+    .topic { margin: 0; color: #e9edff; font-size: 12pt; }
+    .repo {
+      margin-top: 6mm;
+      color: #cbd5e7;
       font-family: Consolas, monospace;
-      font-size: 8.5pt;
+      font-size: 8pt;
       word-break: break-all;
     }
-    .cover-summary {
-      max-width: 160mm;
-      margin-top: 15mm;
-      padding: 7mm;
-      border: 1px solid rgba(43, 70, 200, .15);
-      border-radius: 4mm;
-      background: rgba(255, 255, 255, .78);
-    }
-    .cover-summary .label,
-    .section-label {
-      color: var(--accent);
-      font-family: Arial, sans-serif;
-      font-size: 8pt;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-    }
-    .cover-summary p { margin: 3mm 0 0; font-size: 11pt; }
-    .cover-meta {
+    .meta {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4mm 8mm;
-      margin-top: auto;
-      padding-top: 10mm;
-      border-top: 1px solid var(--line);
+      gap: 3mm 7mm;
+      margin-top: 6mm;
+      padding-top: 5mm;
+      border-top: 1px solid rgba(255,255,255,.22);
+      font-size: 8.5pt;
+      color: #dfe5f8;
     }
-    .meta-item span { display: block; color: var(--ink-soft); font-size: 8.5pt; }
-    .meta-item strong {
+    .meta strong {
       display: block;
-      margin-top: 1mm;
+      margin-top: .7mm;
+      color: #fff;
       font-family: Consolas, monospace;
-      font-size: 9pt;
       word-break: break-all;
     }
-    .content { padding: 2mm 0 0; }
-    .report-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 7mm;
-      padding-bottom: 4mm;
-      border-bottom: 2px solid var(--ink);
-    }
-    .report-header h2 { margin: 1mm 0 0; font-size: 21pt; letter-spacing: -.5px; }
-    .score {
-      width: 26mm;
-      height: 26mm;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      color: var(--accent);
-    }
-    .score strong { font: 800 19pt/1 Arial, sans-serif; }
-    .score span { margin-top: 1mm; font-size: 7.5pt; font-weight: 700; }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3mm;
-      margin: 0 0 7mm;
-    }
-    .metric {
-      min-height: 20mm;
-      padding: 4mm;
+    section {
+      margin: 0 0 6mm;
+      padding: 6mm;
       border: 1px solid var(--line);
-      border-radius: 3mm;
-      background: var(--paper);
+      border-radius: 4mm;
       break-inside: avoid;
     }
-    .metric span { display: block; color: var(--ink-soft); font-size: 8pt; }
-    .metric strong { display: block; margin-top: 1mm; font-size: 12pt; }
-    .stack {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2mm;
-      margin: 3mm 0 7mm;
+    .label {
+      color: var(--accent);
+      font: 800 8pt/1 Arial, sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
+    h2 { margin: 2mm 0 3mm; font-size: 16pt; }
+    p { margin: 0; white-space: pre-line; }
+    .stack { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: 3mm; }
     .stack span {
       padding: 1.5mm 3mm;
       border-radius: 999px;
@@ -161,175 +89,60 @@
       font-size: 8.5pt;
       font-weight: 700;
     }
-    .report-section {
-      margin: 0 0 5mm;
-      padding: 5mm 5.5mm;
-      border: 1px solid var(--line);
-      border-radius: 3.5mm;
-      break-inside: avoid;
-    }
-    .report-section h3 { margin: 1mm 0 2mm; font-size: 14pt; }
-    .report-section p { margin: 0; color: #33405c; }
-    ul {
-      margin: 3mm 0 0;
-      padding: 0;
-      list-style: none;
-    }
-    li {
-      position: relative;
-      margin: 1.7mm 0;
-      padding-left: 4.5mm;
-    }
-    li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 2.4mm;
-      width: 1.8mm;
-      height: 1.8mm;
-      border-radius: .5mm;
-      background: var(--accent);
-    }
-    .summary-groups {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 4mm;
-      margin-top: 7mm;
-    }
-    .summary-group {
-      padding: 5mm 5.5mm;
-      border-radius: 3.5mm;
-      break-inside: avoid;
-    }
-    .summary-group h3 { margin: 0; font-size: 12.5pt; }
-    .summary-group.strength { background: var(--ok-soft); }
-    .summary-group.strength li::before { background: var(--ok); }
-    .summary-group.risk { background: var(--risk-soft); }
-    .summary-group.risk li::before { background: var(--risk); }
-    .summary-group.recommendation { background: var(--warn-soft); }
-    .summary-group.recommendation li::before { background: var(--warn); }
+    ol { margin: 3mm 0 0; padding-left: 6mm; }
+    li { margin: 2.5mm 0; padding-left: 1.5mm; }
+    li::marker { color: var(--accent); font-weight: 800; }
     .notice {
-      margin-top: 8mm;
-      padding: 4mm 5mm;
+      margin-top: 7mm;
+      padding-top: 4mm;
       border-top: 1px solid var(--line);
-      color: var(--ink-soft);
+      color: var(--muted);
       font-size: 8.5pt;
     }
   </style>
 </head>
 <body>
-  <section class="cover">
-    <div class="brand">DAMOYA · AI PROJECT REPORT</div>
-    <div class="cover-main">
-      <div class="section-label">Repository analysis</div>
-      <h1>{{ report.project_name }}</h1>
-      <div class="repo-url">{{ report.repository_url }}</div>
-      <div class="cover-summary">
-        <div class="label">Executive summary</div>
-        <p>{{ report.executive_summary }}</p>
-      </div>
+  <header>
+    <div class="brand">DAMOYA · PROJECT SUMMARY</div>
+    <h1>{{ report.project_name }}</h1>
+    <p class="topic">{{ report.project_topic }}</p>
+    <div class="repo">{{ report.repository_url }}</div>
+    <div class="meta">
+      <div>분석 기준<strong>{{ report.analyzed_ref }}</strong></div>
+      <div>소스 스냅샷<strong>{{ report.analyzed_commit }}</strong></div>
+      <div>생성 시각<strong>{{ generated_at }}</strong></div>
+      <div>분석 모델<strong>{{ report.model_name }}</strong></div>
     </div>
-    <div class="cover-meta">
-      <div class="meta-item">
-        <span>분석 기준</span>
-        <strong>{{ report.analyzed_ref }}</strong>
-      </div>
-      <div class="meta-item">
-        <span>커밋</span>
-        <strong>{{ report.analyzed_commit }}</strong>
-      </div>
-      <div class="meta-item">
-        <span>생성 시각</span>
-        <strong>{{ generated_at }}</strong>
-      </div>
-      <div class="meta-item">
-        <span>분석 모델</span>
-        <strong>{{ report.model_name }}</strong>
-      </div>
-    </div>
+  </header>
+
+  <section>
+    <div class="label">Project summary</div>
+    <h2>프로젝트 요약</h2>
+    <p>{{ report.executive_summary }}</p>
   </section>
 
-  <main class="content">
-    <header class="report-header">
-      <div>
-        <div class="section-label">Analysis details</div>
-        <h2>프로젝트 분석 결과</h2>
-      </div>
-      <div class="score">
-        <strong>{{ report.overall_score }}</strong>
-        <span>OVERALL</span>
-      </div>
-    </header>
-
-    {% if report.repository_metrics %}
-    <section class="metrics">
-      {% for label, value in report.repository_metrics.items() %}
-      <div class="metric">
-        <span>{{ label }}</span>
-        <strong>{{ value }}</strong>
-      </div>
-      {% endfor %}
-    </section>
-    {% endif %}
-
-    {% if report.tech_stack %}
-    <div class="section-label">Detected stack</div>
+  {% if report.tech_stack %}
+  <section>
+    <div class="label">Tech stack</div>
+    <h2>주요 기술</h2>
     <div class="stack">
-      {% for item in report.tech_stack %}
-      <span>{{ item }}</span>
-      {% endfor %}
+      {% for item in report.tech_stack %}<span>{{ item }}</span>{% endfor %}
     </div>
+  </section>
+  {% endif %}
+
+  <section>
+    <div class="label">Improvements</div>
+    <h2>개선점</h2>
+    {% if report.improvements %}
+    <ol>
+      {% for item in report.improvements %}<li>{{ item }}</li>{% endfor %}
+    </ol>
+    {% else %}
+    <p>제공된 파일만으로 구체적인 개선점을 확인하기 어렵습니다.</p>
     {% endif %}
+  </section>
 
-    {% for section in report.sections %}
-    <section class="report-section">
-      <div class="section-label">Section {{ loop.index }}</div>
-      <h3>{{ section.title }}</h3>
-      <p>{{ section.summary }}</p>
-      {% if section.findings %}
-      <ul>
-        {% for finding in section.findings %}
-        <li>{{ finding }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </section>
-    {% endfor %}
-
-    <section class="summary-groups">
-      {% if report.strengths %}
-      <div class="summary-group strength">
-        <h3>강점</h3>
-        <ul>
-          {% for item in report.strengths %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% if report.risks %}
-      <div class="summary-group risk">
-        <h3>위험 및 확인 사항</h3>
-        <ul>
-          {% for item in report.risks %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% if report.recommendations %}
-      <div class="summary-group recommendation">
-        <h3>권장 개선 순서</h3>
-        <ul>
-          {% for item in report.recommendations %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-    </section>
-
-    <p class="notice">{{ report.source_notice }}</p>
-  </main>
+  <p class="notice">{{ report.source_notice }}</p>
 </body>
 </html>
