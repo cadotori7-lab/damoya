@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
 =======
 >>>>>>> feature/comment2
@@ -267,3 +268,87 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TestVO.java
 C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java
 >>>>>>> feature/comment2
+=======
+C:\soldesk\damoya\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
+C:\soldesk\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
+C:\soldesk\damoya\src\main\java\com\soldesk\config\SecurityConfig.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\AdminController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\ErrorPageController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitHubOAuthController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestRestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\HomeController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\LoginController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\MeetingController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\MentorController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\MypageController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\NotificationController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\OAuthController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\ParticipationController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\ProjectController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\PublicProfileController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TalentController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TaskBoardController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestRestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
+C:\soldesk\damoya\src\main\java\com\soldesk\handler\GlobalModelAttributeAdvice.java
+C:\soldesk\damoya\src\main\java\com\soldesk\handler\StompAuthChannelInterceptor.java
+C:\soldesk\damoya\src\main\java\com\soldesk\handler\WebSocketConfig.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\CommentMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MeetingMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\MentorMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\NotificationMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\AdminDashboardService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\AdminService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\CalendarService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\CertVerifyService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\CommentService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\ElasticSearchService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\GitHubOAuthService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\MeetingService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\MemberService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\MentorService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\NotificationService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\OAuthService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\ParticipationService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\ProjectService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\ReportService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\TaskService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\UnivService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
+C:\soldesk\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\AdminDashboardStats.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\CalendarCell.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\CalendarEvent.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\CommentVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MeetingVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberDocument.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MemberVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorDashboardStatsVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorDocument.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorSignupVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\MentorVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\NotificationVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\PageBean.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\ParticipationVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\PublicProfileVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\ReportVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\SocketEventMessage.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\TaskVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\TestVO.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\UnivVO.java
+>>>>>>> feature/git

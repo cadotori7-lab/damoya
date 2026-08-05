@@ -6,7 +6,10 @@ MODEL_NAME = OPENAI_MODEL
 
 
 # llm 객체 생성
-def get_llm(temperature: float = 0.2) -> ChatOpenAI:
+def get_llm(
+    temperature: float = 0.2,
+    max_retries: int = 2,
+) -> ChatOpenAI:
     if not OPENAI_API_KEY:
         raise RuntimeError(
             "OPENAI_API_KEY가 없습니다. "
@@ -17,5 +20,5 @@ def get_llm(temperature: float = 0.2) -> ChatOpenAI:
         temperature=temperature,
         api_key=OPENAI_API_KEY,
         timeout=OPENAI_TIMEOUT_SECONDS,
-        max_retries=2,
+        max_retries=max_retries,
     )

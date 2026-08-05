@@ -78,7 +78,7 @@
 
       <div class="eyebrow">AI repository analysis</div>
       <h1 class="page" id="git-report-title"><em>Git AI 리포트</em> 테스트</h1>
-      <p class="sub">공개 GitHub 저장소를 MCP로 분석하고 Playwright PDF를 생성합니다.</p>
+      <p class="sub">공개 GitHub 저장소를 MCP로 분석하고 PDF 리포트를 생성합니다.</p>
 
       <form class="report-form" id="gitReportForm" action="${ctx}/test/git-report" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

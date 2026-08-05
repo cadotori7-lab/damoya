@@ -1,0 +1,7 @@
+# Copy the relevant values into the ignored app.properties file.
+fastapi.base-url=${FASTAPI_BASE_URL:http://localhost:8501}
+
+# GitHub OAuth App settings
+github.oauth.client-id=${GITHUB_CLIENT_ID:}
+github.oauth.client-secret=${GITHUB_CLIENT_SECRET:}
+github.oauth.callback-url=${GITHUB_CALLBACK_URL:http://localhost:8080/gitTest/github/callback}
