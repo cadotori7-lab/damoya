@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soldesk.mapper.ParticipationMapper;
 import com.soldesk.mapper.ProjectMapper;
 import com.soldesk.vo.ParticipationVO;
+import com.soldesk.vo.ProjectVO;
 
 @Service
 public class TeamManagementService {
@@ -19,11 +20,14 @@ public class TeamManagementService {
 
     private final ParticipationMapper participationMapper;
     private final ProjectMapper projectMapper;
+    private final NotificationService notificationService;
 
     public TeamManagementService(ParticipationMapper participationMapper,
-                                 ProjectMapper projectMapper) {
+                                 ProjectMapper projectMapper,
+                                 NotificationService notificationService) {
         this.participationMapper = participationMapper;
         this.projectMapper = projectMapper;
+        this.notificationService = notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -64,6 +68,11 @@ public class TeamManagementService {
         if (participationMapper.approveWaitingApplicant(
                 projectId, applicantMemberId, nextOrder) != 1) {
             throw new IllegalStateException("대기 중인 지원서를 찾을 수 없습니다.");
+        }
+        ProjectVO project = projectMapper.getProjectById(projectId);
+        if (project != null) {
+            notificationService.toMessage(projectId, (int) applicantMemberId, "APPLY_APPROVED",
+                    "지원 승인: " + project.getTitle() + " 프로젝트 참여가 승인되었습니다.");
         }
     }
 

@@ -40,6 +40,8 @@
         <result property="reject_reason" column="reject_reason"/>
         <result property="submitted_at" column="submitted_at"/>
 
+        <result property="project_title" column="project_title"/>
+
     </resultMap>
 
     <!-- 업무 등록 -->
@@ -173,4 +175,29 @@
           AND status = 'REJECTED'
 
     </update>
+
+    <!-- 담당자별 진행 중인(완료 제외) 업무 목록, 프로젝트 제목 포함 -->
+    <select id="selectTasksByAssignee"
+            resultMap="taskResultMap">
+
+        SELECT
+            task.task_id,
+            task.project_id,
+            task.assignee_id,
+            task.task_name,
+            task.description,
+            task.status,
+            task.due_date,
+            task.submit_title,
+            task.submit_content,
+            task.submit_file,
+            task.reject_reason,
+            task.submitted_at,
+            project.title AS project_title
+        FROM task
+        JOIN project ON task.project_id = project.project_id
+        WHERE task.assignee_id = #{assignee_id}
+          AND task.status != 'APPROVED'
+        ORDER BY task.due_date ASC, task.task_id DESC
+    </select>
 </mapper>

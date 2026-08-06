@@ -20,6 +20,10 @@ public class ReportVO{
     private String commentContent;
     private String commentCreatedAt;
 
+    private String talentTitle;
+    private String talentCategory;
+    private String talentCreatedAt;
+
     public Long getReportId() {
         return reportId;
     }
@@ -130,6 +134,30 @@ public class ReportVO{
 
     public void setCommentCreatedAt(String commentCreatedAt) {
         this.commentCreatedAt = commentCreatedAt;
+    }
+
+    public String getTalentTitle() {
+        return talentTitle;
+    }
+
+    public void setTalentTitle(String talentTitle) {
+        this.talentTitle = talentTitle;
+    }
+
+    public String getTalentCategory() {
+        return talentCategory;
+    }
+
+    public void setTalentCategory(String talentCategory) {
+        this.talentCategory = talentCategory;
+    }
+
+    public String getTalentCreatedAt() {
+        return talentCreatedAt;
+    }
+
+    public void setTalentCreatedAt(String talentCreatedAt) {
+        this.talentCreatedAt = talentCreatedAt;
     }
 
 }

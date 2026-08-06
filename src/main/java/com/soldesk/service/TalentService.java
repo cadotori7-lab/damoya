@@ -28,6 +28,11 @@ public class TalentService {
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     TalentService(CommentService commentService) {
         this.commentService = commentService;
@@ -81,6 +86,14 @@ public class TalentService {
     @Transactional
     public void insertOffer(ParticipationVO participationVO){
         talentMapper.insertOffer(participationVO);
+        ProjectVO project = projectService.getProjectById(participationVO.getProjectId());
+        if (project != null) {
+            notificationService.toMessage(
+                    participationVO.getProjectId(),
+                    participationVO.getMemberId().intValue(),
+                    "OFFER_RECEIVED",
+                    "인재풀 제안: " + project.getTitle());
+        }
     }
 
     // 특정 인재에게 이미 제의를 보낸 프로젝트 ID 목록 조회

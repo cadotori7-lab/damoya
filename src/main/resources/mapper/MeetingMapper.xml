@@ -40,4 +40,15 @@
     <select id="selectMeetingById" parameterType="long" resultMap="meetingResultMap">
         SELECT * FROM meeting WHERE meeting_id = #{meeting_id}
     </select>
+    <!-- 회원별 다가오는 회의 조회(1주일 단위) -->
+    <select id="selectUpcomingMeetingsByMemberId" parameterType="long" resultMap="meetingResultMap">
+        SELECT m.*
+        FROM meeting m
+        JOIN project p ON m.project_id = p.project_id
+        JOIN participation pa ON p.project_id = pa.project_id
+        WHERE pa.member_id = #{member_id}
+          AND pa.join_status = 'JOINED'
+          AND m.meet_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY)
+        ORDER BY m.meet_date ASC
+    </select>
 </mapper>

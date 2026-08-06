@@ -113,4 +113,8 @@ public class TaskService {
             assignee_id
         ) == 1;
     }
+    @Transactional(readOnly = true)
+    public List<TaskVO> selectTasksByAssignee(long assignee_id) {
+        return taskMapper.selectTasksByAssignee(assignee_id);
+    }
 }

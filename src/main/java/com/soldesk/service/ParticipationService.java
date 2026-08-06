@@ -3,10 +3,13 @@ package com.soldesk.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.soldesk.mapper.MemberMapper;
 import com.soldesk.mapper.ParticipationMapper;
+import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 
@@ -21,6 +24,9 @@ public class ParticipationService {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     // 프로젝트 지원하기
     @Transactional
@@ -91,5 +97,42 @@ public class ParticipationService {
     @Transactional(readOnly = true)
     public boolean canReadProject(long projectId, long memberId) {
         return getProjectRole(projectId, memberId) != null;
+    }
+    // 제의받은 프로젝트 리스트
+    @Transactional(readOnly = true)
+    public List<ParticipationVO> getOfferedProjectsByMemberId(int memberId, int limit){
+        return participationMapper.selectOfferedProjectsByMemberId(memberId, limit);
+    }
+    // 제의받은 프로젝트 수락
+    @Transactional
+    public void acceptOfferedProject(long projectId, long memberId){
+        int nextOrder = participationMapper.selectNextSuccessionOrder(projectId);
+        int ownerId = projectService.getProjectById(projectId).getOwnerId().intValue();
+        MemberVO member = memberMapper.selectMemberById((int)memberId);
+        notificationService.toMessage(projectId, ownerId, "OFFER_ACCEPTED", "제안 수락: " + projectService.getProjectById(projectId).getTitle() + " (" + member.getName() + ") 님이 제안을 수락했습니다.");
+        if (participationMapper.acceptOfferedProject(projectId, memberId, nextOrder) != 1) {
+            throw new IllegalStateException("수락할 수 있는 제의를 찾을 수 없습니다.");
+        }
+    }
+
+    // 제의받은 프로젝트 거절
+    @Transactional
+    public void rejectOfferedProject(long projectId, long memberId){
+        if (participationMapper.rejectOfferedProject(projectId, memberId) != 1) {
+            throw new IllegalStateException("거절할 수 있는 제의를 찾을 수 없습니다.");
+        }
+    }
+
+    // AI 추천 멘토에게 참여 제안 (프로젝트 팀장만 가능)
+    @Transactional
+    public void offerMentor(long projectId, long actorMemberId, long mentorMemberId){
+        if (!isLeader(projectId, actorMemberId)) {
+            throw new AccessDeniedException("프로젝트 팀장만 멘토를 제안할 수 있습니다.");
+        }
+        if (participationMapper.countByProjectAndMember(projectId, mentorMemberId) > 0) {
+            throw new IllegalStateException("이미 참여했거나 제안한 멘토입니다.");
+        }
+        notificationService.toMessage(projectId, (int) mentorMemberId, "OFFER_RECEIVED", "멘토 제안: " + projectService.getProjectById(projectId).getTitle());
+        participationMapper.insertMentorOffer(projectId, mentorMemberId);
     }
 }

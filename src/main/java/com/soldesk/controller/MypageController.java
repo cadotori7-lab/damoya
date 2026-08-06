@@ -55,6 +55,7 @@ public class MypageController {
         List<ParticipationVO> applicationList = participationService.getApplicationProjectsByMemberId(member.getMember_id(), 0); // 지원 중인 프로젝트 목록 조회 (0 = 전체 조회)
         List<ProjectVO> likedList = projectService.getFavoriteProjects((long) member.getMember_id()); // 관심 등록한 프로젝트 목록 조회
         List<ParticipationVO> doneParticipationList = participationService.getDoneParticipatingProjectsByMemberId(member.getMember_id(), 0); // 참여 완료된 프로젝트 목록 조회 (0 = 전체 조회)
+        List<ParticipationVO> offeredProjects = participationService.getOfferedProjectsByMemberId(member.getMember_id(), 0); // 제의받은 프로젝트 목록 조회 (0 = 전체 조회)
         // 상단 통계: 참여 중인 프로젝트를 진행중/완료로 나누고, 지원 현황 중 승인 대기(WAITING) 건수만 집계
         long ongoingCount = participationList.stream().filter(p -> !"DONE".equals(p.getStatus())).count();
         long doneCount = doneParticipationList.stream().filter(p -> "DONE".equals(p.getStatus())).count();
@@ -71,7 +72,7 @@ public class MypageController {
         model.addAttribute("doneCount", doneCount);
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("doneParticipationList", doneParticipationList);
-
+        model.addAttribute("offeredProjects", offeredProjects);
         return "mypage/index";
     }
 
@@ -150,6 +151,32 @@ public class MypageController {
         MemberVO member = memberService.findByLoginId(member_id);
         participationService.cancelApplication(projectId, (long) member.getMember_id());
         ra.addFlashAttribute("cancelSuccess", "지원이 취소됐어요.");
+        return "redirect:/mypage/index";
+    }
+
+    @PostMapping("/accept-offer")
+    public String acceptOffer(@RequestParam("projectId") Long projectId, RedirectAttributes ra) {
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
+        try {
+            participationService.acceptOfferedProject(projectId, (long) member.getMember_id());
+            ra.addFlashAttribute("acceptSuccess", "제의를 수락했어요.");
+        } catch (IllegalStateException e) {
+            ra.addFlashAttribute("acceptError", e.getMessage());
+        }
+        return "redirect:/mypage/index";
+    }
+
+    @PostMapping("/reject-offer")
+    public String rejectOffer(@RequestParam("projectId") Long projectId, RedirectAttributes ra) {
+        String member_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.findByLoginId(member_id);
+        try {
+            participationService.rejectOfferedProject(projectId, (long) member.getMember_id());
+            ra.addFlashAttribute("rejectSuccess", "제의를 거절했어요.");
+        } catch (IllegalStateException e) {
+            ra.addFlashAttribute("rejectError", e.getMessage());
+        }
         return "redirect:/mypage/index";
     }
 }
