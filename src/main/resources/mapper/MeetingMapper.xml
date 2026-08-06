@@ -10,6 +10,7 @@
         <result property="meet_date" column="meet_date" />
         <result property="summary" column="summary" />
         <result property="content" column="content" />
+        <result property="project_title" column="project_title" />
     </resultMap>
 
     <!-- 회의록 등록 -->
@@ -42,7 +43,7 @@
     </select>
     <!-- 회원별 다가오는 회의 조회(1주일 단위) -->
     <select id="selectUpcomingMeetingsByMemberId" parameterType="long" resultMap="meetingResultMap">
-        SELECT m.*
+        SELECT m.*, p.title as project_title
         FROM meeting m
         JOIN project p ON m.project_id = p.project_id
         JOIN participation pa ON p.project_id = pa.project_id

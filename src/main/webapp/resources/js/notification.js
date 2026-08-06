@@ -18,6 +18,7 @@
     if (kind === 'APPLY_APPROVED') return '지원 승인';
     if (kind === 'OFFER_RECEIVED') return '제안';
     if (kind === 'OFFER_ACCEPTED') return '제안 수락';
+    if (kind === 'TASK') return '업무';
     return kind || '알림';
   }
 
@@ -33,6 +34,7 @@
     if (n.kind === 'OFFER_RECEIVED') return ctx + '/mypage/index';
     // 제안 수락 알림은 팀장(이미 팀원)에게 가므로 지원자 관리 페이지로 보낸다.
     if (n.kind === 'OFFER_ACCEPTED') return ctx + '/workspace/' + n.target_id + '/applicants';
+    if (n.kind === 'TASK') return ctx + '/workspace/' + n.target_id + '/board';
     return null;
   }
 
@@ -55,13 +57,15 @@
     } else if(n.kind === 'COMMENT2') {
       contentEl.textContent = "(" + n.content + ") 인재풀 게시글에 댓글이 작성되었습니다.";
     } else if(n.kind === 'APPLY') {
-      contentEl.textContent = "프로젝트 지원 알림: " + n.content;
+      contentEl.textContent = "프로젝트 지원 알림- " + n.content;
     } else if(n.kind === 'APPLY_APPROVED') {
-      contentEl.textContent = "지원 승인 알림: " + n.content;
+      contentEl.textContent = "지원 승인 알림- " + n.content;
     } else if(n.kind === 'OFFER_RECEIVED') {
-      contentEl.textContent = "제안 알림: " + n.content;
+      contentEl.textContent = "제안 알림- " + n.content;
     } else if(n.kind === 'OFFER_ACCEPTED') {
-      contentEl.textContent = "제안 수락 알림: " + n.content;
+      contentEl.textContent = "제안 수락 알림- " + n.content;
+    } else if(n.kind === 'TASK') {
+      contentEl.textContent = "업무 알림- " + n.content;
     }
 
     mainEl.appendChild(kindEl);

@@ -19,6 +19,8 @@ public class MeetingVO {
 
     private String content; //내용(회의록)
 
+    private String project_title; //프로젝트명
+
     //get/set
     public Long getMeeting_id() {
         return meeting_id;
@@ -91,5 +93,12 @@ public class MeetingVO {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
+    public String getProject_title() {
+        return project_title;
+    }
+
+    public void setProject_title(String project_title) {
+        this.project_title = project_title;
+    }
 }

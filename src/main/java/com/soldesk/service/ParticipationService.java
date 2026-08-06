@@ -108,7 +108,7 @@ public class ParticipationService {
     public void acceptOfferedProject(long projectId, long memberId){
         int nextOrder = participationMapper.selectNextSuccessionOrder(projectId);
         int ownerId = projectService.getProjectById(projectId).getOwnerId().intValue();
-        MemberVO member = memberMapper.selectMemberById((int)memberId);
+        MemberVO member = memberMapper.getMemberById(memberId);
         notificationService.toMessage(projectId, ownerId, "OFFER_ACCEPTED", "제안 수락: " + projectService.getProjectById(projectId).getTitle() + " (" + member.getName() + ") 님이 제안을 수락했습니다.");
         if (participationMapper.acceptOfferedProject(projectId, memberId, nextOrder) != 1) {
             throw new IllegalStateException("수락할 수 있는 제의를 찾을 수 없습니다.");
