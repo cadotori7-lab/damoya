@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soldesk.mapper.ResultMapper">
+
+    <resultMap id="resultViewMap" type="com.soldesk.vo.ResultVO">
+        <id property="taskId" column="task_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="assigneeId" column="assignee_id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="submitTitle" column="submit_title"/>
+        <result property="submitContent" column="submit_content"/>
+        <result property="submitFile" column="submit_file"/>
+        <result property="submittedAt" column="submitted_at"/>
+        <result property="assigneeName" column="assignee_name"/>
+    </resultMap>
+
+    <select id="selectApprovedResults" resultMap="resultViewMap">
+        SELECT
+            t.task_id,
+            t.project_id,
+            t.assignee_id,
+            t.task_name,
+            t.submit_title,
+            t.submit_content,
+            t.submit_file,
+            t.submitted_at,
+            m.name AS assignee_name
+        FROM task t
+        INNER JOIN member m ON m.member_id = t.assignee_id
+        WHERE t.project_id = #{projectId}
+          AND t.status = 'APPROVED'
+        ORDER BY t.submitted_at DESC, t.task_id DESC
+    </select>
+
+</mapper>

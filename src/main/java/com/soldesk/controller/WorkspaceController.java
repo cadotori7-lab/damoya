@@ -35,10 +35,4 @@ public class WorkspaceController {
         return "workspace/meeting-form";
     }
 
-    @GetMapping("/results") //결과물
-    public String results() {
-        return "workspace/results";
-    }
-
-
 }

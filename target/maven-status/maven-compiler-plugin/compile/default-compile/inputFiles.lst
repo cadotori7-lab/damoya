@@ -21,6 +21,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\Team
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestRestController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\WorkspaceResultController.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\GlobalModelAttributeAdvice.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\StompAuthChannelInterceptor.java
@@ -33,6 +34,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\Notifica
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ResultMapper.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\TalentMapper.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
@@ -53,6 +55,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\Partici
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ProjectService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ReportService.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ResultService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TalentService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TaskService.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TeamManagementService.java
@@ -76,6 +79,7 @@ C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\Participatio
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\PublicProfileVO.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ReportVO.java
+C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ResultVO.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\SocketEventMessage.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\TalentVO.java
 C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\TaskVO.java
