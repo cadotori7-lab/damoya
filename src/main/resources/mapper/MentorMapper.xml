@@ -89,7 +89,7 @@
         WHERE p.member_id = #{memberId}
           AND p.project_role = 'MENTOR'
           AND p.join_status = 'JOINED'
-          AND pr.status = 'RECRUITING'
+          AND pr.status != 'DONE'
     </select>
 
     <!-- 내가 남긴 피드백 수 -->
@@ -97,6 +97,57 @@
         SELECT COUNT(*)
         FROM feedback
         WHERE mentor_id = #{memberId}
+    </select>
+
+    <!-- 수락 대기 중인 멘토 제안 수 -->
+    <select id="countPendingOffers" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM participation
+        WHERE member_id = #{memberId}
+          AND project_role = 'MENTOR'
+          AND join_status = 'OFFER'
+    </select>
+
+    <resultMap id="mentorTeamResultMap" type="com.soldesk.vo.MentorTeamVO">
+        <id property="projectId" column="project_id"/>
+        <result property="title" column="title"/>
+        <result property="category" column="category"/>
+        <result property="status" column="status"/>
+        <result property="memberCount" column="member_count"/>
+        <result property="taskTotal" column="task_total"/>
+        <result property="taskDone" column="task_done"/>
+        <result property="nextMeeting" column="next_meeting"/>
+    </resultMap>
+
+    <!-- 멘토링 중인 팀 카드 목록 (완료 포함, 화면에서 진행 중 필터링) -->
+    <select id="findMentoringTeams" parameterType="int" resultMap="mentorTeamResultMap">
+        SELECT
+            pr.project_id,
+            pr.title,
+            pr.category,
+            pr.status,
+            (SELECT COUNT(*)
+               FROM participation x
+              WHERE x.project_id = pr.project_id
+                AND x.join_status = 'JOINED'
+                AND x.project_role IN ('LEADER', 'MEMBER')) AS member_count,
+            (SELECT COUNT(*)
+               FROM task t
+              WHERE t.project_id = pr.project_id)            AS task_total,
+            (SELECT COUNT(*)
+               FROM task t
+              WHERE t.project_id = pr.project_id
+                AND t.status = 'APPROVED')                   AS task_done,
+            (SELECT MIN(m.meet_date)
+               FROM meeting m
+              WHERE m.project_id = pr.project_id
+                AND m.meet_date >= NOW())                    AS next_meeting
+        FROM participation p
+        INNER JOIN project pr ON pr.project_id = p.project_id
+        WHERE p.member_id = #{memberId}
+          AND p.project_role = 'MENTOR'
+          AND p.join_status = 'JOINED'
+        ORDER BY pr.created_at DESC
     </select>
 
 </mapper>

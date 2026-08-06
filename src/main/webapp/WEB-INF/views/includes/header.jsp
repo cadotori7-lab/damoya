@@ -22,7 +22,7 @@
 
       <sec:authorize access="isAuthenticated() && hasRole('MENTOR')">
         <a href="${ctx}/mentor/" class="${nav=='mentor' ? 'on' : ''}">멘토</a>
-        <a href="${ctx}/feedback/feedback" class="${nav=='feedback' ? 'on' : ''}">피드백</a>
+        <a href="${ctx}/mentor/" class="${nav=='feedback' ? 'on' : ''}">피드백</a>
       </sec:authorize>
 
       <sec:authorize access="isAuthenticated() && hasRole('ADMIN')">
