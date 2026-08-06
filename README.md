@@ -24,7 +24,7 @@
 김해든(팀원): 업무관리(회의/업무 관리/ 업무 분배/피드백)
 ## 기술 스택
 프론트엔드: HTML/CSS/JavaScript, JSP <br>
-백엔드: Spring framework, MyBatis, Spring Security <br>
+백엔드: Spring framework, MyBatis, Spring Security, FastAPI <br>
 DB: MySQL <br>
-툴: Figma, GitHub <br>
+툴: Figma, GitHub, Docker <br>
 협업도구: Notion, Discord, Google Meet
