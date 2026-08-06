@@ -30,9 +30,9 @@ import com.soldesk.service.GitHubOAuthService;
 
 @Controller
 @RequestMapping("/gitTest")
-public class GitTestController {
+public class GitController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitTestController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitController.class);
     private static final Pattern REF_PATTERN = Pattern.compile(
         "^(?!-)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[A-Za-z0-9._/-]{1,200}$"
     );
@@ -41,7 +41,7 @@ public class GitTestController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final GitHubOAuthService gitHubOAuthService;
 
-    public GitTestController(GitHubOAuthService gitHubOAuthService) {
+    public GitController(GitHubOAuthService gitHubOAuthService) {
         this.gitHubOAuthService = gitHubOAuthService;
     }
 

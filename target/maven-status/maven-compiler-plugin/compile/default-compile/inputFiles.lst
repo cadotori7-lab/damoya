@@ -1,282 +1,10 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
-=======
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\config\ElasticSearchConfig.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\config\SecurityConfig.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\AdminController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ErrorPageController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\FeedBackController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\HomeController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\LoginController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MeetingController.java
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MentorController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MypageController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\NotificationController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\OAuthController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ParticipationController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ProjectController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\PublicProfileController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ScheduleController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TalentController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TaskBoardController.java
-=======
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\MypageController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\OAuthController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ParticipationController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ProjectController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\ScheduleController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TalentController.java
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TestController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\TestRestController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\controller\WorkspaceController.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\GlobalModelAttributeAdvice.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\StompAuthChannelInterceptor.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\handler\WebSocketConfig.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\CommentMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MeetingMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MentorMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\NotificationMapper.java
-=======
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\CommentMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MeetingMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\MemberMapper.java
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ParticipationMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ProjectMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ReportMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\ScheduleMapper.java
-<<<<<<< HEAD
-=======
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\TalentMapper.java
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\TaskMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\mapper\UnivMapper.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\security\MemberDetailsService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\AdminDashboardService.java
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\AdminService.java
-=======
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CalendarService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CertVerifyService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\CommentService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ElasticSearchService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MeetingService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MemberService.java
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\MentorService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\NotificationService.java
-=======
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\OAuthService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ParticipationService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\PasswordChangeException.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ProjectService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\ReportService.java
-<<<<<<< HEAD
-=======
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\TalentService.java
->>>>>>> feature/comment2
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\TaskService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\service\UnivService.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\validation\MemberValidation.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\validation\MentorSignupValidation.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\AdminDashboardStats.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\CalendarCell.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\CalendarEvent.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\CommentVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MeetingVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MemberDocument.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MemberVO.java
-<<<<<<< HEAD
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDashboardStatsVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDocument.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\NotificationVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\PageBean.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ParticipationVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ProjectVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\PublicProfileVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ReportVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\SocketEventMessage.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TaskVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TestVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java
-=======
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\config\SecurityConfig.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\AdminController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\ErrorPageController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\HomeController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\LoginController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\MeetingController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\MentorController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\MypageController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\NotificationController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\OAuthController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\ParticipationController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\ProjectController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TalentController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TaskBoardController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TeamManagementController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\TestRestController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\GlobalModelAttributeAdvice.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\StompAuthChannelInterceptor.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\handler\WebSocketConfig.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\CommentMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\MeetingMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\MentorMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\NotificationMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\AdminDashboardService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\CalendarService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\CertVerifyService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\CommentService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ElasticSearchService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\MeetingService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\MemberService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\MentorService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\NotificationService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\OAuthService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ParticipationService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ProjectService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\ReportService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TaskService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\TeamManagementService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\service\UnivService.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\AdminDashboardStats.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\CalendarCell.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\CalendarEvent.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\CommentVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MeetingVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MemberDocument.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MemberVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MentorDashboardStatsVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MentorDocument.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MentorSignupVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\MentorVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\NotificationVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\PageBean.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ParticipationVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\ReportVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\SocketEventMessage.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\TaskVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\TestVO.java
-C:\myProgram\git\webProject_git\damoya\src\main\java\com\soldesk\vo\UnivVO.java
->>>>>>> feature/workspace
-=======
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\config\SecurityConfig.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\AdminController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\ErrorPageController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\HomeController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\LoginController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\MeetingController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\MypageController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\OAuthController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\ParticipationController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\ProjectController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\TalentController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\TestController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\TestRestController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\handler\GlobalExceptionHandler.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\CommentMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\MeetingMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\MemberMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\TalentMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\AdminDashboardService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\CalendarService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\CertVerifyService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\CommentService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\ElasticSearchService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\MeetingService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\MemberService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\OAuthService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\ParticipationService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\ProjectService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\ReportService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\TalentService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\TaskService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\service\UnivService.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\AdminDashboardStats.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\CalendarCell.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\CalendarEvent.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\CommentVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\MeetingVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\MemberDocument.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\MemberVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\MentorDocument.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\MentorSignupVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\PageBean.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\ParticipationVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\ReportVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\TalentVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\TaskVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\TestVO.java
-C:\Users\daeun\Desktop\2차프젝\damoya\src\main\java\com\soldesk\vo\UnivVO.java
->>>>>>> feature/match2
-=======
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorDocument.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\MentorSignupVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\PageBean.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ParticipationVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ProjectVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\ReportVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TalentVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TaskVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\TestVO.java
-C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com\soldesk\vo\UnivVO.java
->>>>>>> feature/comment2
-=======
 C:\soldesk\damoya\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
 C:\soldesk\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
 C:\soldesk\damoya\src\main\java\com\soldesk\config\SecurityConfig.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\AdminController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\ErrorPageController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
-C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitHubOAuthController.java
-C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestRestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\HomeController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\LoginController.java
@@ -291,6 +19,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\controller\PublicProfileController.j
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TalentController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TaskBoardController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TeamManagementController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestRestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
@@ -307,6 +36,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\TalentMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
@@ -326,7 +56,9 @@ C:\soldesk\damoya\src\main\java\com\soldesk\service\ParticipationService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\ProjectService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\ReportService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\TalentService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\TaskService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\TeamManagementService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\UnivService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\soldesk\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java
@@ -348,7 +80,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\PublicProfileVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\ReportVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\SocketEventMessage.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\TalentVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\TaskVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\TestVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\UnivVO.java
->>>>>>> feature/git
