@@ -1,123 +1,178 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="p" value="${overview.project}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title><c:out value="${p.title}"/> 개요</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 </head>
 <body>
-    <jsp:include page="../includes/header.jsp" />
-  <main>
-  <!-- ========== 프로젝트 대시보드 (개요) ========== -->
+<jsp:include page="../includes/header.jsp" />
+<main>
   <section id="v-overview">
     <a class="back" href="${ctx}/project/my">← 내 프로젝트</a>
     <div class="eyebrow">Team workspace</div>
-    <h1 class="page"><em>AI 헬스케어 웹서비스</em></h1>
-    <p class="sub">프로젝트 현황을 한눈에 보고, 각 영역으로 이동해요.</p>
+    <h1 class="page"><em><c:out value="${p.title}"/></em></h1>
+    <p class="sub">프로젝트의 핵심 정보와 최근 현황을 한눈에 확인해요.</p>
 
     <jsp:include page="../includes/workspaceHeader.jsp" />
 
-    <!-- 헤더 -->
     <div class="ov-hero">
       <div class="oh-main">
-        <div class="oh-title"><h2>AI 헬스케어 웹서비스</h2><span class="chip ing">진행중</span><span class="tag">공모전</span></div>
-        <div class="oh-meta"><span>팀원 <b>4명</b></span><span>기간 <b>2026.08.03 ~ 09.04</b></span><span>남은 기간 <b>D-24</b></span></div>
-      </div>
-      <div class="oh-prog">
-        <div class="k">업무 현황</div>
-        <div class="big">11<span style="font-size:18px"> / 12</span></div>
-        <div class="mono" style="font-size:12px;color:var(--ink-soft)">승인 완료 · 검수 대기 1건</div>
-      </div>
-    </div>
-
-    <!-- 요약 / 회의 일정 / 회의 결과 -->
-    <div class="ov-grid">
-      <div class="ocard">
-        <div class="oc-head"><div class="t">프로젝트 요약</div></div>
-        <div class="oc-desc">학생 건강 관리를 돕는 AI 기반 웹서비스예요. 교내 캡스톤 경진대회 출품을 목표로 방학 동안 완성도 있는 결과물을 만듭니다.</div>
-        <div class="oc-tags"><span class="tag">Spring</span><span class="tag">React</span><span class="tag">MySQL</span><span class="tag">캡스톤</span></div>
-      </div>
-      <div class="ocard">
-        <div class="oc-head"><div class="t">회의 일정</div><button class="oc-more" onclick="go('schedule')">전체 보기</button></div>
-        <div class="sch-item"><span class="dt">08.17 (월)</span><span class="tt">중간 점검 회의</span></div>
-        <div class="sch-item"><span class="dt">08.24 (월)</span><span class="tt">2차 스프린트 회의</span></div>
-        <div class="sch-item"><span class="dt">08.31 (월)</span><span class="tt">최종 리허설 회의</span></div>
-      </div>
-      <div class="ocard">
-        <div class="oc-head"><div class="t">회의 결과</div><button class="oc-more" onclick="go('meetings')">전체 보기</button></div>
-        <div class="mr-item"><div class="dt">08.17 (월)</div><h5>중간 점검 회의</h5><ul><li>정원 동시성은 비관적 락으로 우선 구현</li><li>멘토 중간 피드백 요청</li></ul></div>
-        <div class="mr-item"><div class="dt">08.10 (월)</div><h5>킥오프 회의</h5><ul><li>역할 분담(매칭/업무/권한/관리자)</li><li>주 2회 오프라인 회의 · PR 리뷰 후 머지</li></ul></div>
-      </div>
-    </div>
-
-    <!-- 팀원별 업무 현황 -->
-    <div class="ov-grid two">
-      <div class="ocard">
-        <div class="oc-head"><div class="t">팀원별 업무 현황</div><button class="oc-more" onclick="go('org')">팀원 관리</button></div>
-        <table class="ov-tbl">
-          <tr><th>팀원</th><th>역할</th><th>담당 업무</th><th>상태</th><th style="width:100px">기여도</th></tr>
-          <tr>
-            <td><div class="u"><span class="pic" style="background:#c98a12">최</span>최윤서 <span class="badge-me">팀장</span></div></td>
-            <td>기획·프론트</td><td class="tk">전체 기획·일정 관리, UI 설계</td>
-            <td><span class="chip ing">진행중</span></td>
-            <td><span class="mono" style="font-weight:700">완료 3건</span></td>
-          </tr>
-          <tr>
-            <td><div class="u"><span class="pic" style="background:#2b46c8">이</span>이도현</div></td>
-            <td>백엔드</td><td class="tk">인증·권한, ERD 설계</td>
-            <td><span class="chip ing">진행중</span></td>
-            <td><span class="mono" style="font-weight:700">완료 3건</span></td>
-          </tr>
-          <tr>
-            <td><div class="u"><span class="pic" style="background:#2b46c8">민</span>김민재</div></td>
-            <td>백엔드</td><td class="tk">매칭·지원 API, 통계</td>
-            <td><span class="chip wait">검수 대기</span></td>
-            <td><span class="mono" style="font-weight:700">완료 2건</span></td>
-          </tr>
-          <tr>
-            <td><div class="u"><span class="pic" style="background:#0f9d8c">서</span>서지우</div></td>
-            <td>기획·디자인</td><td class="tk">화면 설계, 발표 자료</td>
-            <td><span class="chip approve">완료</span></td>
-            <td><span class="mono" style="font-weight:700">완료 3건</span></td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="ocard">
-        <div class="oc-head"><div class="t">다가오는 일정</div><button class="oc-more" onclick="go('schedule')">전체 보기</button></div>
-        <div class="sch-item"><span class="dt">08.17<br>(월)</span><div><div class="tt">중간 점검 회의</div><div class="mono" style="font-size:11.5px;color:var(--ink-soft)">19:00 · 회의실 A</div></div></div>
-        <div class="sch-item"><span class="dt">08.20<br>(목)</span><div><div class="tt">통계 화면 마감</div><div class="mono" style="font-size:11.5px;color:var(--ink-soft)">업무 · 김민재</div></div></div>
-        <div class="sch-item"><span class="dt">08.24<br>(월)</span><div><div class="tt">2차 스프린트 회의</div><div class="mono" style="font-size:11.5px;color:var(--ink-soft)">19:00 · 온라인</div></div></div>
-      </div>
-    </div>
-
-    <!-- 진행도 세부 / 최근 업데이트 -->
-    <div class="ov-grid two">
-      <div class="ocard">
-        <div class="oc-head"><div class="t">업무 상태 요약</div><button class="oc-more" onclick="go('tasks')">업무 보드</button></div>
-        <div class="mp-stats" style="margin-bottom:0">
-          <div class="mp-stat"><div class="n mono">12</div><div class="k">전체 업무</div></div>
-          <div class="mp-stat"><div class="n mono" style="color:var(--accent)">4</div><div class="k">진행중</div></div>
-          <div class="mp-stat"><div class="n mono" style="color:var(--wait)">1</div><div class="k">검수 대기</div></div>
-          <div class="mp-stat"><div class="n mono" style="color:var(--ok)">6</div><div class="k">승인 완료</div></div>
+        <div class="oh-title">
+          <h2><c:out value="${p.title}"/></h2>
+          <span class="chip ${overview.projectStatusClass}"><c:out value="${overview.projectStatusLabel}"/></span>
+          <c:if test="${not empty p.category}">
+            <span class="tag"><c:out value="${p.category}"/></span>
+          </c:if>
+        </div>
+        <div class="oh-meta">
+          <span>팀원 <b><c:out value="${overview.teamCountLabel}"/></b></span>
+          <span>시작일 <b><c:out value="${overview.startDateLabel}"/></b></span>
+          <c:if test="${overview.recruiting}">
+            <span>모집 종료일 <b><c:out value="${overview.endDateLabel}"/></b></span>
+          </c:if>
         </div>
       </div>
-      <div class="ocard">
-        <div class="oc-head"><div class="t">최근 업데이트</div><button class="oc-more" onclick="go('results')">결과물</button></div>
-        <div class="upd-item"><span class="pic" style="background:#2b46c8">이</span><div class="ut"><b>이도현</b>님이 security_config.zip 을 제출했어요.</div><span class="uw">2시간 전</span></div>
-        <div class="upd-item"><span class="pic" style="background:#0f9d8c">서</span><div class="ut"><b>서지우</b>님이 midterm_deck.pptx 를 제출했어요.</div><span class="uw">5시간 전</span></div>
-        <div class="upd-item"><span class="pic" style="background:#2b46c8">민</span><div class="ut"><b>김민재</b>님이 지원·승인 API 를 제출했어요.</div><span class="uw">어제 18:30</span></div>
+      <div class="oh-prog">
+        <div class="k">완료 업무</div>
+        <div class="big">
+          <c:out value="${overview.taskStats.approved}"/>
+          <span class="ov-total">/ <c:out value="${overview.taskStats.total}"/></span>
+        </div>
+        <div class="mono ov-progress-detail">
+          진행 <c:out value="${overview.taskStats.ongoing}"/> · 검수 대기 <c:out value="${overview.taskStats.review}"/>
+        </div>
       </div>
     </div>
+
+    <div class="ov-grid overview-top-grid">
+      <section class="ocard overview-summary-card">
+        <div class="oc-head"><div class="t">프로젝트 요약</div></div>
+        <c:choose>
+          <c:when test="${not empty p.summary}">
+            <p class="oc-desc"><c:out value="${p.summary}"/></p>
+          </c:when>
+          <c:otherwise>
+            <p class="oc-desc ov-empty-text">등록된 프로젝트 요약이 없어요.</p>
+          </c:otherwise>
+        </c:choose>
+
+        <div class="oc-tags">
+          <c:forEach var="tag" items="${overview.tags}">
+            <span class="tag">#<c:out value="${tag}"/></span>
+          </c:forEach>
+          <c:if test="${empty overview.tags}">
+            <span class="ov-empty-text">등록된 태그가 없어요.</span>
+          </c:if>
+        </div>
+      </section>
+
+      <section class="ocard overview-meetings-card">
+        <div class="oc-head">
+          <div class="t">회의</div>
+          <a class="oc-more" href="${ctx}/workspace/${project_id}/meetings">회의 전체 보기</a>
+        </div>
+
+        <div class="overview-meeting-list">
+          <c:forEach var="meeting" items="${overview.nearestMeetings}">
+            <a class="overview-meeting-card"
+               href="${ctx}/workspace/${project_id}/meetings/${meeting.meeting_id}">
+              <div class="meeting-date"><c:out value="${meeting.meetDateDisplay}"/></div>
+              <div class="meeting-copy">
+                <strong><c:out value="${meeting.title}"/></strong>
+                <span>
+                  <c:choose>
+                    <c:when test="${not empty meeting.summary}"><c:out value="${meeting.summary}"/></c:when>
+                    <c:otherwise>등록된 회의 요약이 없어요.</c:otherwise>
+                  </c:choose>
+                </span>
+              </div>
+              <span class="meeting-arrow" aria-hidden="true">→</span>
+            </a>
+          </c:forEach>
+
+          <c:if test="${empty overview.nearestMeetings}">
+            <div class="overview-empty-state">
+              <strong>등록된 회의가 아직 없어요.</strong>
+              <span>회의를 등록하면 가까운 시간 순으로 표시됩니다.</span>
+            </div>
+          </c:if>
+        </div>
+      </section>
+    </div>
+
+    <section class="ocard overview-team-card">
+      <div class="oc-head">
+        <div class="t">팀원별 업무 현황</div>
+        <a class="oc-more" href="${ctx}/workspace/${project_id}/board">업무 보드</a>
+      </div>
+
+      <div class="mp-stats overview-task-stats">
+        <div class="mp-stat"><div class="n mono"><c:out value="${overview.taskStats.total}"/></div><div class="k">전체 업무</div></div>
+        <div class="mp-stat"><div class="n mono status-ongoing"><c:out value="${overview.taskStats.ongoing}"/></div><div class="k">진행 중</div></div>
+        <div class="mp-stat"><div class="n mono status-review"><c:out value="${overview.taskStats.review}"/></div><div class="k">검수 대기</div></div>
+        <div class="mp-stat"><div class="n mono status-rejected"><c:out value="${overview.taskStats.rejected}"/></div><div class="k">반려</div></div>
+        <div class="mp-stat"><div class="n mono status-approved"><c:out value="${overview.taskStats.approved}"/></div><div class="k">완료</div></div>
+      </div>
+
+      <div class="overview-table-scroll">
+        <table class="ov-tbl overview-team-table">
+          <thead>
+            <tr>
+              <th>팀원</th>
+              <th>역할</th>
+              <th>가장 가까운 업무</th>
+              <th>마감일</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:forEach var="memberTask" items="${overview.memberTasks}">
+              <tr>
+                <td>
+                  <div class="u">
+                    <span class="pic ${memberTask.roleLabel == '팀장' ? 'leader' : ''}"><c:out value="${memberTask.memberInitial}"/></span>
+                    <c:out value="${memberTask.member.memberName}"/>
+                  </div>
+                </td>
+                <td><span class="overview-role"><c:out value="${memberTask.roleLabel}"/></span></td>
+                <td class="tk">
+                  <c:choose>
+                    <c:when test="${not empty memberTask.nearestTask}">
+                      <a class="overview-task-link" href="${ctx}/workspace/${project_id}/board?task=${memberTask.nearestTask.task_id}">
+                        <c:out value="${memberTask.nearestTask.task_name}"/>
+                      </a>
+                    </c:when>
+                    <c:otherwise><span class="ov-empty-text">담당 업무 없음</span></c:otherwise>
+                  </c:choose>
+                </td>
+                <td>
+                  <span class="mono overview-due ${memberTask.overdue ? 'overdue' : ''}">
+                    <c:out value="${memberTask.dueDateLabel}"/>
+                    <c:if test="${memberTask.overdue}"><small>지연</small></c:if>
+                  </span>
+                </td>
+                <td><span class="chip ${memberTask.taskStatusClass}"><c:out value="${memberTask.taskStatusLabel}"/></span></td>
+              </tr>
+            </c:forEach>
+
+            <c:if test="${empty overview.memberTasks}">
+              <tr><td colspan="5" class="overview-table-empty">현재 참여 중인 팀원이 없어요.</td></tr>
+            </c:if>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </section>
-  </main>
-  <jsp:include page="../includes/footer.jsp" />
+</main>
+<jsp:include page="../includes/footer.jsp" />
 </body>
 </html>

@@ -61,6 +61,12 @@ public class TeamManagementService {
         return participationMapper.selectWaitingApplicants(projectId);
     }
 
+    @Transactional(readOnly = true)
+    public List<ParticipationVO> getOfferedMembers(long projectId, long actorMemberId) {
+        requireLeader(projectId, actorMemberId);
+        return participationMapper.selectOfferedMembers(projectId);
+    }
+
     @Transactional
     public void approveApplicant(long projectId, long applicantMemberId, long actorMemberId) {
         requireLeader(projectId, actorMemberId);

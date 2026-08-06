@@ -739,10 +739,18 @@
 
   /* ===== 결과물 (승인 완료 산출물) ===== */
   .res-filter{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap}
-  .res-filter button{padding:7px 14px;border-radius:20px;font-weight:700;font-size:13.5px;color:var(--ink-soft);border:1px solid var(--line)}
+  .res-filter button{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-weight:700;font-size:13.5px;color:var(--ink-soft);border:1px solid var(--line);transition:.15s}
+  .res-filter button:hover{border-color:var(--ok);color:var(--ok)}
   .res-filter button.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .res-filter .filter-count{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--paper);font-family:var(--mono);font-size:10.5px;color:var(--ink-soft)}
+  .res-filter button.on .filter-count{background:rgba(255,255,255,.2);color:#fff}
+  .results-scroll.is-scrollable{max-height:640px;overflow-y:auto;overscroll-behavior:contain;padding-right:9px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+  .results-scroll.is-scrollable::-webkit-scrollbar{width:7px}
+  .results-scroll.is-scrollable::-webkit-scrollbar-track{background:transparent}
+  .results-scroll.is-scrollable::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:10px}
   .results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .res-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;transition:.15s}
+  .res-card[hidden]{display:none}
   .res-card:hover{border-color:var(--line-strong);box-shadow:0 10px 24px -14px rgba(20,35,63,.3)}
   .res-card .rc-file{display:flex;align-items:center;gap:12px}
   .res-card .ficon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent)}
@@ -755,6 +763,8 @@
   .res-card .fmeta .fsz{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:2px}
   .res-card .rc-task{font-size:13px;color:#3a4767;border-top:1px solid var(--line);padding-top:11px}
   .res-card .rc-task .tt{font-weight:700;color:var(--ink);font-size:13.5px}
+  .res-card .rc-task .task-name{margin-top:3px;font-size:12px;font-weight:600;color:var(--ink-soft)}
+  .res-card .rc-task .desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:8px;line-height:1.55;color:#3a4767}
   .res-card .rc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
   .res-card .rc-who{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
   .res-card .rc-who .pic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff}
@@ -762,7 +772,18 @@
   .res-card .dl:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
   .res-summary{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-size:14px;color:var(--ink-soft)}
   .res-summary b{color:var(--ink);font-weight:800}
-  @media(max-width:640px){.results-grid{grid-template-columns:1fr}}
+  .res-summary-note{margin-left:-3px}
+  .res-empty{min-height:260px;border:1px dashed var(--line-strong);border-radius:14px;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;color:var(--ink-soft)}
+  .res-empty[hidden]{display:none}
+  .res-empty-icon{width:58px;height:58px;border-radius:16px;background:var(--surface);display:grid;place-items:center;color:var(--ok);margin-bottom:14px;box-shadow:0 8px 22px -18px rgba(20,35,63,.5)}
+  .res-empty strong{font-size:15px;color:var(--ink);margin-bottom:5px}
+  .res-empty span{font-size:13px}
+  @media(max-width:640px){
+    .results-grid{grid-template-columns:1fr}
+    .results-scroll.is-scrollable{max-height:720px;padding-right:6px}
+    .res-summary{align-items:flex-start;flex-wrap:wrap;gap:5px}
+    .res-summary-note{width:100%;margin-left:0}
+  }
 
   /* ===== 팀원 관리 리스트 ===== */
   .tm-section{max-width:720px;margin:30px auto 0}
@@ -794,6 +815,8 @@
   .ov-hero .oh-prog{text-align:right;min-width:220px}
   .ov-hero .oh-prog .k{font-size:12.5px;color:var(--ink-soft)}
   .ov-hero .oh-prog .big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1;margin:3px 0 8px}
+  .ov-hero .oh-prog .ov-total{font-size:18px;color:var(--ink-soft)}
+  .ov-progress-detail{font-size:12px;color:var(--ink-soft)}
   .ov-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
   .ov-grid.two{grid-template-columns:2fr 1fr}
   .ocard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
@@ -841,7 +864,54 @@
   .upd-item .ut{font-size:13px;color:#3a4767;line-height:1.5}
   .upd-item .ut b{color:var(--ink);font-weight:700}
   .upd-item .uw{font-family:var(--mono);font-size:11px;color:var(--ink-soft);white-space:nowrap;margin-left:auto}
-  @media(max-width:900px){.ov-grid,.ov-grid.two{grid-template-columns:1fr}}
+  .overview-top-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr)}
+  .overview-summary-card,.overview-meetings-card{min-height:250px}
+  .overview-summary-card .oc-desc{white-space:pre-line}
+  .ov-empty-text{font-size:12.5px;color:var(--ink-soft)}
+  .overview-meeting-list{display:flex;flex-direction:column;gap:8px}
+  .overview-meeting-card{display:grid;grid-template-columns:118px minmax(0,1fr) 22px;align-items:center;gap:13px;padding:12px 13px;border:1px solid var(--line);border-radius:11px;transition:.15s}
+  .overview-meeting-card:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+  .overview-meeting-card .meeting-date{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--accent)}
+  .overview-meeting-card .meeting-copy{display:flex;flex-direction:column;min-width:0}
+  .overview-meeting-card .meeting-copy strong{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .overview-meeting-card .meeting-copy span{font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .overview-meeting-card .meeting-arrow{font-size:17px;color:var(--ink-soft);transition:.15s}
+  .overview-meeting-card:hover .meeting-arrow{color:var(--accent);transform:translateX(2px)}
+  .overview-empty-state{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--line-strong);border-radius:11px;background:var(--paper);padding:24px}
+  .overview-empty-state strong{font-size:13.5px}
+  .overview-empty-state span{font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .overview-team-card{margin-top:16px}
+  .overview-task-stats{grid-template-columns:repeat(5,1fr);margin-bottom:22px}
+  .overview-task-stats .status-ongoing{color:var(--accent)}
+  .overview-task-stats .status-review{color:var(--wait)}
+  .overview-task-stats .status-rejected{color:var(--reject)}
+  .overview-task-stats .status-approved{color:var(--ok)}
+  .overview-table-scroll{overflow-x:auto}
+  .overview-team-table{min-width:720px}
+  .overview-team-table .pic{background:var(--accent)}
+  .overview-team-table .pic.leader{background:var(--wait)}
+  .overview-team-table th:nth-child(1){width:190px}
+  .overview-team-table th:nth-child(2){width:90px}
+  .overview-team-table th:nth-child(4){width:110px}
+  .overview-team-table th:nth-child(5){width:120px}
+  .overview-role{font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .overview-task-link{font-weight:650;color:var(--ink)}
+  .overview-task-link:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .overview-due{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .overview-due.overdue{color:var(--reject)}
+  .overview-due small{font-family:var(--sans);font-size:9.5px;padding:1px 5px;border-radius:8px;background:var(--reject-bg)}
+  .overview-table-empty{text-align:center!important;color:var(--ink-soft);padding:36px!important}
+  @media(max-width:900px){
+    .ov-grid,.ov-grid.two,.overview-top-grid{grid-template-columns:1fr}
+    .overview-summary-card,.overview-meetings-card{min-height:0}
+    .overview-task-stats{grid-template-columns:repeat(5,minmax(90px,1fr));overflow-x:auto}
+  }
+  @media(max-width:640px){
+    .ov-hero .oh-prog{text-align:left;min-width:100%;padding-top:16px;border-top:1px solid var(--line)}
+    .overview-meeting-card{grid-template-columns:1fr 20px}
+    .overview-meeting-card .meeting-date{grid-column:1 / -1}
+    .overview-task-stats{grid-template-columns:repeat(2,1fr);overflow:visible}
+  }
 
   /* ===== 내 프로젝트 목록 ===== */
   .psel-list{display:flex;flex-direction:column;gap:14px}

@@ -21,6 +21,7 @@
         <result property="status" column="status"/>
         <result property="memberMajor" column="member_major"/>
         <result property="memberGrade" column="member_grade"/>
+        <result property="contactEmail" column="contact_email"/>
     </resultMap>
 
     <!-- 지원서 저장 -->
@@ -255,6 +256,27 @@
         WHERE p.project_id = #{projectId}
           AND p.join_status = 'WAITING'
         ORDER BY p.applied_at ASC, p.part_id ASC
+    </select>
+
+    <!-- 인재풀에서 팀장이 제의했고 아직 응답을 기다리는 팀원 -->
+    <select id="selectOfferedMembers" resultMap="participationResultMap">
+        SELECT
+            p.part_id,
+            p.project_id,
+            p.member_id,
+            p.project_role,
+            p.join_status,
+            p.want_position,
+            p.motive,
+            p.contact_email,
+            m.name AS member_name,
+            m.major AS member_major,
+            m.grade AS member_grade
+        FROM participation p
+        INNER JOIN member m ON m.member_id = p.member_id
+        WHERE p.project_id = #{projectId}
+          AND p.join_status = 'OFFER'
+        ORDER BY p.part_id DESC
     </select>
 
     <select id="selectNextSuccessionOrder" resultType="int">

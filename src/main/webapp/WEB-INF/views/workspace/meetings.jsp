@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>다모여 — 회의</title>
+  <title><c:out value="${project.title}"/> 회의</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
   <main>
   <section id="v-meetings">
     <div class="eyebrow">Team workspace</div>
-    <h1 class="page"><em>${project.title}</em></h1>
+    <h1 class="page"><em><c:out value="${project.title}"/></em></h1>
     <p class="sub">모집이 끝난 팀의 작업 공간이에요. 업무·일정·회의를 한곳에서 관리해요.</p>
 
     <jsp:include page="../includes/workspaceHeader.jsp" />

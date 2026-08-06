@@ -20,11 +20,6 @@ public class WorkspaceController {
         model.addAttribute("project_id", project_id);
     }
 
-    @GetMapping("/overview") //개요
-    public String overview() {
-        return "workspace/overview";
-    }
-
     @GetMapping("/complete") //완료(최종 결과물)
     public String complete() {
         return "workspace/complete";
@@ -34,11 +29,5 @@ public class WorkspaceController {
     public String meetingForm() {
         return "workspace/meeting-form";
     }
-
-    @GetMapping("/results") //결과물
-    public String results() {
-        return "workspace/results";
-    }
-
 
 }
