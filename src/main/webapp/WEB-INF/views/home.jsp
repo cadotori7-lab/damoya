@@ -30,15 +30,15 @@
         <div class="ic a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
         <div><div class="n">${participatingCount}</div><div class="k">참여 중 프로젝트</div></div>
       </a>
-      <a class="hstat" href="${ctx}/workspace/overview">
+      <a class="hstat">
         <div class="ic b"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
         <div><div class="n">${assigneeTaskCount}</div><div class="k">진행 중 내 업무</div></div>
       </a>
-      <a class="hstat" href="${ctx}/mypage/index">
+      <a class="hstat">
         <div class="ic c"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
         <div><div class="n">${applicationCount}</div><div class="k">지원 진행 중</div></div>
       </a>
-      <a class="hstat" href="${ctx}/mypage/index">
+      <a class="hstat">
         <div class="ic d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
         <div><div class="n">${notiCount}</div><div class="k">새 알림</div></div>
       </a>
@@ -66,7 +66,7 @@
 
       <!-- 오늘/이번 주 할 일 -->
       <div class="ocard">
-        <div class="oc-head"><div class="t">이번 주 할 일</div><button class="oc-more" onclick="go('tasks')">내 업무</button></div>
+        <div class="oc-head"><div class="t">이번 주 할 일</div></div>
         <c:if test="${assigneeTasks.size() == 0}">
           <p style="color:var(--ink-soft);padding:16px">담당 중인 업무가 없어요.</p>
         </c:if>
@@ -81,9 +81,9 @@
           <p style="color:var(--ink-soft);padding:16px">다가오는 회의가 없어요.</p>
         </c:if>
         <c:forEach var="meeting" items="${upcomingMeetings}">
-          <div class="sch-item" style="border-top:1px solid var(--line);padding-top:12px" onclick="location.href='${ctx}/workspace/${meeting.project_id}/meetings'">
+          <div class="sch-item" style="border-top:1px solid var(--line);padding-top:12px" onclick="location.href='${ctx}/workspace/${meeting.project_id}/meetings/${meeting.meeting_id}'">
             <span class="dt">${meeting.meetDateOnly}</span>
-            <span class="tt">${meeting.title} · ${meeting.meetTimeOnly}</span>
+            <span class="tt">${meeting.title} · ${meeting.meetTimeOnly} <small>(${meeting.project_title})</small></span>
           </div>
         </c:forEach>
       </div>

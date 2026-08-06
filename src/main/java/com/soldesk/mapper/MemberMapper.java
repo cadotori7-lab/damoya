@@ -20,7 +20,6 @@ public interface MemberMapper {
     MemberVO findByLoginId(String login_id); // 로그인 ID로 회원 조회
     int countByLoginId(String loginId); // 로그인 ID 중복 확인
     int countByEmail(String email); // 이메일 중복 확인
-    MemberVO selectMemberById(int member_id); // 회원 고유번호로 회원 조회
 
     List<MemberVO> findAllMembers(); // 모든 회원 조회
     List<MentorDocument> findAllMentors(); // 멘토 인덱싱용 회원 + 멘토 정보 조회

@@ -82,7 +82,7 @@
                 <h4>${p.title}</h4>
               </div>
               <div class="m-right">
-                <span class="role-tag ${p.projectRole == 'LEADER' ? 'lead' : 'member'}">${p.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
+                <span class="role-tag ${p.projectRole == 'LEADER' ? 'lead' : 'member'}">${p.projectRole == 'LEADER' ? '팀장' : p.projectRole =='MENTOR' ? '멘토' : '팀원'}</span>
               </div>
             </div>
           </c:forEach>

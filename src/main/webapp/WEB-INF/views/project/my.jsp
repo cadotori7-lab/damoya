@@ -43,7 +43,7 @@
               <div class="psel-main">
                 <div class="psel-top">
                   <span class="psel-cat">${project.category}</span>
-                  <span class="psel-role ${project.projectRole == 'LEADER' ? 'lead' : 'member'}">${project.projectRole == 'LEADER' ? '팀장' : '팀원'}</span>
+                  <span class="psel-role ${project.projectRole == 'LEADER' ? 'lead' : 'member'}">${project.projectRole == 'LEADER' ? '팀장' : project.projectRole == 'MENTOR' ? '멘토' : '팀원'}</span>
                   <span class="chip approve">참여중</span>
                 </div>
                 <h3>${project.title}</h3>
