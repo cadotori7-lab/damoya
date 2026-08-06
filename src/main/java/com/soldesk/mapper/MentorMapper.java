@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.soldesk.vo.MentorDocument;
 import com.soldesk.vo.MentorSignupVO;
+import com.soldesk.vo.MentorTeamVO;
 import com.soldesk.vo.MentorVO;
 
 public interface MentorMapper {
@@ -23,4 +24,8 @@ public interface MentorMapper {
     int countActiveProjects(int memberId); // 진행 중 프로젝트 수
 
     int countFeedbacks(int memberId); // 내가 남긴 피드백 수
+
+    int countPendingOffers(int memberId); // 수락 대기 중인 멘토 제안 수
+
+    List<MentorTeamVO> findMentoringTeams(int memberId); // 멘토링 중인 팀 카드 목록
 }

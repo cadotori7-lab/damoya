@@ -281,4 +281,9 @@
             </if>
         </where>
     </select>
+
+    <!-- 고유번호(PK)로 회원 정보 조회 -->
+    <select id="selectMemberById" parameterType="int" resultMap="memberResultMap">
+        SELECT * FROM member WHERE member_id = #{member_id}
+    </select>
 </mapper>
