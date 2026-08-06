@@ -41,7 +41,7 @@ public class GitHubOAuthService {
     @Value("${github.oauth.client-secret:}")
     private String clientSecret;
 
-    @Value("${github.oauth.callback-url:http://localhost:8080/gitTest/github/callback}")
+    @Value("${github.oauth.callback-url:http://localhost:8080/oauth/git/callback}")
     private String callbackUrl;
 
     public String buildAuthorizationUrl(HttpSession session) {

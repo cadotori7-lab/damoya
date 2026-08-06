@@ -1,4 +1,6 @@
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -91,14 +93,14 @@ C:\Users\82105\OneDrive\바탕 화면\project_match\spring-mvc\src\main\java\com
 <<<<<<< HEAD
 >>>>>>> feature/comment2
 =======
+>>>>>>> main
 C:\soldesk\damoya\src\main\java\com\soldesk\advice\CurrentMemberAdvice.java
 C:\soldesk\damoya\src\main\java\com\soldesk\config\ElasticSearchConfig.java
 C:\soldesk\damoya\src\main\java\com\soldesk\config\SecurityConfig.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\AdminController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\ErrorPageController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\FeedBackController.java
-C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitHubOAuthController.java
-C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\GitTestRestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\HomeController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\LoginController.java
@@ -113,6 +115,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\controller\PublicProfileController.j
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\ScheduleController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TalentController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TaskBoardController.java
+C:\soldesk\damoya\src\main\java\com\soldesk\controller\TeamManagementController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\TestRestController.java
 C:\soldesk\damoya\src\main\java\com\soldesk\controller\WorkspaceController.java
@@ -129,6 +132,7 @@ C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ParticipationMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ProjectMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ReportMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\ScheduleMapper.java
+C:\soldesk\damoya\src\main\java\com\soldesk\mapper\TalentMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\TaskMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\mapper\UnivMapper.java
 C:\soldesk\damoya\src\main\java\com\soldesk\security\MemberDetailsService.java
@@ -148,7 +152,9 @@ C:\soldesk\damoya\src\main\java\com\soldesk\service\ParticipationService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\PasswordChangeException.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\ProjectService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\ReportService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\TalentService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\TaskService.java
+C:\soldesk\damoya\src\main\java\com\soldesk\service\TeamManagementService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\service\UnivService.java
 C:\soldesk\damoya\src\main\java\com\soldesk\validation\MemberValidation.java
 C:\soldesk\damoya\src\main\java\com\soldesk\validation\MentorSignupValidation.java
@@ -170,9 +176,13 @@ C:\soldesk\damoya\src\main\java\com\soldesk\vo\ProjectVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\PublicProfileVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\ReportVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\SocketEventMessage.java
+C:\soldesk\damoya\src\main\java\com\soldesk\vo\TalentVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\TaskVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\TestVO.java
 C:\soldesk\damoya\src\main\java\com\soldesk\vo\UnivVO.java
+<<<<<<< HEAD
+=======
 >>>>>>> feature/git
 =======
 >>>>>>> feature/edit2
+>>>>>>> main

@@ -74,7 +74,7 @@
         <c:when test="${githubConnected}">
           <div class="github-box">
             <p><strong>@<c:out value="${githubLogin}"/></strong> 계정과 연결되었습니다.</p>
-            <form class="inline-form" action="${ctx}/gitTest/github/disconnect" method="post">
+            <form class="inline-form" action="${ctx}/oauth/git/disconnect" method="post">
               <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
               <button class="btn ghost" type="submit">연결 해제</button>
             </form>
@@ -83,7 +83,7 @@
         <c:otherwise>
           <div class="github-box">
             <p>PDF를 만들려면 GitHub 로그인이 필요합니다.</p>
-            <a class="btn ghost" href="${ctx}/gitTest/github/connect">GitHub 로그인</a>
+            <a class="btn ghost" href="${ctx}/oauth/git">GitHub 로그인</a>
           </div>
         </c:otherwise>
       </c:choose>

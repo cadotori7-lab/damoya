@@ -18,7 +18,7 @@
 
       <form class="modal-body" action="${ctx}/mypage/password" method="post" autocomplete="off">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
+      
         <c:if test="${not empty passwordError}">
           <div class="form-error"
                style="background:var(--reject-bg);color:var(--reject);border-radius:11px;padding:11px 14px;margin-bottom:16px;font-size:13.5px;font-weight:600">
