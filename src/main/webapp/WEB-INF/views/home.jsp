@@ -57,7 +57,6 @@
             <div class="psel-main">
               <div class="psel-top"><span class="psel-cat">${project.category}</span><span class="psel-role ${project.projectRole}">${project.projectRole}</span></div>
               <h3 style="font-size:15.5px">${project.title}</h3>
-              <div class="psel-meta"><span>검수 대기 1건</span><span>D-24</span></div>
             </div>
           </div>
         </c:forEach>
