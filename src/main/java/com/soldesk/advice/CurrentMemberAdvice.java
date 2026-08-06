@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 
 import com.soldesk.mapper.MemberMapper;
+import com.soldesk.service.ProjectService;
 import com.soldesk.service.TeamManagementService;
 import com.soldesk.vo.MemberVO;
 
@@ -29,6 +30,9 @@ public class CurrentMemberAdvice {
 
     @Autowired
     private TeamManagementService teamManagementService;
+
+    @Autowired
+    private ProjectService projectService;
 
     @ModelAttribute("member")
     public MemberVO currentMember() {
@@ -55,6 +59,7 @@ public class CurrentMemberAdvice {
 
         long projectId = Long.parseLong(matcher.group(1));
         model.addAttribute("project_id", projectId);
+        model.addAttribute("project", projectService.getProjectById(projectId));
         MemberVO member = currentMember();
         if (member == null) {
             model.addAttribute("canViewTeamManagement", false);

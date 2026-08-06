@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title><c:out value="${project.title}"/> 완료</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
   <main>
     <section id="v-complete">
     <div class="eyebrow">Team workspace</div>
-    <h1 class="page"><em>AI 헬스케어 웹서비스</em></h1>
+    <h1 class="page"><em><c:out value="${project.title}"/></em></h1>
     <p class="sub">프로젝트를 마무리하고 완료 처리해요.</p>
 
     <jsp:include page="../includes/workspaceHeader.jsp" />

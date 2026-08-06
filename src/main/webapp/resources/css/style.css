@@ -815,6 +815,8 @@
   .ov-hero .oh-prog{text-align:right;min-width:220px}
   .ov-hero .oh-prog .k{font-size:12.5px;color:var(--ink-soft)}
   .ov-hero .oh-prog .big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1;margin:3px 0 8px}
+  .ov-hero .oh-prog .ov-total{font-size:18px;color:var(--ink-soft)}
+  .ov-progress-detail{font-size:12px;color:var(--ink-soft)}
   .ov-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
   .ov-grid.two{grid-template-columns:2fr 1fr}
   .ocard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
@@ -862,7 +864,54 @@
   .upd-item .ut{font-size:13px;color:#3a4767;line-height:1.5}
   .upd-item .ut b{color:var(--ink);font-weight:700}
   .upd-item .uw{font-family:var(--mono);font-size:11px;color:var(--ink-soft);white-space:nowrap;margin-left:auto}
-  @media(max-width:900px){.ov-grid,.ov-grid.two{grid-template-columns:1fr}}
+  .overview-top-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr)}
+  .overview-summary-card,.overview-meetings-card{min-height:250px}
+  .overview-summary-card .oc-desc{white-space:pre-line}
+  .ov-empty-text{font-size:12.5px;color:var(--ink-soft)}
+  .overview-meeting-list{display:flex;flex-direction:column;gap:8px}
+  .overview-meeting-card{display:grid;grid-template-columns:118px minmax(0,1fr) 22px;align-items:center;gap:13px;padding:12px 13px;border:1px solid var(--line);border-radius:11px;transition:.15s}
+  .overview-meeting-card:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+  .overview-meeting-card .meeting-date{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--accent)}
+  .overview-meeting-card .meeting-copy{display:flex;flex-direction:column;min-width:0}
+  .overview-meeting-card .meeting-copy strong{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .overview-meeting-card .meeting-copy span{font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .overview-meeting-card .meeting-arrow{font-size:17px;color:var(--ink-soft);transition:.15s}
+  .overview-meeting-card:hover .meeting-arrow{color:var(--accent);transform:translateX(2px)}
+  .overview-empty-state{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--line-strong);border-radius:11px;background:var(--paper);padding:24px}
+  .overview-empty-state strong{font-size:13.5px}
+  .overview-empty-state span{font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .overview-team-card{margin-top:16px}
+  .overview-task-stats{grid-template-columns:repeat(5,1fr);margin-bottom:22px}
+  .overview-task-stats .status-ongoing{color:var(--accent)}
+  .overview-task-stats .status-review{color:var(--wait)}
+  .overview-task-stats .status-rejected{color:var(--reject)}
+  .overview-task-stats .status-approved{color:var(--ok)}
+  .overview-table-scroll{overflow-x:auto}
+  .overview-team-table{min-width:720px}
+  .overview-team-table .pic{background:var(--accent)}
+  .overview-team-table .pic.leader{background:var(--wait)}
+  .overview-team-table th:nth-child(1){width:190px}
+  .overview-team-table th:nth-child(2){width:90px}
+  .overview-team-table th:nth-child(4){width:110px}
+  .overview-team-table th:nth-child(5){width:120px}
+  .overview-role{font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .overview-task-link{font-weight:650;color:var(--ink)}
+  .overview-task-link:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .overview-due{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .overview-due.overdue{color:var(--reject)}
+  .overview-due small{font-family:var(--sans);font-size:9.5px;padding:1px 5px;border-radius:8px;background:var(--reject-bg)}
+  .overview-table-empty{text-align:center!important;color:var(--ink-soft);padding:36px!important}
+  @media(max-width:900px){
+    .ov-grid,.ov-grid.two,.overview-top-grid{grid-template-columns:1fr}
+    .overview-summary-card,.overview-meetings-card{min-height:0}
+    .overview-task-stats{grid-template-columns:repeat(5,minmax(90px,1fr));overflow-x:auto}
+  }
+  @media(max-width:640px){
+    .ov-hero .oh-prog{text-align:left;min-width:100%;padding-top:16px;border-top:1px solid var(--line)}
+    .overview-meeting-card{grid-template-columns:1fr 20px}
+    .overview-meeting-card .meeting-date{grid-column:1 / -1}
+    .overview-task-stats{grid-template-columns:repeat(2,1fr);overflow:visible}
+  }
 
   /* ===== 내 프로젝트 목록 ===== */
   .psel-list{display:flex;flex-direction:column;gap:14px}
