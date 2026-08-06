@@ -134,7 +134,7 @@ public class TaskService {
                     project_id,
                     task.getAssignee_id().intValue(),
                     "TASK",
-                    "업무 반려: " + task.getTask_name() + " (사유: " + reject_reason + ")");
+                    "업무 반려- " + task.getTask_name() + " (사유: " + reject_reason + ")");
         }
         return success;
     }

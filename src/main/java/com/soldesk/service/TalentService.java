@@ -92,7 +92,7 @@ public class TalentService {
                     participationVO.getProjectId(),
                     participationVO.getMemberId().intValue(),
                     "OFFER_RECEIVED",
-                    "인재풀 제안: " + project.getTitle());
+                    "인재풀 제안- " + project.getTitle());
         }
     }
 

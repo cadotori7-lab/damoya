@@ -57,15 +57,15 @@
     } else if(n.kind === 'COMMENT2') {
       contentEl.textContent = "(" + n.content + ") 인재풀 게시글에 댓글이 작성되었습니다.";
     } else if(n.kind === 'APPLY') {
-      contentEl.textContent = "프로젝트 지원 알림- " + n.content;
+      contentEl.textContent = "프로젝트 지원 알림: " + n.content;
     } else if(n.kind === 'APPLY_APPROVED') {
-      contentEl.textContent = "지원 승인 알림- " + n.content;
+      contentEl.textContent = "지원 승인 알림: " + n.content;
     } else if(n.kind === 'OFFER_RECEIVED') {
-      contentEl.textContent = "제안 알림- " + n.content;
+      contentEl.textContent = "제안 알림: " + n.content;
     } else if(n.kind === 'OFFER_ACCEPTED') {
-      contentEl.textContent = "제안 수락 알림- " + n.content;
+      contentEl.textContent = "제안 수락 알림: " + n.content;
     } else if(n.kind === 'TASK') {
-      contentEl.textContent = "업무 알림- " + n.content;
+      contentEl.textContent = "업무 알림: " + n.content;
     }
 
     mainEl.appendChild(kindEl);
