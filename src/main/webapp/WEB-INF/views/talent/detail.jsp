@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -173,13 +173,26 @@
                   <button type="button" class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb; background:#fff;" onclick="requireLogin()">♥ 관심 <span class="fav-count">${talent.favoriteCount}</span></button>
               </c:when>
               
+              <c:when test="${isMentor}">
+                  <button type="button" class="btn ghost" style="width:100%; justify-content:center; padding:12px; font-size:15px; background-color: #f3f4f6; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed;" onclick="alert('멘토 계정은 함께하기 제의를 보낼 수 없습니다.');">
+                      멘토 제의 불가
+                  </button>
+                  
+                  <button type="button" id="favBtn" class="btn ghost ${isLiked ? 'active' : ''}" 
+                        style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; transition: 0.2s;
+                              ${isLiked ? 'color: #ef4444; border-color: #ef4444;' : 'color: inherit; border-color:#e5e7eb;'}"
+                        onclick="toggleTalentFavorite(${talent.postId}, this, event)">
+                      ♥ 관심 <span class="fav-count" style="margin-left: 4px; font-weight: 700;">${talent.favoriteCount}</span>
+                  </button>
+              </c:when>
+              
               <c:otherwise>
                   <button type="button" class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="openOffer('${talent.memberName}', '', ${talent.memberId})">함께하기 제의</button>
                   
                   <button type="button" id="favBtn" class="btn ghost ${isLiked ? 'active' : ''}" 
-                          style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; transition: 0.2s;
-                                ${isLiked ? 'color: #ef4444; border-color: #ef4444;' : 'color: inherit; border-color:#e5e7eb;'}"
-                          onclick="toggleTalentFavorite(${talent.postId}, this, event)">
+                        style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; transition: 0.2s;
+                              ${isLiked ? 'color: #ef4444; border-color: #ef4444;' : 'color: inherit; border-color:#e5e7eb;'}"
+                        onclick="toggleTalentFavorite(${talent.postId}, this, event)">
                       ♥ 관심 <span class="fav-count" style="margin-left: 4px; font-weight: 700;">${talent.favoriteCount}</span>
                   </button>
               </c:otherwise>
