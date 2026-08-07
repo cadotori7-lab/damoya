@@ -116,6 +116,7 @@ public class TalentController {
 
         // 작성자 본인이 맞는지 확인
         boolean isOwner = false;
+        boolean isMentor = false; //멘토인지
         MemberVO loginUser = null;
         List<ProjectVO> leaderProjects = null;
         List<Long> offeredProjectIds = null;    // 이미 제의한 프로젝트 ID 목록
@@ -129,8 +130,13 @@ public class TalentController {
             loginUser = memberService.findByLoginId(loginId);
 
             if (loginUser != null) {
+                long loginMemberId = (long) loginUser.getMember_id();
+
+                int mentorCheck = mentorMapper.selectMentorById(loginMemberId);
+                isMentor = (mentorCheck > 0);
+
                 // 로그인한 유저와 게시글 작성자 비교
-                if (talent.getMemberId() == loginUser.getMember_id()) {
+                if (talent.getMemberId() ==  loginMemberId) {
                     isOwner = true;
                 }
                 // 내가 팀장인 프로젝트 목록 가져오기
@@ -152,6 +158,7 @@ public class TalentController {
         model.addAttribute("offeredProjectIds", offeredProjectIds);
         model.addAttribute("talent", talent);
         model.addAttribute("isOwner", isOwner);
+        model.addAttribute("isMentor", isMentor);
         model.addAttribute("member", loginUser);
         model.addAttribute("commentList", comments);
         model.addAttribute("isLiked", isLiked); 
@@ -168,14 +175,8 @@ public class TalentController {
                             Principal principal,
                             RedirectAttributes rttr) {
 
-        if (projectIds == null || projectIds.length == 0) {
-        rttr.addFlashAttribute("msg", "초대할 프로젝트를 하나 이상 선택해주세요.");
-        return "redirect:/talent/detail?id=" + postId;
-        }
-
         // 로그인 체크
         if(principal == null){
-            System.out.println(">>> 에러: 로그인 정보가 없습니다.");
             rttr.addFlashAttribute("msg", "로그인 후 이용해주세요.");
             return "redirect:/auth/login";
         }
@@ -185,9 +186,19 @@ public class TalentController {
         MemberVO loginUser = memberService.findByLoginId(loginId);
 
         if(loginUser == null){
-            System.out.println(">>> 에러: 로그인 유저 정보를 찾을 수 없습니다.");
             rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
             return "redirect:/auth/login";
+        }
+
+        int mentorCheck = mentorMapper.selectMentorById((long) loginUser.getMember_id());
+        if (mentorCheck > 0) {
+            rttr.addFlashAttribute("msg", "멘토 계정은 함께하기 제의를 보낼 수 없습니다.");
+            return "redirect:/talent/detail?id=" + postId;
+        }
+
+        if (projectIds == null || projectIds.length == 0) {
+            rttr.addFlashAttribute("msg", "초대할 프로젝트를 하나 이상 선택해주세요.");
+            return "redirect:/talent/detail?id=" + postId;
         }
 
         // Offer로 고정 역할은 Member로
@@ -198,7 +209,7 @@ public class TalentController {
         
         try {
             for (Long projectId : projectIds) {
-            participationVO.setProjectId(projectId);
+                participationVO.setProjectId(projectId);
                 try{
                     talentService.insertOffer(participationVO);
                     successCount++;
@@ -206,11 +217,11 @@ public class TalentController {
                     System.out.println(">>> 중복 제의: 이미 해당 프로젝트에 제의를 보냈거나 참여 중인 인재입니다! (Project ID: " + projectId + ")");
                 }
             }
-        if(successCount > 0){
-            rttr.addFlashAttribute("msg", successCount + "개의 프로젝트에 제의가 성공적으로 전송되었습니다.");
-        } else {
-            rttr.addFlashAttribute("msg", "모든 프로젝트에 대한 제의가 실패했습니다. 이미 제의를 보냈거나 참여 중인 인재일 수 있습니다.");
-        }
+            if(successCount > 0){
+                rttr.addFlashAttribute("msg", successCount + "개의 프로젝트에 제의가 성공적으로 전송되었습니다.");
+            } else {
+                rttr.addFlashAttribute("msg", "모든 프로젝트에 대한 제의가 실패했습니다. 이미 제의를 보냈거나 참여 중인 인재일 수 있습니다.");
+            }
         } catch (Exception e) {
             System.out.println(">>> 에러: 제의 전송 중 문제가 발생했습니다. " + e.getMessage());
             rttr.addFlashAttribute("msg", "제의 전송 중 문제가 발생했습니다. 다시 시도해주세요.");
