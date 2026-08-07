@@ -1,6 +1,7 @@
 package com.soldesk.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.soldesk.service.MemberService;
 import com.soldesk.service.ParticipationService;
 import com.soldesk.service.ReportService;
 import com.soldesk.service.TalentService;
+import com.soldesk.service.UnivService;
 import com.soldesk.vo.CommentVO;
 import com.soldesk.vo.MemberVO;
 import com.soldesk.vo.PageBean;
@@ -36,6 +38,7 @@ import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.ReportVO;
 import com.soldesk.vo.TalentVO;
+import com.soldesk.vo.UnivVO;
 
 @Controller
 @RequestMapping("/talent")
@@ -57,6 +60,9 @@ public class TalentController {
 
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private UnivService univService;
 
 
     TalentController(RestClient restClient) {
@@ -213,7 +219,21 @@ public class TalentController {
     }
 
     @GetMapping("/form")
-    public String form() {
+    public String form(Model model, Principal principal) {
+        if(principal == null){
+            return "redirect:/auth/login";
+        }
+
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if(loginUser == null){
+            return "redirect:/auth/login";
+        }
+
+        int mentorCheck = mentorMapper.selectMentorById((long) loginUser.getMember_id());
+        boolean isMentor = (mentorCheck > 0);
+
+        model.addAttribute("isMentor", isMentor);
+        model.addAttribute("isApproved", loginUser.isApproved());
         return "talent/form";
     }
 
@@ -235,11 +255,17 @@ public class TalentController {
         if(loginUser == null){
             rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
             return "redirect:/auth/login";
-        } 
+        }
+
+        //  교내 매칭 등록 시 학교 인증(관리자 승인) 여부 체크
+        if ("교내".equals(talentVO.getMatchScope()) && !loginUser.isApproved()) {
+            rttr.addFlashAttribute("msg", "교내 매칭은 학교 인증 완료 후 등록할 수 있습니다.");
+            return "redirect:/talent/form";
+        }
 
         int mentorCheck = mentorMapper.selectMentorById((long) loginUser.getMember_id());
         boolean isMentor = (mentorCheck >0);
-        
+
        if(isMentor) {
             talentVO.setKind("MENTOR");
        }
@@ -271,7 +297,42 @@ public class TalentController {
                 page = 1;
             }
 
-            //찜 목록 조회 모드일 때 
+            boolean isLoginRequired = false;    // 로그인 필요 여부 (교내 매칭 또는 학과 카테고리인데 비로그인)
+            boolean isApprovalRequired = false; // 학교 인증 필요 여부 (로그인은 했지만 소속 대학이 확인되지 않는 경우)
+
+            TalentVO vo = new TalentVO();
+            // 카테고리를 list로 변환
+            if(categoryList != null && !categoryList.trim().isEmpty()){
+                vo.setCategoryList(Arrays.asList(categoryList.split(",")));
+            }
+
+            boolean hasDeptCategory = vo.getCategoryList() != null && vo.getCategoryList().contains("학과");
+            boolean needsUnivScope = "교내".equals(matchScope) || hasDeptCategory;
+
+            //  로그인 여부에 따른 처리
+            if(principal != null){
+                MemberVO loginUser = memberService.findByLoginId(principal.getName());
+
+                // 로그인 유저의 대학 이름 및 학과 ID 가져오기
+                if(loginUser != null && loginUser.getDept_id() != null){
+                    UnivVO univ = univService.getUnivByDeptId(loginUser.getDept_id().intValue());
+                    if(univ != null){
+                        vo.setUserUnivName(univ.getUniv_name());
+                    }
+                    vo.setUserDeptId(loginUser.getDept_id().longValue());
+                }
+
+                // 교내 매칭/학과 카테고리인데 소속 대학이 확인되지 않으면(학교 인증 미완료 등) 안내
+                if(needsUnivScope && (vo.getUserUnivName() == null || vo.getUserUnivName().isEmpty())){
+                    isApprovalRequired = true;
+                }
+            } else {
+                if(needsUnivScope){
+                    isLoginRequired = true;
+                }
+            }
+
+            //찜 목록 조회 모드일 때
             if("favorite".equals(view)){
                 if(principal == null){
                     return "redirect:/auth/login";
@@ -279,17 +340,12 @@ public class TalentController {
                 MemberVO loginUser = memberService.findByLoginId(principal.getName());
                 long memberId = (long) loginUser.getMember_id();
 
-                TalentVO vo = new TalentVO();
                 vo.setPage(page);
                 vo.setMemberId(memberId);
                 vo.setMatchScope(matchScope);
                 vo.setKind(kind);
                 vo.setKeyword(keyword);
                 vo.setSort(sort);
-                
-                if(categoryList != null){
-                    vo.setCategoryList(Arrays.asList(categoryList.split(",")));
-                }
 
                 // 서비스와 매퍼가 필터가 적용된 찜 목록을 조회할 수 있도록 vo를 전달합니다.
                 // (만약 기존 getFavoriteTalents가 파라미터로 long만 받았다면 서비스/매퍼 메서드도 vo를 받도록 수정이 필요할 수 있습니다)
@@ -302,37 +358,39 @@ public class TalentController {
                 model.addAttribute("pageBean", favoritePageBean);
                 model.addAttribute("isFavoriteView", true);
                 model.addAttribute("currentSort", sort);
-                model.addAttribute("matchScope", matchScope); 
+                model.addAttribute("matchScope", matchScope);
                 model.addAttribute("kind", kind);
 
                 return "talent/list";
             }
 
             //  일반 목록 조회 모드일 때
-            TalentVO vo = new TalentVO();
             vo.setPage(page);
             vo.setMatchScope(matchScope);
             vo.setKind(kind);
             vo.setKeyword(keyword);
             vo.setSort(sort);
-            
-            // 카테고리를 list로 변환
-            if(categoryList != null){
-                vo.setCategoryList(Arrays.asList(categoryList.split(",")));
+            vo.calcOffset();
+
+            List<TalentVO> talentList = new ArrayList<>();
+            int totalCnt = 0;
+
+            //  로그인/학교 인증이 필요한 조건인데 해당 안 되면 DB 조회를 건너뜀
+            if(!isLoginRequired && !isApprovalRequired){
+                totalCnt = talentService.getTotalCount(vo);
+                talentList = talentService.getTalentList(vo);
             }
 
-            // DB에서 전체 프로젝트 가져오기
-            int totalCnt = talentService.getTotalCount(vo);
             PageBean pageBean = new PageBean(page, totalCnt, 6);
-            List<TalentVO> talentList = talentService.getTalentList(vo);
-            
+
             model.addAttribute("talentList", talentList);
             model.addAttribute("pageBean", pageBean);
             model.addAttribute("currentSort", sort);
+            model.addAttribute("isLoginRequired", isLoginRequired); // JSP로 로그인 필요 여부 전달
+            model.addAttribute("isApprovalRequired", isApprovalRequired); // JSP로 학교 인증 필요 여부 전달
+            model.addAttribute("matchScope", matchScope);
 
             return "talent/list";
-        
-    
     }
 
     // 수정 페이지 
@@ -369,14 +427,44 @@ public class TalentController {
     model.addAttribute("talent", talent);
     model.addAttribute("mode", "update");
     model.addAttribute("isMentor", isMentor);
-    return "talent/form"; 
+    model.addAttribute("isApproved", loginUser.isApproved());
+    return "talent/form";
 
     }
     
     // 수정 처리
     @PostMapping("/update")
     public String updateForm(@ModelAttribute TalentVO talentVO,
-                                RedirectAttributes rttr){
+                                RedirectAttributes rttr,
+                                Principal principal){
+        if(principal == null){
+            rttr.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/auth/login";
+        }
+
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        if(loginUser == null){
+            rttr.addFlashAttribute("msg", "회원 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        //  작성자 본인이 맞는지 확인
+        TalentVO existingTalent = talentService.getTalentById(talentVO.getPostId());
+        if(existingTalent == null){
+            rttr.addFlashAttribute("msg", "존재하지 않는 게시글입니다.");
+            return "redirect:/talent/list";
+        }
+        if(existingTalent.getMemberId() != loginUser.getMember_id()){
+            rttr.addFlashAttribute("msg", "권한이 없습니다.");
+            return "redirect:/talent/detail?id=" + talentVO.getPostId();
+        }
+
+        //  교내 매칭으로 수정 시에도 학교 인증(관리자 승인) 여부 체크
+        if ("교내".equals(talentVO.getMatchScope()) && !loginUser.isApproved()) {
+            rttr.addFlashAttribute("msg", "교내 매칭은 학교 인증 완료 후 등록할 수 있습니다.");
+            return "redirect:/talent/edit?id=" + talentVO.getPostId();
+        }
+
         if (talentVO.getCategoryList() != null && !talentVO.getCategoryList().isEmpty()) {
             talentVO.setCategory(String.join(",", talentVO.getCategoryList()));
         }

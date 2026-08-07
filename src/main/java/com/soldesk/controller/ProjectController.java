@@ -305,8 +305,6 @@ public class ProjectController {
        return "project/apply_form";
     }
 
-    @PostMapping("/apply")
-
     @GetMapping("/list")
     public String getProjectList(
             @RequestParam(value="page", defaultValue = "1") int page,

@@ -38,15 +38,24 @@
     <!-- 전체 데이터 개수 구하기  -->
     <select id="getTotalCount" resultType="int" parameterType="com.soldesk.vo.TalentVO">
         select count(*) from intro_post i
+        left join member m on i.member_id = m.member_id
+        left join univ_department ud on m.dept_id = ud.dept_id
         <where>
-            <if test="matchScope != null and matchScope != ''">
-                AND i.match_scope = #{matchScope}
+            <!-- 매칭 범위가 '교내'일 경우, 작성자의 대학교 이름(univ_name)이 현재 로그인 유저의 대학교 이름과 같고, 승인된 회원의 글만 조회 -->
+            <!-- userUnivName이 없으면(예: dept_id 미설정 회원) ud.univ_name = NULL 비교가 항상 거짓이 되어 자연스럽게 0건 처리됨 -->
+            <if test="matchScope == '교내'">
+                AND i.match_scope = '교내'
+                AND ud.univ_name = #{userUnivName}
+                AND m.approved = 1
             </if>
-            
+            <if test="matchScope == '전국'">
+                AND i.match_scope = '전국'
+            </if>
+
             <if test="kind != null and kind != 'all' and kind != ''">
                 AND i.kind = #{kind}
             </if>
-            
+
             <if test="categoryList != null and categoryList.size() > 0">
                 AND (
                 <foreach collection="categoryList" item="cat" separator="OR">
@@ -54,8 +63,16 @@
                 </foreach>
                 )
             </if>
+
+            <!-- 카테고리 리스트에 '학과'가 포함되어 있을 경우, 같은 대학교 + 같은 학과(dept_id)만 조회 -->
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (i.category != '학과' OR m.dept_id = #{userDeptId})
+                </if>
+            </if>
+
             <if test="keyword != null and keyword != ''">
-                AND (i.title LIKE CONCAT('%', #{keyword}, '%') 
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%')
                 OR i.content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
@@ -71,15 +88,23 @@
             (SELECT COUNT(*) FROM comment WHERE post_id = i.post_id) AS comment_count
         from intro_post i
         left join member m on i.member_id = m.member_id
+        left join univ_department ud on m.dept_id = ud.dept_id
         <where>
-            <if test="matchScope != null and matchScope != ''">
-                AND i.match_scope = #{matchScope}
+            <!-- 매칭 범위가 '교내'일 경우, 작성자의 대학교 이름(univ_name)이 현재 로그인 유저의 대학교 이름과 같고, 승인된 회원의 글만 조회 -->
+            <!-- userUnivName이 없으면(예: dept_id 미설정 회원) ud.univ_name = NULL 비교가 항상 거짓이 되어 자연스럽게 0건 처리됨 -->
+            <if test="matchScope == '교내'">
+                AND i.match_scope = '교내'
+                AND ud.univ_name = #{userUnivName}
+                AND m.approved != 0
             </if>
-            
+            <if test="matchScope == '전국'">
+                AND i.match_scope = '전국'
+            </if>
+
             <if test="kind != null and kind != 'all' and kind != ''">
                 AND i.kind = #{kind}
             </if>
-            
+
             <if test="categoryList != null and categoryList.size() > 0">
                 AND (
                 <foreach collection="categoryList" item="cat" separator="OR">
@@ -87,14 +112,18 @@
                 </foreach>
                 )
             </if>
+
+            <!-- 카테고리 리스트에 '학과'가 포함되어 있을 경우, 같은 대학교 + 같은 학과(dept_id)만 조회 -->
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (i.category != '학과' OR m.dept_id = #{userDeptId})
+                </if>
+            </if>
+
             <if test="keyword != null and keyword != ''">
-                AND (i.title LIKE CONCAT('%', #{keyword}, '%') 
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%')
                 OR i.content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
-            <if test="keyword != null and keyword != ''">
-            AND (i.title LIKE CONCAT('%', #{keyword}, '%') 
-              OR i.content LIKE CONCAT('%', #{keyword}, '%'))
-        </if>
         </where>
         <choose>
             <when test="sort == 'view'">

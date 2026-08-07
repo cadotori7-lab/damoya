@@ -101,6 +101,38 @@
             <!-- 인재 카드 그리드 영역 -->
             <div class="talent-grid" id="talentGrid">
                 <c:choose>
+                    <%-- 💡 1순위: 로그인이 필요한 경우 (교내 매칭인데 비로그인 상태) --%>
+                    <c:when test="${isLoginRequired}">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; background: #f9fafb; border: 1px solid var(--line); border-radius: 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;">lock</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">
+                                교내 사람들과의 매칭은 로그인 후 이용할 수 있어요!
+                            </h3>
+                            <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
+                                로그인하고 우리 학교의 다양한 인재들을 확인해 보세요.
+                            </p>
+                            <a href="${ctx}/auth/login" class="btn pri" style="display: inline-flex; padding: 10px 24px; border-radius: 8px; font-size: 15px;">
+                                로그인하러 가기
+                            </a>
+                        </div>
+                    </c:when>
+
+                    <%-- 💡 2순위: 학교 인증이 필요한 경우 (로그인은 했지만 소속 대학이 확인되지 않는 상태) --%>
+                    <c:when test="${isApprovalRequired}">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; background: #f9fafb; border: 1px solid var(--line); border-radius: 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;">school</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">
+                                학교 인증 완료 후 교내 인재풀을 이용할 수 있어요!
+                            </h3>
+                            <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
+                                마이페이지에서 소속 학교/학과 정보와 인증 상태를 확인해 주세요.
+                            </p>
+                            <a href="${ctx}/mypage/index" class="btn pri" style="display: inline-flex; padding: 10px 24px; border-radius: 8px; font-size: 15px;">
+                                마이페이지로 이동
+                            </a>
+                        </div>
+                    </c:when>
+
                     <c:when test="${not empty talentList}">
                         <c:forEach var="t" items="${talentList}">
                             
