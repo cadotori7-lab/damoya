@@ -39,6 +39,13 @@
         where project_id = #{projectId}
     </select>
 
+    <select id="getProjectByIdForUpdate" resultMap="projectResultMap">
+        SELECT *
+        FROM project
+        WHERE project_id = #{projectId}
+        FOR UPDATE
+    </select>
+
     <!-- 프로젝트 모집 수정 -->
     <update id="updateProject" parameterType="com.soldesk.vo.ProjectVO">
         update project
@@ -58,6 +65,12 @@
     <update id="updateProjectOwner">
         UPDATE project
         SET owner_id = #{ownerId}
+        WHERE project_id = #{projectId}
+    </update>
+
+    <update id="markProjectDone">
+        UPDATE project
+        SET status = 'DONE'
         WHERE project_id = #{projectId}
     </update>
 

@@ -1089,6 +1089,76 @@
   .complete-done h2{font-size:24px;font-weight:800;margin-bottom:8px}
   .complete-done p{color:var(--ink-soft);font-size:14.5px;line-height:1.65;max-width:420px;margin:0 auto}
 
+  /* ===== 프로젝트 완료 / 최종 결과물 ===== */
+  .completion-layout{display:flex;flex-direction:column;gap:16px;max-width:940px;margin:0 auto}
+  .completion-layout .panel{margin-bottom:0}
+  .completion-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+  .completion-section-head .fsec-title{margin-bottom:4px}
+  .completion-section-head p{font-size:13px;color:var(--ink-soft)}
+  .completion-count{display:flex;align-items:baseline;gap:5px;flex:none;padding:9px 13px;border-radius:10px;background:var(--reject-bg);color:var(--reject);font-family:var(--mono)}
+  .completion-count.ready{background:var(--ok-bg);color:var(--ok)}
+  .completion-count strong{font-size:22px;line-height:1}
+  .completion-count span{font-size:11.5px;font-weight:700}
+  .completion-ready{display:flex;align-items:center;gap:12px;padding:15px 16px;border:1px solid #bfe5d1;border-radius:12px;background:var(--ok-bg)}
+  .completion-ready .ready-icon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:#fff;flex:none}
+  .completion-ready div{display:flex;flex-direction:column}
+  .completion-ready strong{font-size:14px;color:var(--ok)}
+  .completion-ready span{font-size:12px;color:var(--ink-soft)}
+  .completion-blocked-note{padding:11px 13px;border-radius:10px;background:var(--reject-bg);font-size:13px;color:var(--reject);margin-bottom:12px}
+  .completion-table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  .completion-task-table{width:100%;min-width:640px;border-collapse:collapse;background:var(--surface)}
+  .completion-task-table th{padding:11px 14px;background:var(--paper);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-soft);text-align:left}
+  .completion-task-table td{padding:13px 14px;border-top:1px solid var(--line);font-size:13px}
+  .completion-task-table td:nth-child(1){width:145px;font-weight:700}
+  .completion-task-table td:nth-child(3){width:115px;font-size:11.5px;color:var(--ink-soft)}
+  .completion-task-table td:nth-child(4){width:125px}
+  .completion-task-table a{font-weight:650}
+  .completion-task-table a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .completion-board-link{display:flex;justify-content:flex-end;margin-top:12px}
+  .completion-form-panel.is-locked{background:#fafbfc}
+  .completion-lock-message{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--line-strong);border-radius:12px;background:var(--paper);padding:26px;color:var(--ink-soft)}
+  .completion-lock-message svg{margin-bottom:10px;color:var(--grey)}
+  .completion-lock-message strong{font-size:14.5px;color:var(--ink);margin-bottom:3px}
+  .completion-lock-message span{font-size:12.5px}
+  .completion-form{display:grid;grid-template-columns:1fr 1fr;gap:17px 18px}
+  .completion-field{display:flex;flex-direction:column;gap:7px}
+  .completion-field:first-of-type,.completion-field:last-of-type{grid-column:1 / -1}
+  .completion-field label{font-size:13px;font-weight:750}
+  .completion-field label span{color:var(--reject)}
+  .completion-field input[type="text"],.completion-field textarea,.completion-field input[type="file"]{width:100%;border:1px solid var(--line-strong);border-radius:11px;background:var(--surface);font-family:inherit;font-size:13.5px;color:var(--ink)}
+  .completion-field input[type="text"]{height:44px;padding:0 13px}
+  .completion-field textarea{min-height:130px;padding:12px 13px;resize:vertical;line-height:1.6}
+  .completion-field input[type="file"]{padding:8px;color:var(--ink-soft)}
+  .completion-field input[type="file"]::file-selector-button{border:0;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-family:inherit;font-weight:700;padding:8px 12px;margin-right:11px;cursor:pointer}
+  .completion-field input:focus,.completion-field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .completion-field small{font-size:11.5px;color:var(--ink-soft)}
+  .completion-field .final-file[hidden]{display:none}
+  .completion-field .final-file .rm{width:28px;height:28px;border-radius:7px;font-size:20px;line-height:1;display:grid;place-items:center}
+  .completion-field .final-file .rm:hover{background:var(--reject-bg)}
+  .completion-submit-area{grid-column:1 / -1;display:flex;align-items:center;justify-content:flex-end;gap:18px;border-top:1px solid var(--line);padding-top:18px;margin-top:3px}
+  .completion-submit-area p{max-width:440px;margin-right:auto;font-size:12px;color:var(--ink-soft)}
+  .completion-submit-area .btn.big{height:48px;padding:0 24px;font-size:14px}
+  .completion-submit-area .btn:disabled{opacity:.6;cursor:wait}
+  .completion-result-card{max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:42px 36px}
+  .completion-result-card>.chip{margin-bottom:10px}
+  .completion-result-detail{margin:26px auto 0;max-width:620px;text-align:left;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .result-detail-row{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:14px 16px;border-top:1px solid var(--line);font-size:13px}
+  .result-detail-row:first-child{border-top:0}
+  .result-detail-row>span{color:var(--ink-soft);font-size:12px;font-weight:700}
+  .result-content-row div{white-space:pre-line;line-height:1.65;color:#3a4767}
+  .completion-download{display:inline-flex;align-items:center;gap:7px;color:var(--accent);font-weight:700;word-break:break-all}
+  .completion-download:hover{text-decoration:underline;text-underline-offset:3px}
+  .completion-result-actions{display:flex;justify-content:center;gap:9px;margin-top:22px}
+  @media(max-width:700px){
+    .completion-section-head{flex-direction:column}
+    .completion-form{grid-template-columns:1fr}
+    .completion-field{grid-column:1!important}
+    .completion-submit-area{flex-direction:column;align-items:stretch}
+    .completion-submit-area .btn{justify-content:center}
+    .result-detail-row{grid-template-columns:1fr;gap:5px}
+    .completion-result-card{padding:32px 20px}
+  }
+
   /* 업무 상세 모달 */
   .tm-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .tm-meta .who-mini{font-size:12.5px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:6px}

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.soldesk.vo.TaskVO;
+import com.soldesk.vo.IncompleteTaskVO;
 
 public interface TaskMapper {
 
@@ -54,4 +55,26 @@ public interface TaskMapper {
     List<TaskVO> selectTasksByAssignee(
         @Param("assignee_id") long assignee_id
     );
+
+    List<IncompleteTaskVO> selectIncompleteTasks(
+        @Param("project_id") long project_id
+    );
+
+    int countRegularTasks(
+        @Param("project_id") long project_id
+    );
+
+    int countCompletedRegularTasks(
+        @Param("project_id") long project_id
+    );
+
+    int countFinalResult(
+        @Param("project_id") long project_id
+    );
+
+    TaskVO selectFinalResult(
+        @Param("project_id") long project_id
+    );
+
+    int insertFinalResult(TaskVO task);
 }

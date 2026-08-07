@@ -20,11 +20,6 @@ public class WorkspaceController {
         model.addAttribute("project_id", project_id);
     }
 
-    @GetMapping("/complete") //완료(최종 결과물)
-    public String complete() {
-        return "workspace/complete";
-    }
-
     @GetMapping("/meeting-form") //회의 등록 폼
     public String meetingForm() {
         return "workspace/meeting-form";

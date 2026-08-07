@@ -77,6 +77,7 @@
             <include refid="taskColumns"/>
         FROM task
         WHERE project_id = #{project_id}
+          AND NOT (status = 'DONE' AND task_name = '최종 결과물')
         ORDER BY due_date ASC, task_id DESC
 
     </select>
@@ -197,8 +198,100 @@
         FROM task
         JOIN project ON task.project_id = project.project_id
         WHERE task.assignee_id = #{assignee_id}
-          AND task.status != 'APPROVED'
+          AND task.status NOT IN ('APPROVED', 'DONE')
           AND task.due_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY)
         ORDER BY task.due_date ASC, task.task_id DESC
     </select>
+
+    <!-- 프로젝트 완료를 막고 있는 일반 업무 -->
+    <select id="selectIncompleteTasks"
+            resultType="com.soldesk.vo.IncompleteTaskVO">
+        SELECT
+            t.task_id AS taskId,
+            m.name AS assigneeName,
+            t.task_name AS taskName,
+            t.due_date AS dueDate,
+            t.status
+        FROM task t
+        INNER JOIN member m ON m.member_id = t.assignee_id
+        WHERE t.project_id = #{project_id}
+          AND NOT (t.status = 'DONE' AND t.task_name = '최종 결과물')
+          AND t.status != 'APPROVED'
+        ORDER BY
+            CASE t.status
+                WHEN 'REVIEW' THEN 0
+                WHEN 'REJECTED' THEN 1
+                ELSE 2
+            END,
+            t.due_date ASC,
+            t.task_id ASC
+    </select>
+
+    <select id="countRegularTasks" resultType="int">
+        SELECT COUNT(*)
+        FROM task
+        WHERE project_id = #{project_id}
+          AND NOT (status = 'DONE' AND task_name = '최종 결과물')
+    </select>
+
+    <select id="countCompletedRegularTasks" resultType="int">
+        SELECT COUNT(*)
+        FROM task
+        WHERE project_id = #{project_id}
+          AND status = 'APPROVED'
+    </select>
+
+    <select id="countFinalResult" resultType="int">
+        SELECT COUNT(*)
+        FROM task
+        WHERE project_id = #{project_id}
+          AND status = 'DONE'
+          AND task_name = '최종 결과물'
+    </select>
+
+    <select id="selectFinalResult" resultMap="taskResultMap">
+        SELECT
+            <include refid="taskColumns"/>
+        FROM task
+        WHERE project_id = #{project_id}
+          AND status = 'DONE'
+          AND task_name = '최종 결과물'
+        ORDER BY submitted_at DESC, task_id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 최종 결과물은 일반 업무 제출과 달리 생성 시 바로 DONE 상태로 저장 -->
+    <insert id="insertFinalResult"
+            parameterType="com.soldesk.vo.TaskVO"
+            useGeneratedKeys="true"
+            keyProperty="task_id">
+        INSERT INTO task
+        (
+            project_id,
+            assignee_id,
+            task_name,
+            description,
+            status,
+            due_date,
+            submit_title,
+            submit_content,
+            submit_file,
+            reject_reason,
+            submitted_at
+        )
+        VALUES
+        (
+            #{project_id},
+            #{assignee_id},
+            '최종 결과물',
+            NULL,
+            'DONE',
+            CURRENT_DATE,
+            #{submit_title},
+            #{submit_content},
+            #{submit_file},
+            NULL,
+            NOW()
+        )
+    </insert>
 </mapper>
