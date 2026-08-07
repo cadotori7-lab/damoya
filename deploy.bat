@@ -3,15 +3,9 @@ setlocal EnableExtensions
 
 REM ASCII-only batch file (UTF-8 Korean comments break cmd.exe parsing)
 
-<<<<<<< HEAD
-set "CATALINA_HOME=C:\Program Files\Apache Software Foundation\Tomcat 9.0"
+set "CATALINA_HOME=C:\apache-tomcat-9.0.118"
 set "CATALINA_BASE=%CATALINA_HOME%"
-set "JAVA_HOME=C:\Program Files\Java\jdk-17"
-=======
-set "CATALINA_HOME=C:\myProgram\apache-tomcat-9.0.119"
-set "CATALINA_BASE=C:\myProgram\apache-tomcat-9.0.119"
-set "JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot"
->>>>>>> feature/workspace
+set "JAVA_HOME=C:\Program Files\Java\jdk-21"
 set "WAR_SOURCE=%~dp0target\damoya.war"
 
 set "PATH=%JAVA_HOME%\bin;%PATH%"

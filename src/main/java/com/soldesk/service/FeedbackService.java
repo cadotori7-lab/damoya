@@ -68,7 +68,7 @@ public class FeedbackService {
         ProjectVO project = projectService.getProjectById(projectId);
         if (project != null && project.getOwnerId() != null) {
             notificationService.toMessage(projectId, project.getOwnerId().intValue(),
-                    "FEEDBACK", "멘토 피드백 등록: " + project.getTitle());
+                    "FEEDBACK", "멘토 피드백 등록- " + project.getTitle());
         }
     }
 }

@@ -35,6 +35,7 @@
     // 제안 수락 알림은 팀장(이미 팀원)에게 가므로 지원자 관리 페이지로 보낸다.
     if (n.kind === 'OFFER_ACCEPTED') return ctx + '/workspace/' + n.target_id + '/applicants';
     if (n.kind === 'TASK') return ctx + '/workspace/' + n.target_id + '/board';
+    if (n.kind === 'FEEDBACK') return ctx + '/workspace/' + n.target_id + '/board';
     return null;
   }
 
@@ -66,6 +67,8 @@
       contentEl.textContent = "제안 수락 알림: " + n.content;
     } else if(n.kind === 'TASK') {
       contentEl.textContent = "업무 알림: " + n.content;
+    } else if(n.kind === 'FEEDBACK') {
+      contentEl.textContent = "피드백 알림: " + n.content;
     }
 
     mainEl.appendChild(kindEl);
