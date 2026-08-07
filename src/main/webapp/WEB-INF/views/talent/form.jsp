@@ -55,8 +55,15 @@
         <div class="fld one">
           <label>매칭 범위<span class="req">*</span></label>
           <div class="picker" id="scopePicker">
-            <input type="radio" name="matchScope" id="ms1" value="교내" ${talent.matchScope == '교내' || empty talent.matchScope ? 'checked' : ''}><label for="ms1">교내</label>
-            <input type="radio" name="matchScope" id="ms2" value="전국" ${talent.matchScope == '전국' ? 'checked' : ''}><label for="ms2">전국</label>
+            <c:choose>
+              <c:when test="${isApproved}">
+                <input type="radio" name="matchScope" id="ms1" value="교내" ${talent.matchScope == '교내' || empty talent.matchScope ? 'checked' : ''}><label for="ms1">교내</label>
+              </c:when>
+              <c:otherwise>
+                <input type="radio" name="matchScope" id="ms1" value="교내" disabled><label for="ms1" style="color: var(--ink-soft);">교내 (학교 인증 후 이용 가능)</label>
+              </c:otherwise>
+            </c:choose>
+            <input type="radio" name="matchScope" id="ms2" value="전국" ${talent.matchScope == '전국' || !isApproved ? 'checked' : ''}><label for="ms2">전국</label>
           </div>
         </div>
         
