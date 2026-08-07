@@ -21,6 +21,7 @@
         <result column="member_name" property="memberName"/>
         <result column="member_major" property="memberMajor"/>
         <result column="member_grade" property="memberGrade"/>
+        <result column="comment_count" property="commentCount"/>
     </resultMap>
 
     <!-- 인재풀 등록 -->
@@ -34,32 +35,108 @@
         )
     </insert>
 
-    <!-- 전체 데이터 개수 구하기 (안전하게 전체 행 개수 카운트) -->
-    <select id="getTotalCount" parameterType="com.soldesk.vo.TalentVO" resultType="int">
-        select count(*) from intro_post
+    <!-- 전체 데이터 개수 구하기  -->
+    <select id="getTotalCount" resultType="int" parameterType="com.soldesk.vo.TalentVO">
+        select count(*) from intro_post i
+        left join member m on i.member_id = m.member_id
+        left join univ_department ud on m.dept_id = ud.dept_id
         <where>
-            <if test="kind != null and kind != '' and kind != 'all'">
-                AND kind = #{kind}
+            <!-- 매칭 범위가 '교내'일 경우, 작성자의 대학교 이름(univ_name)이 현재 로그인 유저의 대학교 이름과 같고, 승인된 회원의 글만 조회 -->
+            <!-- userUnivName이 없으면(예: dept_id 미설정 회원) ud.univ_name = NULL 비교가 항상 거짓이 되어 자연스럽게 0건 처리됨 -->
+            <if test="matchScope == '교내'">
+                AND i.match_scope = '교내'
+                AND ud.univ_name = #{userUnivName}
+                AND m.approved = 1
+            </if>
+            <if test="matchScope == '전국'">
+                AND i.match_scope = '전국'
+            </if>
+
+            <if test="kind != null and kind != 'all' and kind != ''">
+                AND i.kind = #{kind}
+            </if>
+
+            <if test="categoryList != null and categoryList.size() > 0">
+                AND (
+                <foreach collection="categoryList" item="cat" separator="OR">
+                    i.category LIKE CONCAT('%', #{cat}, '%')
+                </foreach>
+                )
+            </if>
+
+            <!-- 카테고리 리스트에 '학과'가 포함되어 있을 경우, 같은 대학교 + 같은 학과(dept_id)만 조회 -->
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (i.category != '학과' OR m.dept_id = #{userDeptId})
+                </if>
+            </if>
+
+            <if test="keyword != null and keyword != ''">
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%')
+                OR i.content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </select>
 
     <!-- 조건 및 페이징이 적용된 리스트 조회 -->
     <select id="getTalentList" parameterType="com.soldesk.vo.TalentVO" resultMap="talentResultMap">
-            select
-                i.*,
-                m.name as member_name,
-                m.major as member_major,
-                m.grade as member_grade
-            from intro_post i
-            left join member m on i.member_id = m.member_id
-            <where>
-                <if test="kind != null and kind != '' and kind != 'all'">
-                    AND i.kind = #{kind}
+        select
+            i.*,
+            m.name as member_name,
+            m.major as member_major,
+            m.grade as member_grade,
+            (SELECT COUNT(*) FROM comment WHERE post_id = i.post_id) AS comment_count
+        from intro_post i
+        left join member m on i.member_id = m.member_id
+        left join univ_department ud on m.dept_id = ud.dept_id
+        <where>
+            <!-- 매칭 범위가 '교내'일 경우, 작성자의 대학교 이름(univ_name)이 현재 로그인 유저의 대학교 이름과 같고, 승인된 회원의 글만 조회 -->
+            <!-- userUnivName이 없으면(예: dept_id 미설정 회원) ud.univ_name = NULL 비교가 항상 거짓이 되어 자연스럽게 0건 처리됨 -->
+            <if test="matchScope == '교내'">
+                AND i.match_scope = '교내'
+                AND ud.univ_name = #{userUnivName}
+                AND m.approved != 0
+            </if>
+            <if test="matchScope == '전국'">
+                AND i.match_scope = '전국'
+            </if>
+
+            <if test="kind != null and kind != 'all' and kind != ''">
+                AND i.kind = #{kind}
+            </if>
+
+            <if test="categoryList != null and categoryList.size() > 0">
+                AND (
+                <foreach collection="categoryList" item="cat" separator="OR">
+                    i.category LIKE CONCAT('%', #{cat}, '%')
+                </foreach>
+                )
+            </if>
+
+            <!-- 카테고리 리스트에 '학과'가 포함되어 있을 경우, 같은 대학교 + 같은 학과(dept_id)만 조회 -->
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (i.category != '학과' OR m.dept_id = #{userDeptId})
                 </if>
-            </where>
-            order by i.created_at desc
-            limit #{amount} offset #{offset}
+            </if>
+
+            <if test="keyword != null and keyword != ''">
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%')
+                OR i.content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        <choose>
+            <when test="sort == 'view'">
+                order by i.view_count desc, i.created_at desc
+            </when>
+            <when test="sort == 'favorite'">
+                order by i.favorite_count desc, i.created_at desc
+            </when>
+            <otherwise>
+                order by i.created_at desc
+            </otherwise>
+        </choose>
+        limit #{amount} offset #{offset}
     </select>
 
     <!-- 인재풀 상세 조회 -->
@@ -99,11 +176,12 @@
         select
             p.project_id as projectId, 
             p.title as title, 
-            p.status as status,                   <!-- 모집 마감 상태 -->
-            p.capacity as capacity,          <!-- 모집 정원 -->
+            p.status as status,               
+            p.capacity as capacity,  
+            p.match_scope as matchScope,      
             (SELECT COUNT(*) FROM participation WHERE project_id = p.project_id AND join_status = 'JOINED') AS currentNum  <!-- 현재 참여 인원 -->
         FROM project p
-        WHERE p.owner_id = #{memberId} <!-- (팀장 ID 조건) -->
+        WHERE p.owner_id = #{memberId} 
     </select>
 
 
@@ -122,5 +200,87 @@
     from participation 
     where member_id = #{memberId}
     </select>
-    
+
+    <!-- 관심 등록-->
+    <insert id="insertFavorite">
+        insert into favorite_post (member_id, post_id)
+        values (#{memberId}, #{postId} )
+    </insert>
+
+    <!-- 관심 취소-->
+    <delete id="deleteFavorite">
+        delete from favorite_post
+        where member_id = #{memberId} and post_id = #{postId}
+    </delete>
+
+    <!-- 관심 수 증가-->
+    <update id="increaseFavoriteCount">
+        update intro_post
+        set favorite_count = favorite_count + 1
+        where post_id = #{postId}
+    </update>
+
+    <!-- 관심 수 감소-->
+    <update id="decreaseFavoriteCount">
+        update intro_post 
+        set favorite_count = favorite_count - 1
+        where post_id = #{postId}
+    </update>
+
+    <!-- 로그인한 유저가 좋아요 눌렀는지 확인-->
+    <select id="checkFavorite" resultType="int" parameterType="long">
+        select count(*)
+        from favorite_post f
+        where f.member_id = #{memberId} and post_id = #{postId}
+    </select>
+
+    <!-- 사용자가 관심 등록한 인재풀 페이징 조회-->
+    <select id="getFavoriteTalents" resultMap="talentResultMap" parameterType="com.soldesk.vo.TalentVO">
+        select 
+            p.*,
+            m.name as member_name,
+            m.major as member_major,
+            m.grade as member_grade,
+            (SELECT COUNT(*) FROM comment WHERE post_id = p.post_id) AS comment_count
+        from intro_post p
+        left join member m on p.member_id = m.member_id
+        inner join favorite_post f on p.post_id = f.post_id
+        <where>
+            f.member_id = #{memberId}
+            
+            <if test="matchScope != null and matchScope != ''">
+                AND p.match_scope = #{matchScope}
+            </if>
+            
+            <if test="kind != null and kind != 'all' and kind != ''">
+                AND p.kind = #{kind}
+            </if>
+            
+            <if test="categoryList != null and categoryList.size() > 0">
+                AND (
+                <foreach collection="categoryList" item="cat" separator="OR">
+                    p.category LIKE CONCAT('%', #{cat}, '%')
+                </foreach>
+                )
+            </if>
+        </where>
+        order by p.post_id desc
+    </select>
+
+    <!-- 내가 관심등록한 게시글 보기-->
+    <select id="getFavoritePostsByMemberId" resultMap="talentResultMap" parameterType="long">
+        select p.*
+        from intro_post p
+        inner join favorite_post f on p.post_id = f.post_id
+        where f.member_id = #{memberId}
+        order by p.post_id desc
+    </select>
+
+    <!-- 게시글 조회수 불러오기-->
+    <update id="increaseViewCount">
+        update intro_post
+        set view_count = view_count + 1
+        where post_id = #{postId}
+    </update>
+
 </mapper>

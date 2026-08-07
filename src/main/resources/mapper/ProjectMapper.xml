@@ -67,45 +67,58 @@
         where project_id = #{projectId}
     </delete>
 
-    <!-- 필터 조건에 맞는 전체 게시글 개수 구하기 -->
+    <!-- 조건에 맞는 프로젝트 개수 조회 -->
     <select id="getTotalCount" resultType="int" parameterType="com.soldesk.vo.ProjectVO">
-        SELECT COUNT(*) 
-        FROM project
+        SELECT COUNT(*)
+        FROM project p
+        LEFT JOIN member m ON p.owner_id = m.member_id
+        LEFT JOIN univ_department ud ON m.dept_id = ud.dept_id
         <where>
-            <!-- 매칭 범위 (교내/전국) -->
-            <if test="matchScope != null and matchScope != ''">
-                AND match_scope = #{matchScope}
+            <if test="matchScope == '교내'">
+                AND p.match_scope = '교내'
+                <if test="userUnivName != null and userUnivName != ''">
+                    AND ud.univ_name = #{userUnivName}
+                </if>
             </if>
-            <!-- 탭 상태 -->
+            <if test="matchScope == '전국'">
+                AND p.match_scope = '전국'
+            </if>
+
             <if test="tab != null and tab != 'all'">
-                AND status = #{tab}
+                AND p.status = #{tab}
             </if>
-            <!-- 키워드 검색 -->
+
             <if test="keyword != null and keyword != ''">
                 AND (
-                    title LIKE CONCAT('%', #{keyword}, '%')
-                    OR summary LIKE CONCAT('%', #{keyword}, '%')
-                    OR tags LIKE CONCAT('%', #{keyword}, '%')
+                    p.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.summary LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.tags LIKE CONCAT('%', #{keyword}, '%')
                 )
             </if>
-            <!-- 카테고리 다중 선택 -->
+
             <if test="categoryList != null and categoryList.size() > 0">
-                AND category IN
+                AND p.category IN
                 <foreach collection="categoryList" item="category" open="(" separator="," close=")">
                     #{category}
                 </foreach>
             </if>
-            <!-- 대상 학년 다중 선택 -->
+
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (p.category != '학과' OR m.dept_id = #{userDeptId})
+                </if>
+            </if>
+
             <if test="gradeList != null and gradeList.size() > 0">
                 <if test="!gradeList.contains('all') and !gradeList.contains('ALL') and !gradeList.contains('무관')">
                     AND (
-                        target_grade = '무관' 
-                        OR target_grade = 'ALL' 
-                        OR target_grade = 'all'
-                        OR target_grade IS NULL 
-                        OR target_grade = ''
+                        p.target_grade = '무관' 
+                        OR p.target_grade = 'ALL' 
+                        OR p.target_grade = 'all'
+                        OR p.target_grade IS NULL 
+                        OR p.target_grade = ''
                         <foreach collection="gradeList" item="grade">
-                            OR target_grade LIKE CONCAT('%', #{grade}, '%')
+                            OR p.target_grade LIKE CONCAT('%', #{grade}, '%')
                         </foreach>
                     )
                 </if>
@@ -115,44 +128,64 @@
 
     <!-- 필터 조건에 맞는 게시글 리스트 조회 -->
     <select id="getProjectList" resultMap="projectResultMap" parameterType="com.soldesk.vo.ProjectVO">
-        select p.*, 
+        SELECT p.*, 
         (SELECT COUNT(*) FROM comment c WHERE c.project_id = p.project_id) AS commentCount
         FROM project p
+        <!--학교 및 학과 필터링을 위한 JOIN (member와 univ_department 조인) -->
+        LEFT JOIN member m ON p.owner_id = m.member_id
+        LEFT JOIN univ_department ud ON m.dept_id = ud.dept_id
         <where>
-            <!-- 매칭 범위 (교내/전국) -->
-            <if test="matchScope != null and matchScope != ''">
-                AND match_scope = #{matchScope}
+            <!-- 매칭 범위가 '교내'일 경우, 작성자의 대학교 이름(univ_name)과 현재 로그인 유저의 대학교 이름이 같은 것만 조회 -->
+            <if test="matchScope == '교내'">
+                AND p.match_scope = '교내'
+                <if test="userUnivName != null and userUnivName != ''">
+                    AND ud.univ_name = #{userUnivName}
+                </if>
             </if>
+            <if test="matchScope == '전국'">
+                AND p.match_scope = '전국'
+            </if>
+
             <!-- 탭 상태 -->
             <if test="tab != null and tab != 'all'">
-                AND status = #{tab}
+                AND p.status = #{tab}
             </if>
+
             <!-- 키워드 검색 -->
             <if test="keyword != null and keyword != ''">
                 AND (
-                    title LIKE CONCAT('%', #{keyword}, '%')
-                    OR summary LIKE CONCAT('%', #{keyword}, '%')
-                    OR tags LIKE CONCAT('%', #{keyword}, '%')
+                    p.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.summary LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.tags LIKE CONCAT('%', #{keyword}, '%')
                 )
             </if>
+
             <!-- 카테고리 다중 선택 -->
             <if test="categoryList != null and categoryList.size() > 0">
-                AND category IN
+                AND p.category IN
                 <foreach collection="categoryList" item="category" open="(" separator="," close=")">
                     #{category}
                 </foreach>
             </if>
+
+            <!--  카테고리 리스트에 '학과'가 포함되어 있을 경우, 같은 대학교 + 같은 학과(dept_id)만 조회 -->
+            <if test="categoryList != null and categoryList.contains('학과')">
+                <if test="userDeptId != null">
+                    AND (p.category != '학과' OR m.dept_id = #{userDeptId})
+                </if>
+            </if>
+
             <!-- 대상 학년 다중 선택 -->
             <if test="gradeList != null and gradeList.size() > 0">
                 <if test="!gradeList.contains('all') and !gradeList.contains('ALL') and !gradeList.contains('무관')">
                     AND (
-                        target_grade = '무관' 
-                        OR target_grade = 'ALL' 
-                        OR target_grade = 'all'
-                        OR target_grade IS NULL 
-                        OR target_grade = ''
+                        p.target_grade = '무관' 
+                        OR p.target_grade = 'ALL' 
+                        OR p.target_grade = 'all'
+                        OR p.target_grade IS NULL 
+                        OR p.target_grade = ''
                         <foreach collection="gradeList" item="grade">
-                            OR target_grade LIKE CONCAT('%', #{grade}, '%')
+                            OR p.target_grade LIKE CONCAT('%', #{grade}, '%')
                         </foreach>
                     )
                 </if>
@@ -162,19 +195,19 @@
         <!-- 정렬 조건 -->
         <choose>
             <when test="sort == 'recommend'">
-                ORDER BY ((favorite_count * 10) + (view_count * 5)) DESC, created_at DESC
+                ORDER BY ((p.favorite_count * 10) + (p.view_count * 5)) DESC, p.created_at DESC
             </when>
             <when test="sort == 'deadline'">
                 ORDER BY 
-                    CASE WHEN end_date &lt; CURDATE() THEN 1 ELSE 0 END ASC, 
-                    end_date ASC, 
-                    created_at DESC
+                    CASE WHEN p.end_date &lt; CURDATE() THEN 1 ELSE 0 END ASC, 
+                    p.end_date ASC, 
+                    p.created_at DESC
             </when>
             <when test="sort == 'likes'">
-                ORDER BY favorite_count DESC, created_at DESC
+                ORDER BY p.favorite_count DESC, p.created_at DESC
             </when>
             <otherwise>
-                ORDER BY created_at DESC
+                ORDER BY p.created_at DESC
             </otherwise>
         </choose>
 

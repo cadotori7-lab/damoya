@@ -33,7 +33,6 @@
     <div class="modal-body" id="offerBody">
       <c:choose>
           <c:when test="${not empty leaderProjects and fn:length(leaderProjects) > 0}">
-              <!-- 💡 onsubmit 속성 제거 (자바스크립트 처리 불필요) -->
               <form id="offerForm" action="${ctx}/talent/offer/send" method="post">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 
@@ -48,48 +47,53 @@
                 <div class="project-checkbox-list" style="max-height: 150px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 10px;">
                   
                   <c:forEach var="project" items="${leaderProjects}">
-                      
-                      <!-- 1. 이미 제의했는지 체크 -->
-                      <c:set var="isOffered" value="false" />
-                      <c:forEach var="offeredId" items="${offeredProjectIds}">
-                          <c:if test="${offeredId == project.projectId}">
-                              <c:set var="isOffered" value="true" />
-                          </c:if>
-                      </c:forEach>
+    
+                    <!-- 이미 제의했는지 체크 -->
+                    <c:set var="isOffered" value="false" />
+                    <c:forEach var="offeredId" items="${offeredProjectIds}">
+                        <c:if test="${offeredId == project.projectId}">
+                            <c:set var="isOffered" value="true" />
+                        </c:if>
+                    </c:forEach>
 
-                      <!-- 2. 모집 마감 여부 체크 (💡 DB 필드 상태값에 맞게 CLOSED로 수정) -->
-                      <c:set var="isClosed" value="${project.status == 'CLOSED'}" /> 
-                      
-                      <!-- 3. 인원 초과 여부 체크 -->
-                      <c:set var="isFull" value="${project.currentNum >= project.capacity}" />
+                    <!-- 모집 마감 여부 체크 -->
+                    <c:set var="isClosed" value="${project.status == 'CLOSED'}" /> 
+                    
+                    <!-- 인원 초과 여부 체크 -->
+                    <c:set var="isFull" value="${project.currentNum >= project.capacity}" />
 
-                      <!-- 최종 비활성화 여부: 셋 중 하나라도 해당되면 비활성화 -->
-                      <c:set var="isDisabled" value="${isOffered or isClosed or isFull}" />
+                    <!-- 매칭 범위 불일치 여부 체크 -->
+                    <c:set var="isScopeMismatch" value="${project.matchScope != talent.matchScope}" />
 
-                      <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; cursor: ${isDisabled ? 'not-allowed' : 'pointer'}; color: ${isDisabled ? '#9ca3af' : 'inherit'};">
-                          
-                          <!-- 비활성화 조건에 걸리면 disabled 속성 부여 -->
-                          <input type="checkbox" name="projectIds" value="${project.projectId}" 
-                                style="width: 16px; height: 16px;" 
-                                <c:if test="${isDisabled}">disabled</c:if>>
-                                
-                          <span>${project.title}</span>
-                          
-                          <!-- 조건에 따라 각기 다른 라벨 뱃지 표시 -->
-                          <c:choose>
-                              <c:when test="${isOffered}">
-                                  <span style="font-size: 11px; background: #f3f4f6; color: #6b7280; padding: 2px 6px; border-radius: 4px; margin-left: auto;">참여중/제의함</span>
-                              </c:when>
-                              <c:when test="${isFull}">
-                                  <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; margin-left: auto;">인원 꽉 참</span>
-                              </c:when>
-                              <c:when test="${isClosed}">
-                                  <span style="font-size: 11px; background: #f3f4f6; color: #9ca3af; padding: 2px 6px; border-radius: 4px; margin-left: auto;">모집 마감</span>
-                              </c:when>
-                          </c:choose>
-                      </label>
-                  </c:forEach>
-                  
+                    <!-- 넷 중 하나라도 해당되면 비활성화 -->
+                    <c:set var="isDisabled" value="${isOffered or isClosed or isFull or isScopeMismatch}" />
+
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; cursor: ${isDisabled ? 'not-allowed' : 'pointer'}; color: ${isDisabled ? '#9ca3af' : 'inherit'};">
+                        
+                        <input type="checkbox" name="projectIds" value="${project.projectId}" 
+                          style="width: 16px; height: 16px;" 
+                          <c:if test="${isDisabled}">disabled</c:if>>
+                              
+                        <span>${project.title} <small style="color:#9ca3af;">(${project.matchScope})</small></span>
+                        
+                        <!-- 조건에 따라 각기 다른 라벨 뱃지 표시  -->
+                        <c:choose>
+                            <c:when test="${isOffered}">
+                                <span style="font-size: 11px; background: #f3f4f6; color: #6b7280; padding: 2px 6px; border-radius: 4px; margin-left: auto;">참여중/제의함</span>
+                            </c:when>
+                            <c:when test="${isFull}">
+                                <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; margin-left: auto;">인원 꽉 참</span>
+                            </c:when>
+                            <c:when test="${isClosed}">
+                                <span style="font-size: 11px; background: #f3f4f6; color: #9ca3af; padding: 2px 6px; border-radius: 4px; margin-left: auto;">모집 마감</span>
+                            </c:when>
+                            <c:when test="${isScopeMismatch}">
+                                <span style="font-size: 11px; background: #fffbeb; color: #f59e0b; padding: 2px 6px; border-radius: 4px; margin-left: auto;">범위 다름</span>
+                            </c:when>
+                        </c:choose>
+                    </label>
+                </c:forEach>
+                                  
                 </div>
               </div>
                 
@@ -100,13 +104,11 @@
 
                 <div class="fld one" style="margin-bottom: 16px;">
                     <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">회신 받을 연락처 (이메일 필수) <span style="color: red;">*</span></label>
-                    <!-- 💡 DB 컬럼(contact_email)에 매핑되도록 name="contactEmail" 부여 -->
                     <input type="email" id="offerEmail" name="contactEmail" placeholder="example@email.com" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);">
                 </div>
                 
                 <div class="fld one">
                     <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">제의 메시지</label>
-                    <!-- 💡 DB 컬럼(motive)에 매핑되도록 name="motive" 부여 -->
                     <textarea id="offerMessage" name="motive" placeholder="왜 함께하고 싶은지, 어떤 점이 좋았는지 적어주세요." style="min-height:90px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line);"></textarea>
                 </div>
                 

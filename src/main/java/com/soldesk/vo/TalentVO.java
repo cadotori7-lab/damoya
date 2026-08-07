@@ -32,8 +32,28 @@ public class TalentVO {
     private String memberName;  // 회원이름
     private String memberMajor; // 소속 학과
     private String memberGrade; // 학년
-    
-    
+    private String userUnivName; // 로그인한 유저의 대학교 이름
+    private Long userDeptId;     // 로그인 유저의 학과 ID
+
+    // offset 자동 계산 메서드
+    public void calcOffset() {
+        this.offset = (this.page - 1) * this.amount;
+    }
+
+    public String getUserUnivName() {
+        return userUnivName;
+    }
+    public void setUserUnivName(String userUnivName) {
+        this.userUnivName = userUnivName;
+    }
+    public Long getUserDeptId() {
+        return userDeptId;
+    }
+    public void setUserDeptId(Long userDeptId) {
+        this.userDeptId = userDeptId;
+    }
+
+
     public void setCategoryList(List<String> categoryList) {
         this.categoryList = categoryList;
     }
@@ -88,7 +108,7 @@ public class TalentVO {
     public String getCategory() {
         return category;
     }
-    public void setCateogry(String category) {
+    public void setCategory(String category) {
         this.category = category;
     }
     public String getTargetGrade() {
@@ -165,9 +185,6 @@ public class TalentVO {
     }
     public List<String> getCategoryList() {
         return categoryList;
-    }
-    public void setCategory(String category) {
-        this.category = category;
     }
     public List<String> getGradeList() {
         return gradeList;

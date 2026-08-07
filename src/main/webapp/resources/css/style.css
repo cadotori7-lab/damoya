@@ -120,20 +120,48 @@
 /* 정렬 메뉴(좌)와 글쓰기 버튼(우)을 양 끝으로 배치 */
 .list-sort-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 30px; }
 
-/* 정렬 버튼들 사이의 간격 (20px로 넓힘) */
-.list-sort { display: flex; align-items: center; gap: 28px; }
-
-/* 개별 정렬 버튼 스타일 */
-.sort-btn { font-size: 15px; font-weight: 600; color: #8b95a1; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0; }
-
-/* 텍스트 앞의 회색 점(•) */
-.sort-btn::before { content: "•"; color: #d1d6db; font-size: 20px; line-height: 1; margin-top: -2px; }
-
-/* 활성화된(선택된) 정렬 버튼 텍스트 강조 */
-.sort-btn.active { color: var(--ink); font-weight: 700; }
-
-/* 활성화된 버튼 앞의 점을 초록색으로 변경 */
-.sort-btn.active::before { color: #0b9e43; }
+/* 정렬 버튼 커스텀 (초록 점, 회색 점) */
+    .list-sort {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .sort-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        color: #9ca3af; /* 비활성 회색 텍스트 */
+        font-weight: 500;
+        padding: 4px 0 4px 14px; /* 점이 들어갈 왼쪽 여백(14px) 확보 */
+        position: relative;
+        outline: none;
+    }
+    
+    /* 기본(비활성) 상태의 회색 점 */
+    .sort-btn::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: #d1d5db; /* 회색 점 */
+    }
+    
+    /* 활성(선택) 상태의 텍스트와 초록색 점 */
+    .sort-btn.active {
+        color: #111827; /* 진한 검정 텍스트 */
+        font-weight: 700;
+    }
+    .sort-btn.active::before {
+        background-color: #10b981; /* 💡 사진과 같은 초록색 점 */
+    }
 
 /* 레퍼런스 스타일의 다크 버튼 (글쓰기 버튼용) */
 .btn.dark { background: #333333; color: #ffffff; border: none; border-radius: 6px; }

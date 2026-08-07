@@ -13,11 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/resources/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <style>
-        .tc-head .pic.mentor { background: linear-gradient(135deg, #e07a45, #c98a12); } 
-        .tc-head .pic.member { background: linear-gradient(135deg, #2b46c8, #5b45c8); } 
-        .talent-stats span { display: flex; align-items: center; gap: 4px; }
-    </style>
+
 </head>
 <body>
     <jsp:include page="../includes/header.jsp" />
@@ -35,46 +31,51 @@
             <!-- 역할 필터 -->
             <h3 style="margin-top: 0;">역할</h3>
             <div class="scope" style="margin-bottom: 24px;">
-                <button type="button" class="on" onclick="setRole('all')">전체보기</button>
-                <button type="button" onclick="setRole('MEMBER')">팀원</button>
-                <button type="button" onclick="setRole('MENTOR')">멘토</button>
+                <button type="button" class="${param.kind == 'all' or empty param.kind ? 'on' : ''}" onclick="setRole('all')">전체보기</button>
+                <button type="button" class="${param.kind == 'MEMBER' ? 'on' : ''}" onclick="setRole('MEMBER')">팀원</button>
+                <button type="button" class="${param.kind == 'MENTOR' ? 'on' : ''}" onclick="setRole('MENTOR')">멘토</button>
             </div>
 
             <!-- 매칭 범위 필터 -->
             <h3>매칭 범위</h3>
             <div class="scope" style="margin-bottom: 24px;" id="scopeFilterBtns">
-                <button type="button" class="on" onclick="changeScope('교내', this)">교내</button>
-                <button type="button" onclick="changeScope('전국', this)">전국</button>
+                <button type="button" class="${param.matchScope == '교내' or empty param.matchScope ? 'on' : ''}" onclick="changeScope('교내', this)">교내</button>
+                <button type="button" class="${param.matchScope == '전국' ? 'on' : ''}" onclick="changeScope('전국', this)">전국</button>
             </div>
 
-            <!-- 카테고리 필터 -->
+            <!-- 카테고리 필터 (다중 선택) -->
             <h3>카테고리</h3>
-            <div class="flt" style="margin-bottom: 24px;" id="categoryFilterContainer">
-                <input type="checkbox" id="c1" value="CONTEST" checked><label for="c1">공모전</label>
-                <input type="checkbox" id="c2" value="DEPARTMENT"><label for="c2">학과</label>
-                <input type="checkbox" id="c3" value="LIBERAL"><label for="c3">교양</label>
-                <input type="checkbox" id="c4" value="CLUB"><label for="c4">교내활동</label>
+            <div class="flt" style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 8px;" id="categoryFilterContainer">
+                <input type="checkbox" id="c1" value="공모전"><label for="c1" class="cat-chip">공모전</label>
+                <input type="checkbox" id="c2" value="사이드프로젝트"><label for="c2" class="cat-chip">사이드프로젝트</label>
+                <input type="checkbox" id="c3" value="학과"><label for="c3" class="cat-chip">학과</label>
+                <input type="checkbox" id="c4" value="교양"><label for="c4" class="cat-chip">교양</label>
+                <input type="checkbox" id="c5" value="교내활동"><label for="c5" class="cat-chip">교내활동</label>
             </div>
         </aside>
 
         <!-- 우측 리스트 영역 -->
         <div class="list-section">
             
+            <!-- 검색바 -->
             <div class="searchbar" style="margin-bottom: 24px;">
                 <form action="javascript:void(0);" onsubmit="if(typeof doSearch === 'function') doSearch();" style="display: flex; width: 100%; gap: 10px;">
-                    <input type="text" id="searchInput" placeholder="관심 분야·기술·소개로 검색 (예: Spring, 디자인)" style="flex: 1;">
+                    <input type="text" id="searchInput" placeholder="관심 분야·기술·소개로 검색 (예: Spring, 디자인)" style="flex: 1;" value="${param.keyword}">
                     <button type="submit" class="btn pri">검색</button>
                 </form>
             </div>
 
-            <div class="list-sort-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 24px;">
+            <!-- 정렬 및 우측 액션 버튼 상단 바 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 
-                <div class="list-sort">
-                    <button type="button" class="sort-btn active" onclick="if(typeof setSort === 'function') setSort('latest')">최신순</button>
-                    <button type="button" class="sort-btn" onclick="if(typeof setSort === 'function') setSort('views')">조회순</button>
-                    <button type="button" class="sort-btn" onclick="if(typeof setSort === 'function') setSort('likes')">좋아요순</button>
+                <!-- 정렬 버튼 그룹 -->
+                <div class="list-sort" style="display: flex; gap: 16px; align-items: center;">
+                    <button type="button" class="sort-btn ${empty param.sort or param.sort == 'latest' ? 'active' : ''}" onclick="if(typeof setSort === 'function') setSort('latest')">최신순</button>
+                    <button type="button" class="sort-btn ${param.sort == 'view' ? 'active' : ''}" onclick="if(typeof setSort === 'function') setSort('view')">조회순</button>
+                    <button type="button" class="sort-btn ${param.sort == 'favorite' ? 'active' : ''}" onclick="if(typeof setSort === 'function') setSort('favorite')">좋아요순</button>
                 </div>
 
+                <!-- 우측 액션 버튼 그룹 (내 관심등록 & 글쓰기) -->
                 <div class="list-right-actions" style="display: flex; gap: 8px; align-items: center;">
                     <c:choose>
                         <c:when test="${isFavoriteView}">
@@ -84,22 +85,54 @@
                             <a class="btn ghost sm" href="${ctx}/talent/list?view=favorite">⭐ 내 관심등록</a>
                         </c:otherwise>
                     </c:choose>
+                    
                     <c:choose>
                         <c:when test="${pageContext.request.userPrincipal == null}">
-                            <!-- 비로그인 상태 -->
                             <a href="javascript:void(0);" class="btn dark sm" onclick="requireLogin()">✏️ 글쓰기</a>
                         </c:when>
                         <c:otherwise>
-                            <!-- 로그인 상태 -->
                             <a class="btn dark sm" href="${ctx}/talent/form">✏️ 글쓰기</a>
                         </c:otherwise>
-                    </c:choose>                
+                    </c:choose>            
                 </div>
+
             </div>
 
             <!-- 인재 카드 그리드 영역 -->
             <div class="talent-grid" id="talentGrid">
                 <c:choose>
+                    <%-- 💡 1순위: 로그인이 필요한 경우 (교내 매칭인데 비로그인 상태) --%>
+                    <c:when test="${isLoginRequired}">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; background: #f9fafb; border: 1px solid var(--line); border-radius: 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;">lock</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">
+                                교내 사람들과의 매칭은 로그인 후 이용할 수 있어요!
+                            </h3>
+                            <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
+                                로그인하고 우리 학교의 다양한 인재들을 확인해 보세요.
+                            </p>
+                            <a href="${ctx}/auth/login" class="btn pri" style="display: inline-flex; padding: 10px 24px; border-radius: 8px; font-size: 15px;">
+                                로그인하러 가기
+                            </a>
+                        </div>
+                    </c:when>
+
+                    <%-- 💡 2순위: 학교 인증이 필요한 경우 (로그인은 했지만 소속 대학이 확인되지 않는 상태) --%>
+                    <c:when test="${isApprovalRequired}">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; background: #f9fafb; border: 1px solid var(--line); border-radius: 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;">school</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">
+                                학교 인증 완료 후 교내 인재풀을 이용할 수 있어요!
+                            </h3>
+                            <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
+                                마이페이지에서 소속 학교/학과 정보와 인증 상태를 확인해 주세요.
+                            </p>
+                            <a href="${ctx}/mypage/index" class="btn pri" style="display: inline-flex; padding: 10px 24px; border-radius: 8px; font-size: 15px;">
+                                마이페이지로 이동
+                            </a>
+                        </div>
+                    </c:when>
+
                     <c:when test="${not empty talentList}">
                         <c:forEach var="t" items="${talentList}">
                             
@@ -167,30 +200,40 @@
                                         </span>
                                     </div>
                                     <span style="font-weight: 500;">
-                                        ${fn:substring(t.createdAt, 0, 10)}                                    </span>
+                                        ${fn:substring(t.createdAt, 0, 10)}</span>
                                 </div>
 
                             </div>
                         </c:forEach>
                     </c:when>
+                    
                     <c:otherwise>
                         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--ink-soft);">
-                            <p style="font-size: 16px; font-weight: 600;">등록된 인재풀 게시물이 없습니다.</p>
-                            <p style="font-size: 13.5px; margin-top: 6px;">새로운 프로필을 등록해 보세요!</p>
+                            <c:choose>
+                                <c:when test="${isFavoriteView}">
+                                    <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">아직 관심 설정한 인재풀 게시글이 없어요!</p>
+                                    <p style="font-size: 13.5px; margin-bottom: 20px;">마음에 드는 인재에게 하트(♥)를 눌러 관심 목록에 추가해 보세요.</p>
+                                    <a href="${ctx}/talent/list" class="btn pri sm" style="display: inline-block; padding: 10px 20px; font-size: 14px;">
+                                        인재풀 보러 가기 🚀
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <p style="font-size: 16px; font-weight: 600;">등록된 인재풀 게시물이 없습니다.</p>
+                                    <p style="font-size: 13.5px; margin-top: 6px;">새로운 프로필을 등록해 보세요!</p>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </c:otherwise>
                 </c:choose>
             </div>
 
+            <!-- 페이징 영역 -->
             <c:if test="${pageBean.pageCnt > 0}">
                 <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 40px; padding: 20px;">
-                    
-                    <!-- 이전 페이지 그룹 -->
                     <c:if test="${pageBean.min > 1}">
                         <button type="button" class="btn ghost sm" onclick="goPage(${pageBean.prevPage})">◀ 이전</button>
                     </c:if>
 
-                    <!-- 페이지 번호 반복 (min ~ max) -->
                     <c:forEach var="p" begin="${pageBean.min}" end="${pageBean.max}">
                         <button type="button" class="btn sm ${p == pageBean.currentPage ? 'pri' : 'ghost'}" 
                                 onclick="goPage(${p})"
@@ -199,15 +242,19 @@
                         </button>
                     </c:forEach>
 
-                    <!-- 다음 페이지 그룹 -->
                     <c:if test="${pageBean.pageCnt > pageBean.max}">
                         <button type="button" class="btn ghost sm" onclick="goPage(${pageBean.nextPage})">다음 ▶</button>
                     </c:if>
-                    
                 </div>
             </c:if>
+
             <script>
                 const ctx = '${pageContext.request.contextPath}';
+                
+                <c:if test="${not empty msg}">
+                    alert("${msg}");
+                </c:if>
+
                 function goPage(pageNum) {
                     var url = new URL(window.location.href);
                     url.searchParams.set('page', pageNum);

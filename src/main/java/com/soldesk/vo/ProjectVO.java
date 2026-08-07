@@ -30,12 +30,30 @@ public class ProjectVO {
     private boolean liked; // 현재 로그인한 유저가 좋아요를 눌렀는지 여부
     private int commentCount; //댓글 수 
     private int currentNum; //현재 참여 중인 인원수
+    private String userUnivName; //로그인한 유저의 대학교 이름
+    private Long userDeptId; //로그인 유저의 학과 ID
 
     // offset 자동 계산 메서드
     public void calcOffset() {
         this.offset = (this.page - 1) * this.amount;
     }
     
+    public String getUserUnivName() {
+        return userUnivName;
+    }
+
+    public void setUserUnivName(String userUnivName) {
+        this.userUnivName = userUnivName;
+    }
+
+    public Long getUserDeptId() {
+        return userDeptId;
+    }
+
+    public void setUserDeptId(Long userDeptId) {
+        this.userDeptId = userDeptId;
+    }
+
     public int getViewCount() {
         return viewCount;
     }

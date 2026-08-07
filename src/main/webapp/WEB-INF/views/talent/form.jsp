@@ -32,20 +32,38 @@
             <input type="hidden" name="postId" value="${talent.postId}" />
         </c:if>
         
-        <div class="fld one">
-          <label>글 유형<span class="req">*</span></label>
-          <div class="picker">
-            <input type="radio" name="kind" id="tk1" value="MEMBER" ${talent.kind == 'MEMBER' || empty talent.kind ? 'checked' : ''}><label for="tk1">팀원으로 지원</label>
-            <input type="radio" name="kind" id="tk2" value="MENTOR" ${talent.kind == 'MENTOR' ? 'checked' : ''}><label for="tk2">멘토로 참여</label>
-          </div>
+      <div class="fld one">
+        <label>글 유형<span class="req">*</span></label>
+        <div class="picker" style="display: flex; gap: 8px;">
+          <c:choose>
+            <c:when test="${isMentor}">
+              <div style="display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border: 1px solid var(--accent, #2b46c8); background-color: var(--accent-soft, #f0f4ff); color: var(--accent, #2b46c8); border-radius: 8px; font-weight: 700; font-size: 14px; cursor: default;">
+                멘토로 참여
+              </div>
+              <input type="hidden" name="kind" value="MENTOR">
+            </c:when>
+            
+            <c:otherwise>
+              <input type="radio" name="kind" id="tk1" value="MEMBER" ${talent.kind == 'MEMBER' || empty talent.kind ? 'checked' : ''}><label for="tk1">팀원으로 지원</label>
+              <input type="radio" name="kind" id="tk2" value="MENTOR" ${talent.kind == 'MENTOR' ? 'checked' : ''}><label for="tk2">멘토로 참여</label>
+            </c:otherwise>
+          </c:choose>
         </div>
+      </div>
 
         <!-- 매칭 범위 라디오 버튼  -->
         <div class="fld one">
           <label>매칭 범위<span class="req">*</span></label>
           <div class="picker" id="scopePicker">
-            <input type="radio" name="matchScope" id="ms1" value="교내" ${talent.matchScope == '교내' || empty talent.matchScope ? 'checked' : ''}><label for="ms1">교내</label>
-            <input type="radio" name="matchScope" id="ms2" value="전국" ${talent.matchScope == '전국' ? 'checked' : ''}><label for="ms2">전국</label>
+            <c:choose>
+              <c:when test="${isApproved}">
+                <input type="radio" name="matchScope" id="ms1" value="교내" ${talent.matchScope == '교내' || empty talent.matchScope ? 'checked' : ''}><label for="ms1">교내</label>
+              </c:when>
+              <c:otherwise>
+                <input type="radio" name="matchScope" id="ms1" value="교내" disabled><label for="ms1" style="color: var(--ink-soft);">교내 (학교 인증 후 이용 가능)</label>
+              </c:otherwise>
+            </c:choose>
+            <input type="radio" name="matchScope" id="ms2" value="전국" ${talent.matchScope == '전국' || !isApproved ? 'checked' : ''}><label for="ms2">전국</label>
           </div>
         </div>
         
