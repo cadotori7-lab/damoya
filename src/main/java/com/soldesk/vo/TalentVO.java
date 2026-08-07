@@ -32,6 +32,7 @@ public class TalentVO {
     private String memberName;  // 회원이름
     private String memberMajor; // 소속 학과
     private String memberGrade; // 학년
+
     
     
     public void setCategoryList(List<String> categoryList) {
@@ -88,7 +89,7 @@ public class TalentVO {
     public String getCategory() {
         return category;
     }
-    public void setCateogry(String category) {
+    public void setCategory(String category) {
         this.category = category;
     }
     public String getTargetGrade() {
@@ -165,9 +166,6 @@ public class TalentVO {
     }
     public List<String> getCategoryList() {
         return categoryList;
-    }
-    public void setCategory(String category) {
-        this.category = category;
     }
     public List<String> getGradeList() {
         return gradeList;

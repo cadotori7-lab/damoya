@@ -32,13 +32,24 @@
             <input type="hidden" name="postId" value="${talent.postId}" />
         </c:if>
         
-        <div class="fld one">
-          <label>글 유형<span class="req">*</span></label>
-          <div class="picker">
-            <input type="radio" name="kind" id="tk1" value="MEMBER" ${talent.kind == 'MEMBER' || empty talent.kind ? 'checked' : ''}><label for="tk1">팀원으로 지원</label>
-            <input type="radio" name="kind" id="tk2" value="MENTOR" ${talent.kind == 'MENTOR' ? 'checked' : ''}><label for="tk2">멘토로 참여</label>
-          </div>
+      <div class="fld one">
+        <label>글 유형<span class="req">*</span></label>
+        <div class="picker" style="display: flex; gap: 8px;">
+          <c:choose>
+            <c:when test="${isMentor}">
+              <div style="display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border: 1px solid var(--accent, #2b46c8); background-color: var(--accent-soft, #f0f4ff); color: var(--accent, #2b46c8); border-radius: 8px; font-weight: 700; font-size: 14px; cursor: default;">
+                멘토로 참여
+              </div>
+              <input type="hidden" name="kind" value="MENTOR">
+            </c:when>
+            
+            <c:otherwise>
+              <input type="radio" name="kind" id="tk1" value="MEMBER" ${talent.kind == 'MEMBER' || empty talent.kind ? 'checked' : ''}><label for="tk1">팀원으로 지원</label>
+              <input type="radio" name="kind" id="tk2" value="MENTOR" ${talent.kind == 'MENTOR' ? 'checked' : ''}><label for="tk2">멘토로 참여</label>
+            </c:otherwise>
+          </c:choose>
         </div>
+      </div>
 
         <!-- 매칭 범위 라디오 버튼  -->
         <div class="fld one">

@@ -43,18 +43,18 @@
     </insert>
 
     <!-- 멘토인지 확인 -->
-    <select id="selectMentorById" parameterType="int" resultType="int">
+    <select id="selectMentorById" parameterType="long" resultType="int">
         SELECT COUNT(*) FROM mentor WHERE member_id = #{member_id}
     </select>
 
-    <select id="findByMemberId" parameterType="int" resultMap="mentorResultMap">
+    <select id="findByMemberId" parameterType="long" resultMap="mentorResultMap">
         SELECT member_id, career, cert, field
         FROM mentor
         WHERE member_id = #{member_id}
     </select>
 
     <!-- Elasticsearch 멘토 인덱싱용 전체 멘토 조회 -->
-    <select id="findAllMentors" resultMap="mentorDocumentResultMap">
+    <select id="findAllMentors" parameterType="long" resultMap="mentorDocumentResultMap">
         SELECT
             member.member_id,
             member.login_id,
@@ -73,7 +73,7 @@
     </select>
 
     <!-- 멘토링 중인 팀 수 -->
-    <select id="countMentoringTeams" parameterType="int" resultType="int">
+    <select id="countMentoringTeams" parameterType="long" resultType="int">
         SELECT COUNT(*)
         FROM participation
         WHERE member_id = #{memberId}
@@ -82,7 +82,7 @@
     </select>
 
     <!-- 진행 중 프로젝트 수 -->
-    <select id="countActiveProjects" parameterType="int" resultType="int">
+    <select id="countActiveProjects" parameterType="long" resultType="int">
         SELECT COUNT(*)
         FROM participation p
         INNER JOIN project pr ON pr.project_id = p.project_id
@@ -93,7 +93,7 @@
     </select>
 
     <!-- 내가 남긴 피드백 수 -->
-    <select id="countFeedbacks" parameterType="int" resultType="int">
+    <select id="countFeedbacks" parameterType="long" resultType="int">
         SELECT COUNT(*)
         FROM feedback
         WHERE mentor_id = #{memberId}

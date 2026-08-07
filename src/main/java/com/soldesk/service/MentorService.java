@@ -24,7 +24,7 @@ public class MentorService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isMentor(int memberId) {
+    public boolean isMentor(long memberId) {
         return mentorMapper.selectMentorById(memberId) > 0;
     }
 

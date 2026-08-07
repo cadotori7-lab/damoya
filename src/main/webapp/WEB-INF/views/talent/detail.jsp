@@ -167,24 +167,23 @@
                 내 프로젝트에 이 분을 초대할 수 있어요. 제의를 보내면 상대가 수락/거절해요.
             </p>
             
-            <c:choose>
-                <c:when test="${empty member}">
-                    <button class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="requireLogin()">
-                        함께하기 제의
-                    </button>
-                    <button class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb;" onclick="requireLogin()">
-                        ♥ 관심 표시
-                    </button>
-                </c:when>
-                <c:otherwise>
-                    <button class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="openOffer('${talent.memberName}', '', ${talent.memberId})">
-                        함께하기 제의
-                    </button>
-                    <button class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb;">
-                        ♥ 관심 표시
-                    </button>
-                </c:otherwise>
-            </c:choose>
+          <c:choose>
+              <c:when test="${empty member}">
+                  <button type="button" class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="requireLogin()">함께하기 제의</button>
+                  <button type="button" class="btn ghost" style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border-color:#e5e7eb; background:#fff;" onclick="requireLogin()">♥ 관심 <span class="fav-count">${talent.favoriteCount}</span></button>
+              </c:when>
+              
+              <c:otherwise>
+                  <button type="button" class="btn pri" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="openOffer('${talent.memberName}', '', ${talent.memberId})">함께하기 제의</button>
+                  
+                  <button type="button" id="favBtn" class="btn ghost ${isLiked ? 'active' : ''}" 
+                          style="width:100%; justify-content:center; margin-top:8px; padding:12px; font-size:15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; transition: 0.2s;
+                                ${isLiked ? 'color: #ef4444; border-color: #ef4444;' : 'color: inherit; border-color:#e5e7eb;'}"
+                          onclick="toggleTalentFavorite(${talent.postId}, this, event)">
+                      ♥ 관심 <span class="fav-count" style="margin-left: 4px; font-weight: 700;">${talent.favoriteCount}</span>
+                  </button>
+              </c:otherwise>
+          </c:choose>
 
           </c:otherwise>
         </c:choose>
@@ -195,6 +194,7 @@
     </div>
   </section>
   </main>
+  
   <!-- 댓글 수정 모달 -->
   <div class="modal-overlay" id="editModal">
     <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="editCommentTitle">
@@ -257,15 +257,17 @@
   <jsp:include page="../includes/footer.jsp" />
 
   <script>
-      const ctx = '${pageContext.request.contextPath}';
+      window.ctx = '${pageContext.request.contextPath}';
+      window.csrfParameter = '${_csrf.parameterName}';
+      window.csrfToken = '${_csrf.token}';
       
       <c:if test="${not empty msg}">
           alert("${msg}");
       </c:if>
   </script>
+
   <script src="${ctx}/resources/js/common.js"></script>
   <script src="${ctx}/resources/js/offerForm.js"></script>
-  <script src="${ctx}/resources/js/TalentDetail.js"></script>
-  
+  <script src="${ctx}/resources/js/TalentDetail.js"></script>  
 </body>
 </html>

@@ -95,120 +95,151 @@
                           <a class="btn ghost sm active" 
                              style="background-color: var(--ink); color: #fff; border-color: var(--ink);"
                              href="${ctx}/project/list">
-                              ⭐ 내 관심등록 보기 중
+                               ⭐ 내 관심등록 보기 중
                           </a>
                       </c:when>
                       <c:otherwise>
                           <a class="btn ghost sm" href="${ctx}/project/list?view=favorite">
-                              ⭐ 내 관심등록
+                               ⭐ 내 관심등록
                           </a>
                       </c:otherwise>
                   </c:choose>
-                  <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
-              </div>
-          </div>
+                  <!-- 멘토의 경우에는 글 못씀-->
+                  <c:choose>
+                      <c:when test="${isMentor}">
+                          <a class="btn dark sm" href="javascript:void(0);" onclick="alert('멘토는 프로젝트 게시글을 작성할 수 없습니다.');">✏️ 글쓰기</a>
+                      </c:when>
+                      <c:otherwise>
+                          <a class="btn dark sm" href="${ctx}/project/form">✏️ 글쓰기</a>
+                      </c:otherwise>
+                  </c:choose>             
+                </div>
+                </div>
 
           <!-- 프로젝트 카드 목록 -->
           <div class="project-list">
-            <c:forEach var="project" items="${projectList}">
-              
-              <c:choose>
-                <c:when test="${project.category eq '공모전' or project.category eq 'CONTEST'}">
-                  <c:set var="catClass" value="cat-contest" />
-                  <c:set var="catName" value="공모전" />
-                </c:when>
-                <c:when test="${project.category eq '학과' or project.category eq 'DEPARTMENT'}">
-                  <c:set var="catClass" value="cat-major" />
-                  <c:set var="catName" value="학과" />
-                </c:when>
-                <c:when test="${project.category eq '교양' or project.category eq 'LIBERAL'}">
-                  <c:set var="catClass" value="cat-liberal" />
-                  <c:set var="catName" value="교양" />
-                </c:when>
-                <c:when test="${project.category eq '사이드 프로젝트' or project.category eq 'SIDE_PROJECT' or project.category eq '사이드프로젝트'}">
-                  <c:set var="catClass" value="cat-side" />
-                  <c:set var="catName" value="사이드프로젝트" />
-                </c:when>
-                <c:otherwise>
-                  <c:set var="catClass" value="cat-club" />
-                  <c:set var="catName" value="교내활동" />
-                </c:otherwise>
-              </c:choose>
-
-              <!-- 💡 툴팁: 클릭 시 현재 검색/필터 쿼리스트링을 통째로 들고 상세페이지로 이동 -->
-              <div class="card-item" 
-              data-match="${project.matchScope}"
-              data-category="${catName}"
-              data-grade="${project.targetGrade}"
-              data-status="${project.status}"
-              data-end-date="${project.endDate}"
-              onclick="location.href='${ctx}/project/detail?id=${project.projectId}&' + window.location.search.substring(1)" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
-                
-                <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
-                  <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
-                    <c:choose>
-                      <c:when test="${project.status eq 'RECRUITING'}">
-                        <span class="status-badge recruiting">모집중</span>
-                        <span class="d-day-badge"></span>
-                      </c:when>
-                      <c:otherwise>
-                        <span class="status-badge closed">모집마감</span>
-                      </c:otherwise>
-                    </c:choose>
-                  </div>
-                  <span class="card-cat ${catClass}">${catName}</span>
-                </div>
-                
-                <div class="card-body">
-                  <h4 style="margin: 0 0 8px 0; font-size: 18px; color: var(--ink);"><c:out value="${project.title}" /></h4>
-                  <p style="margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><c:out value="${project.summary}" /></p>
-                </div>
-                
-                <c:if test="${not empty project.tags}">
-                  <div class="tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
-                    <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
-                      <span class="tag" style="background: var(--surface-alt); padding: 4px 8px; border-radius: 4px; font-size: 12px;"><c:out value="${tag}" /></span>
-                    </c:forEach>
-                  </div>
-                </c:if>
-
-                <div class="card-item-foot" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 13px; color: var(--ink-soft);">
-                  <div class="author-info">
-                    <span>대진대학교 · 컴퓨터공학</span>
-                    <span style="margin: 0 4px;">·</span>
-                    <span>모집인원 <b>${project.capacity}명</b></span>
-                  </div>
-                  <div class="stats" style="display: flex; align-items: center; gap: 12px;">
-                      
-                      <!-- 관심 버튼 -->
-                      <button type="button" class="btn-favorite ${project.liked ? 'active' : ''}" style="font-size: 13px; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleFavorite(${project.projectId}, this, event)">
-                          <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 
-                          <span class="fav-count">${project.favoriteCount}</span>
-                      </button>
-                      
-                      <!-- 조회수 -->
-                      <span style="display: inline-flex; align-items: center; gap: 4px;">
-                          <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${project.viewCount}
-                      </span>
-                      
-                      <!-- 댓글 수 -->
-                      <span style="display: inline-flex; align-items: center; gap: 4px;">
-                          <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 
-                          ${project.commentCount}
-                      </span>
-                      
-                  </div>
-                </div>
-
-              </div>
-            </c:forEach>
             
-            <c:if test="${empty projectList}">
-              <div style="text-align: center; padding: 80px 0; color: var(--ink-soft);">
-                <p style="font-size: 16px; font-weight: 600;">등록된 프로젝트 모집글이 없습니다.</p>
-                <p style="font-size: 13.5px; margin-top: 6px;">첫 번째 프로젝트 모집글의 주인공이 되어보세요!</p>
-              </div>
-            </c:if>
+            <c:choose>
+                <%-- 💡 1순위: 로그인이 필요한 경우 (교내 매칭인데 비로그인 상태) --%>
+                <c:when test="${isLoginRequired}">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; background: #f9fafb; border: 1px solid var(--line); border-radius: 12px;">
+                        <span class="material-symbols-outlined" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;">lock</span>
+                        <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">
+                            교내 사람들과의 매칭은 로그인 후 이용할 수 있어요!
+                        </h3>
+                        <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
+                            로그인하고 우리 학교의 다양한 프로젝트와 팀원들을 확인해 보세요.
+                        </p>
+                        <a href="${ctx}/auth/login" class="btn pri" style="display: inline-flex; padding: 10px 24px; border-radius: 8px; font-size: 15px;">
+                            로그인하러 가기
+                        </a>
+                    </div>
+                </c:when>
+
+                <%-- 💡 2순위: 조건에 맞는 게시글이 없는 경우 --%>
+                <c:when test="${empty projectList}">
+                    <div style="text-align: center; padding: 80px 0; color: var(--ink-soft);">
+                        <p style="font-size: 16px; font-weight: 600;">등록된 프로젝트 모집글이 없습니다.</p>
+                        <p style="font-size: 13.5px; margin-top: 6px;">첫 번째 프로젝트 모집글의 주인공이 되어보세요!</p>
+                    </div>
+                </c:when>
+
+                <%-- 💡 3순위: 정상적으로 프로젝트 리스트 출력 --%>
+                <c:otherwise>
+                    <c:forEach var="project" items="${projectList}">
+                      <c:choose>
+                        <c:when test="${project.category eq '공모전' or project.category eq 'CONTEST'}">
+                          <c:set var="catClass" value="cat-contest" />
+                          <c:set var="catName" value="공모전" />
+                        </c:when>
+                        <c:when test="${project.category eq '학과' or project.category eq 'DEPARTMENT'}">
+                          <c:set var="catClass" value="cat-major" />
+                          <c:set var="catName" value="학과" />
+                        </c:when>
+                        <c:when test="${project.category eq '교양' or project.category eq 'LIBERAL'}">
+                          <c:set var="catClass" value="cat-liberal" />
+                          <c:set var="catName" value="교양" />
+                        </c:when>
+                        <c:when test="${project.category eq '사이드 프로젝트' or project.category eq 'SIDE_PROJECT' or project.category eq '사이드프로젝트'}">
+                          <c:set var="catClass" value="cat-side" />
+                          <c:set var="catName" value="사이드프로젝트" />
+                        </c:when>
+                        <c:otherwise>
+                          <c:set var="catClass" value="cat-club" />
+                          <c:set var="catName" value="교내활동" />
+                        </c:otherwise>
+                      </c:choose>
+
+                      <!-- 툴팁: 클릭 시 현재 검색/필터 쿼리스트링을 통째로 들고 상세페이지로 이동 -->
+                      <div class="card-item" 
+                      data-match="${project.matchScope}"
+                      data-category="${catName}"
+                      data-grade="${project.targetGrade}"
+                      data-status="${project.status}"
+                      data-end-date="${project.endDate}"
+                      onclick="location.href='${ctx}/project/detail?id=${project.projectId}&' + window.location.search.substring(1)" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-bottom: 1px solid #eee; cursor: pointer;">
+                        
+                        <div class="card-top" style="display: flex; justify-content: space-between; align-items: center;">
+                          <div class="status-group" style="display: flex; gap: 8px; align-items: center;">
+                            <c:choose>
+                              <c:when test="${project.status eq 'RECRUITING'}">
+                                <span class="status-badge recruiting">모집중</span>
+                                <span class="d-day-badge"></span>
+                              </c:when>
+                              <c:otherwise>
+                                <span class="status-badge closed">모집마감</span>
+                              </c:otherwise>
+                            </c:choose>
+                          </div>
+                          <span class="card-cat ${catClass}">${catName}</span>
+                        </div>
+                        
+                        <div class="card-body">
+                          <h4 style="margin: 0 0 8px 0; font-size: 18px; color: var(--ink);"><c:out value="${project.title}" /></h4>
+                          <p style="margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><c:out value="${project.summary}" /></p>
+                        </div>
+                        
+                        <c:if test="${not empty project.tags}">
+                          <div class="tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            <c:forEach var="tag" items="${fn:split(project.tags, ',')}">
+                              <span class="tag" style="background: var(--surface-alt); padding: 4px 8px; border-radius: 4px; font-size: 12px;"><c:out value="${tag}" /></span>
+                            </c:forEach>
+                          </div>
+                        </c:if>
+
+                        <div class="card-item-foot" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 13px; color: var(--ink-soft);">
+                          <div class="author-info">
+                            <span>대진대학교 · 컴퓨터공학</span>
+                            <span style="margin: 0 4px;">·</span>
+                            <span>모집인원 <b>${project.capacity}명</b></span>
+                          </div>
+                          <div class="stats" style="display: flex; align-items: center; gap: 12px;">
+                              
+                              <!-- 관심 버튼 -->
+                              <button type="button" class="btn-favorite ${project.liked ? 'active' : ''}" style="font-size: 13px; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleFavorite(${project.projectId}, this, event)">
+                                  <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span> 
+                                  <span class="fav-count">${project.favoriteCount}</span>
+                              </button>
+                              
+                              <!-- 조회수 -->
+                              <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                  <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span> ${project.viewCount}
+                              </span>
+                              
+                              <!-- 댓글 수 -->
+                              <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                  <span class="material-symbols-outlined" style="font-size: 16px;">mode_comment</span> 
+                                  ${project.commentCount}
+                              </span>
+                              
+                          </div>
+                        </div>
+
+                      </div>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+            
           </div>
           
           <!-- 페이징 처리 영역 -->

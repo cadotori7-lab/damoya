@@ -1,6 +1,8 @@
 package com.soldesk.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,56 @@ public class TalentService {
     public List<Long> getAlreadyOfferedProjectIds(Long memberId) {
         return talentMapper.getAlreadyOfferedProjectIds(memberId);
     }
+
+
+    // 관심 등록 및 취소
+    @Transactional
+    public boolean toggleFavorite(Long memberId, Long postId){
+        //좋아요 눌렀는지 확인
+        Map<String,Object> params = new HashMap<>();
+        params.put("memberId", memberId);
+        params.put("postId", postId);
+
+        int count = talentMapper.checkFavorite(params);
+
+        if(count > 0){
+            //이미 눌렀다면 삭제 후 감소
+            talentMapper.deleteFavorite(params);
+            talentMapper.decreaseFavoriteCount(postId);
+            return false; //좋아요 취소
+        }else{
+            //안눌렀다면 등록 후 증가
+            talentMapper.insertFavorite(params);
+            talentMapper.increaseFavoriteCount(postId);
+            return true; //좋아요 누름
+        }
+    }
+
+    // 사용자가 해당 인재글에 좋아요 눌렀는지 확인
+    @Transactional
+    public int checkFavorite(Map<String, Object> params){
+        return talentMapper.checkFavorite(params);
+    }
+
+    // 관심 등록한 게시글 불러오기
+    @Transactional
+    public List<TalentVO> getFavoriteTalents(long memberId) {
+    // 만약 기존에 long으로 호출하던 곳이 있다면 TalentVO를 만들어 매퍼로 전달
+    TalentVO vo = new TalentVO();
+    vo.setMemberId(memberId);
+    return talentMapper.getFavoriteTalents(vo);
+    }
+    public List<TalentVO> getFavoriteTalents(TalentVO vo) {
+    // 새로 바꾼 컨트롤러에서 vo 통째로 넘길 때 처리
+    return talentMapper.getFavoriteTalents(vo);
+}
+
+    // 게시글 조회수 불러오기
+    @Transactional
+    public void increaseViewCount(Long postId){
+        talentMapper.increaseViewCount(postId);
+    }
+    
     
 
 

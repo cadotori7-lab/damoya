@@ -71,7 +71,7 @@
                     <button type="button" class="btn ghost sm" style="width: auto !important; flex: none !important; display: inline-flex !important; align-items: center; justify-content: center; color: #e07a45; border-color: #e07a45;" onclick="deleteProject(${project.projectId})">삭제하기</button>
                     <a class="btn pri sm" href="${ctx}/project/mentor-recommend?id=${project.projectId}">멘토 AI 추천</a>
                 </c:if>
-                <!--   목록으로 -->
+                <!--  목록으로 -->
                 <a class="back" style="margin: 0; padding: 6px 12px;" href="${ctx}/project/list${pageContext.request.queryString != null ? '?' : ''}${pageContext.request.queryString}">← 목록으로</a>
             </div>
           </div>
@@ -153,11 +153,17 @@
             <!-- 우측 사이드바 버튼 영역 (지원하기 + 관심등록 가로 나란히 배치) -->
             <div style="display: flex; gap: 8px; margin-top: 18px;">
                 
-                <!-- 비로그인 유저 접근 차단 -->
+                <!-- 비로그인 및 멘토 지원 차단 처리 -->
                 <c:choose>
                     <c:when test="${empty member}">
                         <button type="button" class="btn pri" style="flex: 1.2; justify-content:center; padding:0;" onclick="alert('로그인 후 이용하세요!'); location.href='${ctx}/auth/login';">
                             지원하기
+                        </button>
+                    </c:when>
+                    <c:when test="${isMentor}">
+                        <!-- 💡 멘토 계정인 경우 지원 원천 차단 -->
+                        <button type="button" class="btn ghost" style="flex: 1.2; justify-content:center; background:#f3f4f6; color:#9ca3af; cursor:not-allowed; padding:0;" disabled onclick="alert('멘토 계정은 프로젝트에 지원할 수 없습니다.');">
+                            멘토 지원 불가
                         </button>
                     </c:when>
                     <c:when test="${isOwner}">
