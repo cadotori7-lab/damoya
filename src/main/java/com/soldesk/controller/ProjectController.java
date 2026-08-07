@@ -50,6 +50,8 @@ import com.soldesk.vo.ParticipationVO;
 import com.soldesk.vo.ProjectVO;
 import com.soldesk.vo.ReportVO;
 import com.soldesk.vo.UnivVO;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -152,15 +154,20 @@ public class ProjectController {
         // 내가 쓴 글인지 체크
         boolean isOwner = false; 
 
+        // 멘토인지 체크
+        boolean isMentor = false;
+
         // 로그인 상태인지 체크 
         if (principal != null) {
             String loginId = principal.getName();
             MemberVO loginUser = memberService.findByLoginId(loginId);
             model.addAttribute("member",loginUser);
+            
             if (loginUser != null) {
                 Long loginMemberId = (long) loginUser.getMember_id();
                 
-                // 지원 여부 확인
+                // 멘토 여부 확인
+                isMentor = mentorService.isMentor(loginMemberId.intValue());                // 지원 여부 확인
                 int count = participationMapper.countByProjectAndMember(projectId, loginMemberId);
                 hashApplied = (count > 0);
 
@@ -182,6 +189,7 @@ public class ProjectController {
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("isLiked", isLiked);
         model.addAttribute("isOwner", isOwner); 
+        model.addAttribute("isMentor", isMentor);
         model.addAttribute("commentList", commentList);
         model.addAttribute("project", project);
         model.addAttribute("member", member);
@@ -297,17 +305,37 @@ public class ProjectController {
         rttr.addFlashAttribute("msg", "프로젝트가 성공적으로 삭제되었습니다.");
         return "redirect:/project/list";
     }
-
-    //지원하기
+    // 지원하기 폼
     @GetMapping("/apply")
     public String applyForm(@RequestParam("id") Long projectId, Model model) {
        model.addAttribute("projectId", projectId);
        return "project/apply_form";
     }
 
+    //지원하기
     @PostMapping("/apply")
+    public String applyProject(@RequestParam("id") Long projectId, 
+                           Principal principal,
+                            RedirectAttributes rttr) {
+        if(principal == null){
+            rttr.addFlashAttribute("msg","로그인 후 이용 가능합니다.");
+            return "redirect:/auth/login";
+        }
 
-    @GetMapping("/list")
+        MemberVO loginUser = memberService.findByLoginId(principal.getName());
+        boolean isMentor = mentorService.isMentor(loginUser.getMember_id());
+
+        // 멘토인 경우 지원 안됨
+        if(isMentor){
+            rttr.addFlashAttribute("msg", "멘토 계정은 프로젝트에 지원할 수 없습니다.");
+            return "redirect:/project/detail?id=" + projectId;
+        }
+        rttr.addFlashAttribute("msg", "프로젝트 지원이 완료되었습니다.");
+        return "redirect:/project/detail?id=" + projectId;
+    }
+
+
+   @GetMapping("/list")
     public String getProjectList(
             @RequestParam(value="page", defaultValue = "1") int page,
             @RequestParam(value="matchScope", defaultValue = "교내") String matchScope, 
@@ -320,12 +348,13 @@ public class ProjectController {
             Model model, Principal principal){
 
         boolean isLoginRequired = false;    // 로그인 했는지
+        boolean isApprovalRequired = false; // 승인 대기 상태인지 
         boolean isMentor = false;           // 멘토인지 여부
-        boolean isExternalMentor = false;   // 내부/외부 멘토인지 여부
+        boolean isExternalMentor = false;   // 외부 멘토인지 여부
         
         ProjectVO vo = new ProjectVO(); 
         
-        // 카테고리와 학년 파라미터
+        // 카테고리와 학년 파라미터 셋팅
         if(categoryList != null && !categoryList.trim().isEmpty()){
             vo.setCategoryList(Arrays.asList(categoryList.split(",")));
         }
@@ -333,40 +362,52 @@ public class ProjectController {
             vo.setGradeList(Arrays.asList(gradeList.split(",")));
         }
 
-        //  로그인 여부에 따른 처리
+        // 로그인 여부에 따른 처리
         if(principal != null){
             MemberVO loginUser = memberService.findByLoginId(principal.getName());
             long memberId = loginUser.getMember_id();
 
-            // 멘토 여부 및 외부 멘토 여부 확인 
-            isMentor = mentorService.isMentor((int)memberId);
-            isExternalMentor = isMentor && !loginUser.isApproved();
+            //  멘토 여부 확인
+            isMentor = mentorService.isMentor(Long.valueOf(memberId).intValue());            
 
-            // 외부 멘토는 전국만 볼 수 있게
+            //  대학/학과 소속 여부 및 학교 인증 여부 확인
+            boolean hasDept = (loginUser.getDept_id() != null && loginUser.getDept_id() > 0);
+            boolean isApproved = loginUser.isApproved();
+
+            //  외부 멘토 
+            isExternalMentor = isMentor && !hasDept;
+
+            // 외부 멘토는 전국만 볼 수 있
             if(isExternalMentor){
                 matchScope = "전국";
             }
 
-            // 로그인 유저의 대학 이름 및 학과 ID 가져오기
-            if(loginUser.getDept_id() != null){
+            // 아직 승인x 학생 및 내부 멘토
+            if ("교내".equals(matchScope) && hasDept && !isApproved) {
+                isApprovalRequired = true;
+            }
+
+            if(hasDept){
                 UnivVO univ = univService.getUnivByDeptId(loginUser.getDept_id().intValue());
                 if(univ != null){
                     vo.setUserUnivName(univ.getUniv_name());
                 }
                 vo.setUserDeptId(loginUser.getDept_id().longValue());
             }
+            
             model.addAttribute("isMentor", isMentor);
             model.addAttribute("isExternalMentor", isExternalMentor);
-        } else {
-            // categoryList 배열 안에 "학과"가 포함되어 있는지 체크
-            boolean hasDeptCategory = vo.getCategoryList() != null && vo.getCategoryList().contains("학과");
+            model.addAttribute("isApprovalRequired", isApprovalRequired);
             
+        } else {
+            // 비로그인 상태 처리
+            boolean hasDeptCategory = vo.getCategoryList() != null && vo.getCategoryList().contains("학과");
             if("교내".equals(matchScope) || hasDeptCategory){
                 isLoginRequired = true;
             }
         }
 
-        // 페이지가 1 미만으로 내려가서 음수 오프셋이 발생하지 않도록 차단
+        // 페이지 음수 방지
         if (page < 1) {
             page = 1;
         }
@@ -381,7 +422,6 @@ public class ProjectController {
             
             List<ProjectVO> projectList = projectService.getFavoriteProjects(memberId);
             
-            // 찜 목록일 때도 화면 아래에 0이 뜨거나 깨지지 않도록 pageBean 전달
             int totalFavoriteCnt = projectList.size();
             PageBean favoritePageBean = new PageBean(1, totalFavoriteCnt, 6); 
             
@@ -390,6 +430,7 @@ public class ProjectController {
             model.addAttribute("isFavoriteView", true); 
             model.addAttribute("currentSort", sort); 
             
+
             return "project/list";
         }
 
@@ -403,8 +444,8 @@ public class ProjectController {
         List<ProjectVO> projectList = new ArrayList<>();
         int totalCnt = 0;
         
-        //  로그인이 필요한 조건(교내/학과)인데 비로그인 상태라면 DB 조회를 건너뜀
-        if (!isLoginRequired) {
+        // 로그인이 필요한 조건(교내/학과)인데 비로그인 상태라면 DB 조회를 건너뜀
+        if (!isLoginRequired && !isApprovalRequired) {
             totalCnt = projectService.getTotalCount(vo);
             projectList = projectService.getProjectList(vo);
         }
@@ -414,8 +455,8 @@ public class ProjectController {
         model.addAttribute("projectList", projectList);
         model.addAttribute("pageBean", pageBean);
         model.addAttribute("currentSort", sort);
-        model.addAttribute("isLoginRequired", isLoginRequired); // JSP로 로그인 필요 여부 전달
-        model.addAttribute("matchScope", matchScope); // 강제 변경된 매칭 범위 전달
+        model.addAttribute("isLoginRequired", isLoginRequired); 
+        model.addAttribute("matchScope", matchScope); // 강제 변경된 매칭 범위 뷰로 전달
 
         return "project/list";
     }
